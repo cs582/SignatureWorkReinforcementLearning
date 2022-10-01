@@ -23,10 +23,10 @@ def preprocessing_correlation(op, cl, size):
 
 def preprocessing_open_product(op, cl):
     """
-
-    :param op:
-    :param cl:
-    :return:
+    Returns an open product dataset with matrices of op.shape[1] x cl.shape[1].
+    :param op:      --pd.Dataframe, open prices historical data for all tokens
+    :param cl:      --pd.Dataframe, close prices historical data for all tokens
+    :return: X      --list, returns a list of 2D open product matrices
     """
     X = []
 
@@ -39,11 +39,10 @@ def preprocessing_open_product(op, cl):
     return X
 
 
-def prepare_dataset(tokens_open_prices, tokens_close_prices, use_change, use_covariance, lookback):
+def prepare_dataset(tokens_prices, use_change, use_covariance, lookback):
     """
 
-    :param tokens_open_prices:  --pd.Dataframe, it gets a dataframe with the token open prices
-    :param tokens_close_prices: --pd.Dataframe, it gets a dataframe with the token close prices
+    :param tokens_prices:       --pd.Dataframe, it gets a dataframe with the token open prices
     :param use_change:          --boolean, if true, then use price change else use raw prices
     :param use_covariance:      --boolean, if true, then use covariance else use open product
     :param lookback:            --int, when using covariance, it tells how many days back to look at. To trade for n days, it would be necessary to have n+lookback days as input.
@@ -52,17 +51,15 @@ def prepare_dataset(tokens_open_prices, tokens_close_prices, use_change, use_cov
     X_matrices = None
 
     if use_change:
-        tokens_close_prices = tokens_close_prices.pct_change().drop([0], axis=0)
-        tokens_open_prices = tokens_open_prices.pct_change().drop([0], axis=0)
+        tokens_prices = tokens_prices.pct_change().drop([0], axis=0)
 
     if use_covariance:
         size = lookback
-        X_matrices = preprocessing_correlation(tokens_open_prices, tokens_close_prices, size)
+        X_matrices = preprocessing_correlation(tokens_prices, tokens_prices, size)
         X_matrices = np.asanyarray(X_matrices)
 
     if not use_covariance:
-        X_matrices = preprocessing_open_product(tokens_open_prices, tokens_close_prices)
+        X_matrices = preprocessing_open_product(tokens_prices, tokens_prices)
         X_matrices = np.asanyarray(X_matrices)
-        X_matrices = (X_matrices - X_matrices.mean(axis=0))/X_matrices.std(axis=0)
 
     return X_matrices

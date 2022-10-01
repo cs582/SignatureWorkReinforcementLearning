@@ -33,7 +33,9 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     # Calculate cash per token
     cash_ptoken = cash/len(tokens)
 
-    curr_net_worth = 0
+    curr_total_net_worth = 0
+    curr_total_units_value = 0
+    curr_total_cash = 0
 
     # Perform the corresponding action for each token
     for token in tokens:
@@ -49,10 +51,14 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
             token_name=token
         )
 
+        curr_total_cash += curr_cash
+
         # Calculate current value of units held
-        curr_units_value = token_portfolio[token]*current_token_prices[token]
+        curr_units_value = token_portfolio[token] * current_token_prices[token]
+        curr_total_units_value += curr_units_value
 
         # Calculate current net worth i.e. cash + units value
-        curr_net_worth += curr_cash + curr_units_value
+        curr_net_worth = curr_cash + curr_units_value
+        curr_total_net_worth += curr_net_worth
 
-    return curr_net_worth, curr_cash, curr_units_value
+    return token_portfolio, curr_total_net_worth, curr_total_cash, curr_total_units_value
