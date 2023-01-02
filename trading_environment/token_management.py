@@ -1,6 +1,7 @@
 def trade_token(cash, gas, available_tokens, price, action, sell_limit, buy_limit, token_name=None, print_transaction=False):
     """
     Performs the corresponding transaction for the given token. It returns the remaining cash and tokens.
+    :param print_transaction:   --boolean, decide whether to print the transaction or not
     :param cash:                --float, cash available for transaction
     :param gas:                 --float, gas price in Gwei
     :param available_tokens:    --float, units available of the given token
@@ -53,6 +54,7 @@ def trade_token(cash, gas, available_tokens, price, action, sell_limit, buy_limi
     remaining_tokens = available_tokens + units_to_buy - units_to_sell
     remaining_cash = cash + cash_earned - cash_spent
 
-    print(f"remaining tokens: {remaining_tokens}, remaining cash: {remaining_cash}")
+    if print_transaction:
+        print(f"remaining tokens: {remaining_tokens}, remaining cash: {remaining_cash}")
 
     return remaining_tokens, remaining_cash

@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
+from sklearn.impute import KNNImputer
 
 
 def retrieve_online_gas_prices(address):
     # Read csv and convert to dataframe
-    df = pd.read_html(address)[0]
+    df = pd.read_csv(address)
     return df
 
 
@@ -23,26 +24,24 @@ def retrieve_online_token_prices(filename):
     :return:            --list, list of dictionaries that map to the price of each token at each time t
     """
     # Read csv and convert to dataframe
-    df = pd.read_html(filename)[0]
+    df = pd.read_csv(filename, index_col=0)
+    df = df.drop(df.index[0], axis=0)
+
+    df_values = KNNImputer(n_neighbors=5).fit_transform(df)
+    for i, col in enumerate(df.columns):
+        df[col] = df_values[:, i]
 
     # Get token names and prices
     token_names = df.columns.tolist()
-    historical_prices = df.values.tolist()
 
-    # Convert them to a list of dictionaries
-    new_historical_prices = []
-    for cur_token_prices in historical_prices[::-1]:
-        cur_token_price_map = {}
-        for token_name, cur_token_price in zip(token_names, cur_token_prices):
-            cur_token_price_map[token_names] = cur_token_price
-        new_historical_prices.append(cur_token_price_map)
+    assert df.isnull().sum().sum() == 0, f"there are {df.isnull().sum().sum()} missing values."
 
-    return token_names, new_historical_prices
+    return len(token_names), token_names, df
 
 
 def retrieve_offline_token_prices(starting_price, n_defi_tockens, n_trading_days):
     # Generate names of each tocken
-    token_names = [str(x) for x in range(n_defi_tockens)]
+    token_names = [str(x) for x in range(1,n_defi_tockens+1)]
 
     # Markov process to simulate stock price time series data
     historical_prices = []
