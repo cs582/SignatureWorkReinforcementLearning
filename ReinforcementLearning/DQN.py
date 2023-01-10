@@ -19,10 +19,7 @@ class Block(nn.Module):
         out = self.relu(out)
         out = self.conv2(out)
         out = self.bn2(out)
-        print("out shape", out.shape, "x shape", x.shape)
-        out += x
         out = self.relu(out)
-
         return out
 
 
@@ -42,8 +39,8 @@ class DQN(nn.Module):
         self.block5 = Block(in_channels=128, out_channels=256, kernel_size=(kernel, kernel))
         self.block6 = Block(in_channels=256, out_channels=256, kernel_size=(kernel, kernel))
         # 4 Blocks of 512 channels
-        self.block5 = Block(in_channels=256, out_channels=512, kernel_size=(kernel, kernel))
-        self.block6 = Block(in_channels=512, out_channels=512, kernel_size=(kernel, kernel))
+        self.block7 = Block(in_channels=256, out_channels=512, kernel_size=(kernel, kernel))
+        self.block8 = Block(in_channels=512, out_channels=512, kernel_size=(kernel, kernel))
 
         self.fc1 = nn.Linear((n_classes - 32) * (n_classes - 32) * 512, 512)
         self.fc2 = nn.Linear(512, 256)
@@ -62,6 +59,10 @@ class DQN(nn.Module):
         x = self.block4(x)
         x = self.block5(x)
         x = self.block6(x)
+        x = self.block7(x)
+        x = self.block8(x)
+
+        print(x.shape)
 
         x = torch.flatten(x, 1)
 
