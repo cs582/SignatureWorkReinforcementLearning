@@ -86,13 +86,16 @@ class Environment:
         self.token_prices = self.token_prices.to_dict("records")
 
     def trade(self, actions=None):
+        # Check if cuda is available and set device to use (cuda or CPU)
+        device = torch.device("cuda:0") if torch.cuda.is_available() else None
+
         if actions is None:
             # Update environment current state
             reward = None
             done = len(self.token_prices) == 0
 
             self.curr_prices = self.token_prices[self.data_index] if not done else None
-            self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.float64) if not done else None
+            self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=device) if not done else None
             self.curr_gas = self.gas_prices[self.data_index] if not done else None
 
             self.data_index += 1
@@ -147,7 +150,7 @@ class Environment:
 
         # If have performed all n_transactions, then move to next prices
         if self.curr_transactions >= self.n_transactions:
-            self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.float64) if not done else None
+            self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=device) if not done else None
             self.curr_gas = self.gas_prices[self.data_index] if not done else None
             self.data_index += 1
             self.curr_transactions = 0

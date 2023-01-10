@@ -54,8 +54,6 @@ class DQN(nn.Module):
 
     def forward(self, x):
         x_in = x
-        print(x_in.shape)
-
         x = self.block1(x)
         x = self.block2(x)
         x = self.block3(x)
@@ -64,9 +62,6 @@ class DQN(nn.Module):
         x = self.block6(x)
         x = self.block7(x)
         x = self.block8(x)
-
-        print(x.shape)
-
         x += x_in
 
         x = torch.flatten(x, 1)
