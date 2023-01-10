@@ -138,13 +138,11 @@ class Environment:
             sell_limit=self.sell_limit,
             print_transactions=self.print_transactions
         )
-        logging.info(f"""
-        Completed Portfolio Management
-            current net worth = {self.curr_net_worth}
-            current cash = {self.curr_cash}
-            current assets value = {self.curr_units_value}
-            portfolio = {self.portfolio}
-        """)
+        logging.info(f"Completed Portfolio Management!!!")
+        logging.info(f"current net worth = {self.curr_net_worth}")
+        logging.info(f"current cash = {self.curr_cash}")
+        logging.info(f"current assets value = {self.curr_units_value}")
+        logging.debug(f"portfolio = {self.portfolio}")
 
         # Store the current net_worth, cash, and units value
         self.net_worth_history.append(self.curr_net_worth)
@@ -154,37 +152,31 @@ class Environment:
         # Calculate roi and sharpe ratio
         daily_roi = (self.net_worth_history[-1] / self.net_worth_history[-2]) - 1
         gross_roi = (self.net_worth_history[-1] / self.initial_cash) - 1
-        logging.info(f"""
-        Returns
-            current daily roi = {daily_roi}
-            current gross roi = {gross_roi}
-        """)
+        logging.info(f"Current daily roi = {daily_roi}")
+        logging.info(f"Current gross roi = {gross_roi}")
+
         self.daily_roi_history.append(daily_roi)
         self.gross_roi_history.append(gross_roi)
 
         # Obtain the current number of days since the beginning of the transaction period
         n_days = len(self.net_worth_history)
-        logging.info(f"""
-        Number of days since beginning of trading {n_days} 
-        """)
+        logging.info(f"Number of days since beginning of trading: {n_days}")
 
         # Calculate sharpe ratio
         sharpe = (n_days ** 0.5) * np.mean(self.daily_roi_history) / np.std(self.daily_roi_history)
         self.sharpe_history.append(float(sharpe))
-        logging.info(f"""
-        Sharpe Ratio
-            {sharpe}
-        """)
+        logging.info(f"Sharpe Ratio: {sharpe}")
 
         # Update environment current state
         reward = self.sharpe_history[-1] if self.reward_metric == "sharpe" else self.daily_roi_history[-1]
         done = len(self.database) == 0
-        logging.info(f"Reinforcement Learning Reward : {self.reward_metric} = {reward}")
+        logging.info(f"Reinforcement Learning Reward: {self.reward_metric} = {reward}")
 
         # Move to next prices
         self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=self.device) if not done else None
         self.curr_gas = self.gas_prices[self.data_index] if not done else None
         self.data_index += 1
+        logging.debug(f"Data index: {self.data_index}")
 
         reward_matrix = np.zeros(self.n_defi_tokens) + reward
 
