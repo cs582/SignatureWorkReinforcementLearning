@@ -100,14 +100,14 @@ class Environment:
     def trade(self, actions=None):
         logging.info("Environment/trade")
         if actions is None:
-            logging.info("\tActions is None")
+            logging.info("Actions is None")
 
             # Update environment current state
             reward = None
             done = len(self.token_prices) == 0
 
             # Retrieving the current prices, input image, and gas price
-            logging.info("\tRetrieving the current prices, input image, and gas price.")
+            logging.info("Retrieving the current prices, input image, and gas price.")
             self.curr_prices = self.token_prices[self.data_index] if not done else None
             self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=self.device) if not done else None
             self.curr_gas = self.gas_prices[self.data_index] if not done else None
@@ -116,17 +116,17 @@ class Environment:
 
             return reward, self.curr_prices_image, done
 
-        logging.info("\tActions is not None")
+        logging.info("Actions is not None")
 
         assert self.n_defi_tokens==len(actions.reshape(-1,1)), f"actions don't match size expected {self.n_defi_tokens}, got {len(actions)}"
 
         # Sort indexes and get trading vector
-        logging.info("\tTransform actions to list")
+        logging.info("Transform actions to list")
         trading_vector = actions.tolist()
-        logging.info(f"\tTrading Vector: {trading_vector}")
+        logging.info(f"Trading Vector: {trading_vector}")
 
         # Performing portfolio management
-        logging.info("\tPerforming Portfolio Management")
+        logging.info("Performing Portfolio Management")
         self.portfolio, self.curr_net_worth, self.curr_cash, self.curr_units_value = portfolio_management(
             cash=self.curr_cash,
             token_portfolio=self.portfolio,

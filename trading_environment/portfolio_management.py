@@ -52,9 +52,9 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     curr_total_cash = 0
 
     # Perform the corresponding action for each token
-    for token in tokens:
+    for i, token in enumerate(tokens):
         # Trade and get current tokens and cash
-        logging.info(f"Trading token {token} with action {action_map[token]}")
+        logging.info(f"Transaction #{i}\nTrading token {token} with action {action_map[token]}.")
         token_portfolio[token], curr_cash = trade_token(
             cash=cash_ptoken,
             gas=current_gas_price,
@@ -66,7 +66,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
             token_name=token,
             print_transaction=print_transactions
         )
-        logging.info(f"Finished trading token {token}")
+        logging.info(f"Finished trading token {token}.")
 
         curr_total_cash += curr_cash
         logging.debug(f"curr_total_cash = {curr_total_cash}, added curr_cash = {curr_cash}")
