@@ -18,28 +18,28 @@ class Agent:
         self.actions = None
 
     def store(self, info):
-        logging.info("Agent called store method")
+        logging.debug("Agent called store method")
         self.memory[self.curr_index_memory] = info
         self.curr_index_memory = (self.curr_index_memory % self.memory_size) + 1
-        logging.info(f"\tstored info at {self.curr_index_memory}")
+        logging.debug(f"Stored info at memory index {self.curr_index_memory}")
 
     def draw(self, batch_size):
-        logging.info("Agent called draw method")
+        logging.debug("Agent called draw method")
 
-        actual_size = min(batch_size, self.curr_index_memory+1)
-        logging.info(f"Size of batch = {actual_size}")
+        actual_size = min(batch_size, self.curr_index_memory)
+        logging.debug(f"Size of batch: {actual_size}")
 
         indexes = np.arange(0, self.curr_index_memory, dtype=np.int)
         np.random.shuffle(indexes)
-        index_sample = indexes[:actual_size]
-        logging.info(f"Random Sample = {indexes}")
+        index_sample = indexes[:actual_size + 1]
+        logging.debug(f"Random Sample: {indexes}")
 
         return self.memory[index_sample]
 
     def get_action(self, y_hat, epsilon):
-        logging.info("Agent called method get_action")
+        logging.debug("Agent called method get_action")
         if np.random.rand() < epsilon:
-            logging.info(f"Chosen random actions with epsilon = {epsilon}")
+            logging.debug(f"Chosen random actions with epsilon {epsilon}")
             self.actions = np.random.shuffle(self.map_actions)
             return self.actions
 

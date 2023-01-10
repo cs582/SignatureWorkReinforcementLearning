@@ -139,10 +139,10 @@ class Environment:
             print_transactions=self.print_transactions
         )
         logging.info(f"Completed Portfolio Management!!!")
-        logging.info(f"current net worth = {self.curr_net_worth}")
-        logging.info(f"current cash = {self.curr_cash}")
-        logging.info(f"current assets value = {self.curr_units_value}")
-        logging.debug(f"portfolio = {self.portfolio}")
+        logging.info(f"Current net worth = {self.curr_net_worth}")
+        logging.info(f"Current cash = {self.curr_cash}")
+        logging.info(f"Current assets value = {self.curr_units_value}")
+        logging.debug(f"Portfolio = {self.portfolio}")
 
         # Store the current net_worth, cash, and units value
         self.net_worth_history.append(self.curr_net_worth)
