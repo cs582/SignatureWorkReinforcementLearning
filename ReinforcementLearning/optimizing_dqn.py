@@ -20,7 +20,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     # Predict the next moves
     logging.debug("Predict next moves")
     y_hat = dqn(curr_images).gather(1, curr_actions)
-    logging.debug(f"obtained next moves y_hat: {y_hat}")
+    logging.debug("Next moves predicted")
 
     # Calculate target value
     logging.debug("Calculate target value")
@@ -31,6 +31,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     # Calculate Loss
     logging.debug("Calculate the loss")
     loss = loss_function(y_hat, y_target)
+    logging.debug("Loss has been calculated")
 
     # Compute gradient
     logging.debug("Calculate gradient")
@@ -39,8 +40,9 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     logging.debug("Gradient computed")
 
     # Take gradient step
-    optimizer.step()
     logging.debug("Taking gradient step")
+    optimizer.step()
+    logging.debug("Step has been taken")
 
     return loss.item()
 
