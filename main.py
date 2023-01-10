@@ -1,9 +1,12 @@
+import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
 
 from ReinforcementLearning.training_DQN import train
 
 if __name__ == "__main__":
+    device = torch.device("cuda:0") if torch.cuda.is_available() else None
+
     loss_function = nn.MSELoss()
 
     reward_metric = "roi"
@@ -40,7 +43,8 @@ if __name__ == "__main__":
         epsilon=epsilon,
         gamma=gamma,
         reward_metric=reward_metric,
-        print_transactions=False
+        print_transactions=False,
+        device=device
     )
 
     plt.title("Total reward history")

@@ -12,7 +12,7 @@ import torch
 class Environment:
     def __init__(self, trading_days=365, n_transactions=10, token_prices_address=None, gas_address=None,
                  initial_cash=100000, buy_limit=100000, sell_limit=1000000, use_change=True, use_covariance=True,
-                 reward_metric="sharpe", print_transactions=True):
+                 reward_metric="sharpe", print_transactions=True, device=None):
         # Trading Boundaries
         self.n_defi_tokens = -1
         self.n_transactions = n_transactions
@@ -61,6 +61,9 @@ class Environment:
         # Done
         self.done = False
 
+        # Hardware to use
+        self.device = device
+
     def initialize_portfolio(self, starting_price=None, n_defi_tokens=None, avg_price=None, std_deviation=None):
         if self.token_prices_address is not None:
             self.n_defi_tokens, self.token_names, self.token_prices = retrieve_online_token_prices(self.token_prices_address)
@@ -86,16 +89,13 @@ class Environment:
         self.token_prices = self.token_prices.to_dict("records")
 
     def trade(self, actions=None):
-        # Check if cuda is available and set device to use (cuda or CPU)
-        device = torch.device("cuda:0") if torch.cuda.is_available() else None
-
         if actions is None:
             # Update environment current state
             reward = None
             done = len(self.token_prices) == 0
 
             self.curr_prices = self.token_prices[self.data_index] if not done else None
-            self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=device) if not done else None
+            self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=self.device) if not done else None
             self.curr_gas = self.gas_prices[self.data_index] if not done else None
 
             self.data_index += 1
@@ -150,7 +150,7 @@ class Environment:
 
         # If have performed all n_transactions, then move to next prices
         if self.curr_transactions >= self.n_transactions:
-            self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=device) if not done else None
+            self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=self.device) if not done else None
             self.curr_gas = self.gas_prices[self.data_index] if not done else None
             self.data_index += 1
             self.curr_transactions = 0

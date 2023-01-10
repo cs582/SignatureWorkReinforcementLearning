@@ -1,13 +1,13 @@
 import numpy as np
 import torch
 
-from ReinforcementLearning import DQN
+from ReinforcementLearning.model import DQN
 from ReinforcementLearning.optimizing_dqn import optimize_dqn
 from trading_environment.agent import Agent
 from trading_environment.environment import Environment
 
 
-def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, print_transactions=False):
+def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, print_transactions=False, device=None):
     train_history = {"metric_history": [], "loss": []}
 
     # Initialize environment and portfolio
@@ -22,7 +22,8 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
         use_change=use_change,
         use_covariance=use_covariance,
         reward_metric=reward_metric,
-        print_transactions=print_transactions
+        print_transactions=print_transactions,
+        device=device
     )
 
     # If the filenames are given, no parameters are necessary for method initialize portfolio
@@ -39,7 +40,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
     )
 
     # Initialize action-value function Q with random weights
-    q = DQN.DQN(n_classes=n_tokens).double()
+    q = DQN(n_classes=n_tokens).double().to(device=device)
 
     optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
 
