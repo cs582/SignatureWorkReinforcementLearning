@@ -29,16 +29,16 @@ class DQN(nn.Module):
         # ResNet-20 backbone
         self.n_classes = n_classes
 
-        # 4 Blocks of 64 channels
+        # 2 Blocks of 64 channels
         self.block1 = Block(in_channels=1, out_channels=64, kernel_size=(kernel, kernel))
         self.block2 = Block(in_channels=64, out_channels=64, kernel_size=(kernel, kernel))
-        # 4 Blocks of 128 channels
+        # 2 Blocks of 128 channels
         self.block3 = Block(in_channels=64, out_channels=128, kernel_size=(kernel, kernel))
         self.block4 = Block(in_channels=128, out_channels=128, kernel_size=(kernel, kernel))
-        # 4 Blocks of 256 channels
+        # 2 Blocks of 256 channels
         self.block5 = Block(in_channels=128, out_channels=256, kernel_size=(kernel, kernel))
         self.block6 = Block(in_channels=256, out_channels=256, kernel_size=(kernel, kernel))
-        # 4 Blocks of 512 channels
+        # 2 Blocks of 512 channels
         self.block7 = Block(in_channels=256, out_channels=512, kernel_size=(kernel, kernel))
         self.block8 = Block(in_channels=512, out_channels=512, kernel_size=(kernel, kernel))
 
@@ -54,6 +54,7 @@ class DQN(nn.Module):
 
     def forward(self, x):
         x = self.block1(x)
+        print(x.shape)
         x = self.block2(x)
         x = self.block3(x)
         x = self.block4(x)
