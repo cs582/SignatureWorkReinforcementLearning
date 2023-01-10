@@ -24,7 +24,7 @@ if __name__ == "__main__":
     buy_limit = 100000
     sell_limit = 100000
 
-    batch_size = 64
+    batch_size = 32
     memory_size = 100000
 
     q, history_dqn = train(
