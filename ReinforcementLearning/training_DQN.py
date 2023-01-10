@@ -26,11 +26,11 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
         print_transactions=print_transactions,
         device=device
     )
-    logging.info("Environment Constructor Called!")
+    logging.info("Environment Initialized!")
 
     # If the filenames are given, no parameters are necessary for method initialize portfolio
     environment.initialize_portfolio()
-    logging.info("Portfolio Initialized")
+    logging.info("Portfolio Initialized!")
 
     n_tokens = environment.n_defi_tokens if n_tokens is None else n_tokens
     logging.info(f"Number of DeFi tokens: {n_tokens}")

@@ -39,11 +39,12 @@ class Agent:
     def get_action(self, y_hat, epsilon):
         logging.info("Agent called method get_action")
         if np.random.rand() < epsilon:
-            logging.info(f"Chosen random actions with epsion = {epsilon}")
+            logging.info(f"Chosen random actions with epsilon = {epsilon}")
             self.actions = np.random.shuffle(self.map_actions)
             return self.actions
 
         # Get the highest and lowest scores
+        logging.info(f"raw output from DQN: {y_hat}")
         sorted_indexes = y_hat.detach().cpu().argsort()
         self.actions = np.zeros(self.n_tokens)
         self.actions[sorted_indexes[:self.n_transactions // 2]] = -1
