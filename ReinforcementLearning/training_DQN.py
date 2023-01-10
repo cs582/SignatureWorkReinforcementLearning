@@ -56,7 +56,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
 
             # Predict or randomly choose an action
             y_hat = q(cur_state)
-            cur_action = agent.get_action(y_hat.detach(), epsilon)
+            cur_action = agent.get_action(y_hat, epsilon)
             if cur_action is None:
                 print(f"at episode {episode}, cur_action is None")
 

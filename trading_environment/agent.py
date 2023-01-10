@@ -32,7 +32,7 @@ class Agent:
             return self.actions
 
         # Get the highest and lowest scores
-        sorted_indexes = np.argsort(y_hat.numpy())
+        sorted_indexes = y_hat.argsort()
         self.actions = np.zeros(self.n_tokens)
         self.actions[sorted_indexes[:self.n_transactions // 2]] = -1
         self.actions[sorted_indexes[-self.n_transactions // 2:]] = 1
