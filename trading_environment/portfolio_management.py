@@ -17,17 +17,17 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     :param sell_limit:              --float, limit of units to sell per transaction
     :return: net worth              --float, total cash and value of units held
     """
-    logging.info("\tPortfolio Management Function")
+    logging.info("Portfolio Management Function")
 
     # Ensure portfolio and available prices have the same number of tokens
     length_portfolio = len(token_portfolio)
     length_token_prices = len(current_token_prices)
-    logging.debug(f"\tPortfolio length = {length_portfolio}, Length Token Prices = {length_token_prices}")
+    logging.debug(f"Portfolio length = {length_portfolio}, Length Token Prices = {length_token_prices}")
 
     # Map actions to their corresponding token name
     logging.debug("Mapping actions to their corresponding token name")
     action_map = {tkn: actions[i] for i, tkn in enumerate(token_portfolio.keys())}
-    logging.debug(f"\t\taction_map = {action_map}")
+    logging.debug(f"action_map = {action_map}")
 
     assert length_portfolio == length_token_prices, f"Error: token_portfolio and current_token_prices must have same length, got {length_portfolio} and {length_token_prices}"
 
@@ -39,7 +39,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     assert portfolio_tokens == token_prices_available, f"Error: portfolio tokens and tokens in available prices must match."
 
     # Get the names of all tokens in the portfolio
-    logging.info("getting the names of all tokens that need to take action in the action map")
+    logging.debug("getting the names of all tokens that need to take action in the action map")
     tokens = [x for x, y in action_map.items() if y != 0.0]
     logging.debug(f"tokens to be traded: {tokens}")
 
@@ -54,7 +54,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     # Perform the corresponding action for each token
     for i, token in enumerate(tokens):
         # Trade and get current tokens and cash
-        logging.info(f"Transaction #{i}\nTrading token {token} with action {action_map[token]}.")
+        logging.info(f"Transaction #{i}. Trading token {token} with action {action_map[token]}.")
         token_portfolio[token], curr_cash = trade_token(
             cash=cash_ptoken,
             gas=current_gas_price,

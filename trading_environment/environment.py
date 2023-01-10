@@ -11,14 +11,13 @@ import logging
 
 
 class Environment:
-    def __init__(self, trading_days=365, n_transactions=10, token_prices_address=None, gas_address=None,
+    def __init__(self, trading_days=365, token_prices_address=None, gas_address=None,
                  initial_cash=100000, buy_limit=100000, sell_limit=1000000, use_change=True, use_covariance=True,
                  reward_metric="sharpe", print_transactions=True, device=None):
         logging.info("Initializing Environment")
 
         # Trading Boundaries
         self.n_defi_tokens = -1
-        self.n_transactions = n_transactions
         self.curr_transactions = 0
         self.buy_limit = buy_limit
         self.sell_limit = sell_limit
@@ -67,8 +66,8 @@ class Environment:
         # Hardware to use
         self.device = device
 
-    def initialize_portfolio(self, starting_price=None, n_defi_tokens=None, avg_price=None, std_deviation=None):
-        logging.info("Environment called method, Initialize portfolio.")
+    def initialize_portfolio(self, starting_price=None, n_defi_tokens=None):
+        logging.info("Environment called method initialize_portfolio")
 
         if self.token_prices_address is not None:
             logging.info("Retrieving token prices from online address: {}".format(self.token_prices_address))
@@ -77,6 +76,7 @@ class Environment:
             # Reset trading days to be the number of available days if trading days is larger than that
             self.trading_days = min(self.trading_days, len(self.token_prices))
         else:
+            logging.info("Getting offline token prices")
             self.token_prices = retrieve_offline_token_prices(starting_price=starting_price,
                                                               n_defi_tockens=n_defi_tokens,
                                                               n_trading_days=self.trading_days)
@@ -85,6 +85,7 @@ class Environment:
             logging.info("Retrieving gas prices from online address: {}".format(self.gas_address))
             self.gas_prices = retrieve_online_token_prices(self.gas_address)
         else:
+            logging.info("Getting offline gas prices")
             self.gas_prices = retrieve_offline_gas_prices(avg_price=100, std_deviation=25,
                                                           n_trading_days=self.trading_days)
 
@@ -98,16 +99,16 @@ class Environment:
         self.token_prices = self.token_prices.to_dict("records")
 
     def trade(self, actions=None):
-        logging.info("Environment/trade")
+        logging.info("Environment called method trade")
         if actions is None:
-            logging.info("Actions is None")
+            logging.debug("Actions is None")
 
             # Update environment current state
             reward = None
             done = len(self.token_prices) == 0
 
             # Retrieving the current prices, input image, and gas price
-            logging.info("Retrieving the current prices, input image, and gas price.")
+            logging.debug("Retrieving the current prices, input image, and gas price.")
             self.curr_prices = self.token_prices[self.data_index] if not done else None
             self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=self.device) if not done else None
             self.curr_gas = self.gas_prices[self.data_index] if not done else None
@@ -116,14 +117,14 @@ class Environment:
 
             return reward, self.curr_prices_image, done
 
-        logging.info("Actions is not None")
+        logging.debug("Actions is not None")
 
         assert self.n_defi_tokens==len(actions.reshape(-1,1)), f"actions don't match size expected {self.n_defi_tokens}, got {len(actions)}"
 
         # Sort indexes and get trading vector
-        logging.info("Transform actions to list")
+        logging.debug("Transform actions to list")
         trading_vector = actions.tolist()
-        logging.info(f"Trading Vector: {trading_vector}")
+        logging.debug(f"Trading Vector: {trading_vector}")
 
         # Performing portfolio management
         logging.info("Performing Portfolio Management")
@@ -144,9 +145,6 @@ class Environment:
             current assets value = {self.curr_units_value}
             portfolio = {self.portfolio}
         """)
-
-        self.curr_transactions += 1
-        logging.info(f"current number of transactions = {self.curr_transactions}")
 
         # Store the current net_worth, cash, and units value
         self.net_worth_history.append(self.curr_net_worth)
@@ -183,12 +181,10 @@ class Environment:
         done = len(self.database) == 0
         logging.info(f"Reinforcement Learning Reward : {self.reward_metric} = {reward}")
 
-        # If have performed all n_transactions, then move to next prices
-        if self.curr_transactions >= self.n_transactions:
-            self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=self.device) if not done else None
-            self.curr_gas = self.gas_prices[self.data_index] if not done else None
-            self.data_index += 1
-            self.curr_transactions = 0
+        # Move to next prices
+        self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=self.device) if not done else None
+        self.curr_gas = self.gas_prices[self.data_index] if not done else None
+        self.data_index += 1
 
         reward_matrix = np.zeros(self.n_defi_tokens) + reward
 

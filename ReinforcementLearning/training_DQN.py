@@ -14,7 +14,6 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
     # Initialize environment and portfolio
     environment = Environment(
         trading_days=n_trading_days,
-        n_transactions=n_transactions,
         token_prices_address="data//ClosePriceData_2022-10-01_to_2022-08-21.csv",
         gas_address=None,
         initial_cash=initial_cash,
@@ -57,8 +56,9 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
         final_reward = 0
         episode_loss = []
         done = False
+        current_trading_day = 0
         while not done:
-            logging.info("New Trading Day")
+            logging.info(f"Trading Day {current_trading_day}")
 
             # Initialize gradient to zero
             optimizer.zero_grad()
