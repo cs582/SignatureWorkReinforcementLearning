@@ -46,6 +46,7 @@ class Agent:
         # Get the highest and lowest scores
         logging.info(f"raw output from DQN: {y_hat}")
         sorted_indexes = y_hat.detach().cpu().argsort()
+        logging.info(f"sorted indexes: {sorted_indexes}")
         self.actions = np.zeros(self.n_tokens)
         self.actions[sorted_indexes[:self.n_transactions // 2]] = -1
         self.actions[sorted_indexes[-self.n_transactions // 2:]] = 1
