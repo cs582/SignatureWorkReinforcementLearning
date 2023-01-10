@@ -39,9 +39,9 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     assert portfolio_tokens == token_prices_available, f"Error: portfolio tokens and tokens in available prices must match."
 
     # Get the names of all tokens in the portfolio
-    logging.info("getting the names of all tokens in the portfolio")
-    tokens = [x for x in token_portfolio.keys()]
-    logging.debug(f"token names: {tokens}")
+    logging.info("getting the names of all tokens that need to take action in the action map")
+    tokens = [x for x, y in action_map.items() if y != 0.0]
+    logging.debug(f"tokens to be traded: {tokens}")
 
     # Calculate cash per token
     cash_ptoken = cash / len(tokens)

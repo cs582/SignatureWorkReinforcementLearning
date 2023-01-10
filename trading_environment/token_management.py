@@ -58,7 +58,6 @@ def trade_token(cash, gas, available_tokens, price, action, sell_limit, buy_limi
     remaining_tokens = available_tokens + units_to_buy - units_to_sell
     remaining_cash = cash + cash_earned - cash_spent
 
-    if print_transaction:
-        logging.info(f"remaining tokens: {remaining_tokens}, remaining cash: {remaining_cash}")
+    logging.info(f"remaining tokens: {remaining_tokens}, remaining cash: {remaining_cash}")
 
     return remaining_tokens, remaining_cash
