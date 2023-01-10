@@ -42,7 +42,7 @@ class DQN(nn.Module):
         self.block7 = Block(in_channels=256, out_channels=512, kernel_size=(kernel, kernel))
         self.block8 = Block(in_channels=512, out_channels=512, kernel_size=(kernel, kernel))
 
-        self.fc1 = nn.Linear((n_classes - 32) * (n_classes - 32) * 512, 512)
+        self.fc1 = nn.Linear(n_classes * n_classes * 512, 512)
         self.fc2 = nn.Linear(512, 256)
         self.fc3 = nn.Linear(256, 256)
         self.fc4 = nn.Linear(256, 128)
@@ -53,8 +53,10 @@ class DQN(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
+        x_in = x
+        print(x_in.shape)
+
         x = self.block1(x)
-        print(x.shape)
         x = self.block2(x)
         x = self.block3(x)
         x = self.block4(x)
@@ -64,6 +66,8 @@ class DQN(nn.Module):
         x = self.block8(x)
 
         print(x.shape)
+
+        x += x_in
 
         x = torch.flatten(x, 1)
 
