@@ -1,6 +1,14 @@
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
+import logging
+
+logging.basicConfig(
+    filename='log.txt',
+    format='%%(levelname)s (asctime)s: %(name)s - %(message)s ',
+    datefmt='%m/%d/%Y %I:%M:%S %p',
+    level=logging.INFO
+)
 
 from ReinforcementLearning.training_DQN import train
 
@@ -27,6 +35,31 @@ if __name__ == "__main__":
     batch_size = 64
     memory_size = 100000
 
+    training_info = f"""
+    Training DQN with
+        device = {"CPU" if not torch.cuda.is_available() else torch.cuda.get_device_name(device=device)}
+        loss_function = {loss_function}
+        reward_metric = {reward_metric}
+        
+        episodes = {episodes}
+        epsilon = {epsilon}
+        gamma = {gamma}
+        lr = {lr}
+        momentum = {momentum}
+        
+        n_transactions = {n_transactions}
+        n_trading_days = {n_trading_days}
+        
+        initial_cash = {initial_cash}
+        buy_limit = {buy_limit}
+        sell_limit = {sell_limit}
+        
+        batch_size = {batch_size}
+        memory_size = {memory_size}
+    """
+
+    logging.info(training_info)
+
     q, history_dqn = train(
         n_trading_days=n_trading_days,
         n_tokens=None,
@@ -46,6 +79,8 @@ if __name__ == "__main__":
         print_transactions=False,
         device=device
     )
+
+    logging.info("Training Complete!")
 
     plt.title("Total reward history")
     plt.plot(history_dqn["total_reward"], color="red")

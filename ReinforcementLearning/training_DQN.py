@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import logging
 
 from ReinforcementLearning.model import DQN
 from ReinforcementLearning.optimizing_dqn import optimize_dqn
@@ -25,12 +26,14 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
         print_transactions=print_transactions,
         device=device
     )
+    logging.info("Environment Constructor Called!")
 
     # If the filenames are given, no parameters are necessary for method initialize portfolio
     environment.initialize_portfolio()
+    logging.info("Portfolio Initialized")
 
-    print("Number of DeFi tokens:", environment.n_defi_tokens)
     n_tokens = environment.n_defi_tokens if n_tokens is None else n_tokens
+    logging.info(f"Number of DeFi tokens: {n_tokens}")
 
     # Initialize replay memory D to capacity N
     agent = Agent(
@@ -38,6 +41,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
         n_tokens=environment.n_defi_tokens,
         memory_size=memory_size
     )
+    logging.info("Agent Initialized")
 
     # Initialize action-value function Q with random weights
     q = DQN(n_classes=n_tokens).double().to(device=device)
@@ -45,24 +49,29 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
     optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
 
     for episode in range(0, episodes):
+        logging.info(f"Training episode {episode}")
         print(f"Training episode {episode}")
+
+        logging.info("Initial Trade call")
         _, cur_state, _ = environment.trade()
         final_reward = 0
         episode_loss = []
         done = False
         while not done:
+            logging.info("New Trading Day")
+
             # Initialize gradient to zero
             optimizer.zero_grad()
 
             # Predict or randomly choose an action
             y_hat = q(cur_state)
+
             cur_action = agent.get_action(y_hat, epsilon)
             if cur_action is None:
-                print(f"at episode {episode}, cur_action is None")
+                logging.warning(f"at episode {episode}, cur_action is None")
 
             # Trade portfolio with the given instructions
             cur_reward, next_image, done = environment.trade(cur_action)
-            print(f"cur reward {cur_reward[0]}")
 
             # Store experience in memory
             cur_experience = (cur_state, cur_action, cur_reward, next_image)

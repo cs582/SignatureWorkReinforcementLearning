@@ -1,0 +1,95 @@
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:root:
+    Training DQN with
+        device = CPU
+        loss_function = MSELoss()
+        reward_metric = roi
+        
+        episodes = 500
+        epsilon = 0.05
+        gamma = 0.8
+        lr = 0.0001
+        momentum = 0.001
+        
+        n_transactions = 4
+        n_trading_days = 1000
+        
+        initial_cash = 100000
+        buy_limit = 100000
+        sell_limit = 100000
+        
+        batch_size = 64
+        memory_size = 100000
+    
+INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+INFO:root:
+    Training DQN with
+        device = CPU
+        loss_function = MSELoss()
+        reward_metric = roi
+        
+        episodes = 500
+        epsilon = 0.05
+        gamma = 0.8
+        lr = 0.0001
+        momentum = 0.001
+        
+        n_transactions = 4
+        n_trading_days = 1000
+        
+        initial_cash = 100000
+        buy_limit = 100000
+        sell_limit = 100000
+        
+        batch_size = 64
+        memory_size = 100000
+    
+01/10/2023 12:29:15 PM NumExpr defaulting to 8 threads.
+01/10/2023 12:29:16 PM 
+    Training DQN with
+        device = CPU
+        loss_function = MSELoss()
+        reward_metric = roi
+        
+        episodes = 500
+        epsilon = 0.05
+        gamma = 0.8
+        lr = 0.0001
+        momentum = 0.001
+        
+        n_transactions = 4
+        n_trading_days = 1000
+        
+        initial_cash = 100000
+        buy_limit = 100000
+        sell_limit = 100000
+        
+        batch_size = 64
+        memory_size = 100000
+    
+01/10/2023 12:35:04 PM NumExpr defaulting to 8 threads.
+01/10/2023 12:35:05 PM 
+    Training DQN with
+        device = CPU
+        loss_function = MSELoss()
+        reward_metric = roi
+        
+        episodes = 500
+        epsilon = 0.05
+        gamma = 0.8
+        lr = 0.0001
+        momentum = 0.001
+        
+        n_transactions = 4
+        n_trading_days = 1000
+        
+        initial_cash = 100000
+        buy_limit = 100000
+        sell_limit = 100000
+        
+        batch_size = 64
+        memory_size = 100000
+    
+01/10/2023 12:35:05 PM Initializing Environment
