@@ -83,7 +83,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
             # Get a random minibatch of transitions from memory
             experience_batch = agent.draw(batch_size=batch_size)
 
-            loss = optimize_dqn(dqn=q, target=q, experience_batch=experience_batch, loss_function=loss_function, gamma=gamma, optimizer=optimizer)
+            loss = optimize_dqn(dqn=q, target=q, experience_batch=experience_batch, loss_function=loss_function, gamma=gamma, optimizer=optimizer, device=device)
 
             episode_loss.append(loss)
 
