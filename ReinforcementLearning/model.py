@@ -30,38 +30,36 @@ class DQN(nn.Module):
         self.n_classes = n_classes
 
         # 2 Blocks of 64 channels
-        self.block1 = Block(in_channels=1, out_channels=64, kernel_size=(kernel, kernel))
-        #self.block2 = Block(in_channels=64, out_channels=64, kernel_size=(kernel, kernel))
+        self.block1 = Block(in_channels=1, out_channels=8, kernel_size=(kernel, kernel))
+        self.block2 = Block(in_channels=8, out_channels=8, kernel_size=(kernel, kernel))
         # 2 Blocks of 128 channels
-        self.block3 = Block(in_channels=64, out_channels=128, kernel_size=(kernel, kernel))
-        #self.block4 = Block(in_channels=128, out_channels=128, kernel_size=(kernel, kernel))
+        self.block3 = Block(in_channels=8, out_channels=16, kernel_size=(kernel, kernel))
+        self.block4 = Block(in_channels=16, out_channels=16, kernel_size=(kernel, kernel))
         # 2 Blocks of 256 channels
-        self.block5 = Block(in_channels=128, out_channels=256, kernel_size=(kernel, kernel))
-        #self.block6 = Block(in_channels=256, out_channels=256, kernel_size=(kernel, kernel))
+        self.block5 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel))
+        self.block6 = Block(in_channels=32, out_channels=32, kernel_size=(kernel, kernel))
         # 2 Blocks of 512 channels
-        self.block7 = Block(in_channels=256, out_channels=512, kernel_size=(kernel, kernel))
-        #self.block8 = Block(in_channels=512, out_channels=512, kernel_size=(kernel, kernel))
+        self.block7 = Block(in_channels=32, out_channels=64, kernel_size=(kernel, kernel))
+        self.block8 = Block(in_channels=64, out_channels=64, kernel_size=(kernel, kernel))
 
-        self.fc1 = nn.Linear(n_classes * n_classes * 512, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, 256)
-        self.fc4 = nn.Linear(256, 128)
-        self.fc5 = nn.Linear(128, 64)
-        self.fc6 = nn.Linear(64, 128)
-        self.fc7 = nn.Linear(128, self.n_classes)
+        self.fc1 = nn.Linear(n_classes * n_classes * 64, 256)
+        self.fc2 = nn.Linear(256, 128)
+        self.fc3 = nn.Linear(128, 64)
+        self.fc4 = nn.Linear(64, 128)
+        self.fc5 = nn.Linear(128, self.n_classes)
 
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
         x_in = x
         x = self.block1(x)
-        #x = self.block2(x)
+        x = self.block2(x)
         x = self.block3(x)
-        #x = self.block4(x)
+        x = self.block4(x)
         x = self.block5(x)
-        #x = self.block6(x)
+        x = self.block6(x)
         x = self.block7(x)
-        #x = self.block8(x)
+        x = self.block8(x)
         x += x_in
 
         x = torch.flatten(x, 1)
@@ -71,8 +69,6 @@ class DQN(nn.Module):
         x = self.fc3(x)
         x = self.fc4(x)
         x = self.fc5(x)
-        x = self.fc6(x)
-        x = self.fc7(x)
 
         x = self.softmax(x)
 
