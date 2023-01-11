@@ -78,6 +78,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
             cur_reward, next_image, done = environment.trade(cur_action)
 
             # Store experience in memory
+            logging.debug("Creating current experience")
             cur_experience = (cur_state, cur_action, cur_reward, next_image)
             DQN_logs.check_experience(cur_state, cur_action, cur_reward, next_image)
 
