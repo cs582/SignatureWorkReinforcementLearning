@@ -13,7 +13,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     logging.debug("Creating curr_actions tensor")
     curr_actions = torch.Tensor(np.array([x[1] for x in experience_batch])).long().to(device=device)
     logging.debug("Creating curr_rewards tensor")
-    curr_rewards = torch.Tensor(np.array([x[2] for x in experience_batch])).to(device=device)
+    curr_rewards = torch.Tensor(np.array([[x[2]] for x in experience_batch])).to(device=device)
     logging.debug("Creating next_state_images tensor")
     next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for x in experience_batch if x[3] is not None])).double().to(device=device)
     logging.info("Unpacked Batch")
