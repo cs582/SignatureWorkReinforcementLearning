@@ -1,5 +1,5 @@
 import logging
-import numpy as np
+
 
 def check_experience(cur_state, cur_action, cur_reward, next_image):
     if cur_state.isnan().any() or cur_state.isinf().any():
