@@ -55,7 +55,6 @@ class DQN(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
-        logging.debug(f"raw input: {x}")
         x_in = x
         x = self.block1(x)
         x = self.block2(x)
