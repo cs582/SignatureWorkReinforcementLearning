@@ -5,7 +5,7 @@ import logging
 class Agent:
     def __init__(self, n_transactions=10, n_tokens=20, memory_size=100):
         logging.info("Initializing Agent")
-        self.map_actions = [1] * (n_transactions // 2) + [-1] * (n_transactions // 2) + [0] * n_tokens
+        self.map_actions = [2] * (n_transactions // 2) + [0] * (n_transactions // 2) + [1] * n_tokens
         self.map_actions = np.asanyarray(self.map_actions)
 
         self.n_transactions = n_transactions
@@ -48,8 +48,8 @@ class Agent:
         sorted_indexes = y_hat.detach().cpu().argsort()[0]
         logging.debug(f"sorted indexes: {sorted_indexes}")
         self.actions = np.zeros(self.n_tokens)
-        self.actions[sorted_indexes[:self.n_transactions // 2]] = -1
-        self.actions[sorted_indexes[-self.n_transactions // 2:]] = 1
+        self.actions[sorted_indexes[:self.n_transactions // 2]] = 0
+        self.actions[sorted_indexes[-self.n_transactions // 2:]] = 2
         logging.debug(f"actions to be performed: {self.actions}")
 
         return self.actions
