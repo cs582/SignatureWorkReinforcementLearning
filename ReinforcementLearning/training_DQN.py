@@ -7,6 +7,7 @@ from ReinforcementLearning.optimizing_dqn import optimize_dqn
 from trading_environment.agent import Agent
 from trading_environment.environment import Environment
 
+from utils.logging_tools import DQN_logs
 
 def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, print_transactions=False, device=None):
     train_history = {"metric_history": [], "loss": []}
@@ -78,10 +79,8 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
 
             # Store experience in memory
             cur_experience = (cur_state, cur_action, cur_reward, next_image)
-            logging.debug(f"current_reward: {cur_state}")
-            logging.debug(f"next_image: {cur_action}")
-            logging.debug(f"cur_reward: {cur_reward}")
-            logging.debug(f"next_image: {next_image}")
+            DQN_logs.check_experience(cur_state, cur_action, cur_reward, next_image)
+
             agent.store(cur_experience)
 
             # Update current state
