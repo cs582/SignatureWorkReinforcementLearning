@@ -10,7 +10,7 @@ class Block(nn.Module):
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding, stride=stride)
         self.bn1 = nn.BatchNorm2d(out_channels)
 
-        self.relu = nn.ReLU(inplace=True)
+        self.relu = nn.ReLU(inplace=False)
 
         self.conv2 = nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding, stride=stride)
         self.bn2 = nn.BatchNorm2d(out_channels)
