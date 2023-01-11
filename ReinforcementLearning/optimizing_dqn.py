@@ -1,5 +1,6 @@
 import torch
 import logging
+import numpy as np
 
 
 def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer, device):
@@ -8,13 +9,13 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     logging.debug("Creating mask tensor")
     mask_non_terminal_states = torch.BoolTensor([x[3] is not None for x in experience_batch])
     logging.debug("Creating curr_images tensor")
-    curr_images = torch.Tensor([x[0][0].cpu().numpy() for x in experience_batch]).double().to(device=device)
+    curr_images = torch.Tensor(np.array([x[0][0].cpu().numpy() for x in experience_batch])).double().to(device=device)
     logging.debug("Creating curr_actions tensor")
     curr_actions = torch.Tensor([x[1] for x in experience_batch]).long().to(device=device)
     logging.debug("Creating curr_rewards tensor")
     curr_rewards = torch.Tensor([x[2] for x in experience_batch]).to(device=device)
     logging.debug("Creating next_state_images tensor")
-    next_state_images = torch.Tensor([x[3][0].cpu().numpy() for x in experience_batch if x[3] is not None]).double().to(device=device)
+    next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for x in experience_batch if x[3] is not None])).double().to(device=device)
     logging.info("Unpacked Batch")
 
     # Predict the next moves
