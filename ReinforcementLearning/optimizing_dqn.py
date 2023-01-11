@@ -19,12 +19,14 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
 
     # Predict the next moves
     logging.debug("Predict next moves")
+    logging.debug(f"curr_images shape: {curr_images.shape}")
     y_hat = dqn(curr_images).gather(1, curr_actions)
     logging.debug("Next moves predicted")
 
     # Calculate target value
     logging.debug("Calculate target value")
     y_target = torch.as_tensor(torch.zeros_like(torch.empty(len(experience_batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
+    logging.debug(f"next_state_images shape: {next_state_images.shape}")
     y_target[mask_non_terminal_states] = gamma*target(next_state_images) + curr_rewards
     logging.debug("Target value has been calculated")
 
