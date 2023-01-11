@@ -110,7 +110,7 @@ class Environment:
             # Retrieving the current prices, input image, and gas price
             logging.debug("Retrieving the current prices, input image, and gas price.")
             self.curr_prices = self.token_prices[self.data_index] if not done else None
-            self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=self.device) if not done else None
+            self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device) if not done else None
             self.curr_gas = self.gas_prices[self.data_index] if not done else None
 
             self.data_index += 1
@@ -173,7 +173,7 @@ class Environment:
         logging.info(f"Reinforcement Learning Reward: {self.reward_metric} = {reward}")
 
         # Move to next prices
-        self.curr_prices_image = torch.tensor([self.database[self.data_index]], dtype=torch.double, device=self.device) if not done else None
+        self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device) if not done else None
         self.curr_gas = self.gas_prices[self.data_index] if not done else None
         self.data_index += 1
         logging.debug(f"Data index: {self.data_index}")
