@@ -46,7 +46,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
         logging.info("Agent Initialized")
 
         # Initialize action-value function Q with random weights
-        set_inplace = False
+        set_inplace = True
         set_bias = False
         q = DQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
         t = DQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)

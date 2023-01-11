@@ -57,7 +57,7 @@ class DQN(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
-        x_in = x
+        raw_x = x
         x = self.block1(x)
         x = self.block2(x)
         x = self.block3(x)
@@ -66,6 +66,7 @@ class DQN(nn.Module):
         x = self.block6(x)
         x = self.block7(x)
         x = self.block8(x)
+        x = self.add(x, raw_x)
 
         x = torch.flatten(x, 1)
 

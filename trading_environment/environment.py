@@ -178,6 +178,4 @@ class Environment:
         self.data_index += 1
         logging.debug(f"Data index: {self.data_index}")
 
-        reward_matrix = np.zeros(self.n_defi_tokens) + reward
-
-        return reward_matrix, self.curr_prices_image, done
+        return reward, self.curr_prices_image, done

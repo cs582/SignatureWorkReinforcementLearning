@@ -32,7 +32,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     logging.debug("Calculate target input value has been calculated!!!")
 
     logging.debug(f"Calculate target_output")
-    target_output = gamma*target_y + curr_rewards
+    target_output = torch.add(gamma*target_y, curr_rewards)
     logging.debug("Target output has been calculated!!!")
 
     # Calculate Loss
