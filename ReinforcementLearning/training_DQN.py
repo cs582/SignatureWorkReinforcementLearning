@@ -49,7 +49,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
 
     t.load_state_dict(q.state_dict())
 
-    optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
+    optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum, device=device)
 
     for episode in range(0, episodes):
         logging.info(f"Training episode {episode}")
