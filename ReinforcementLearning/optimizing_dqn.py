@@ -25,14 +25,18 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
 
     # Calculate target value
     logging.debug("Calculate target value")
-    y_target = torch.as_tensor(torch.zeros_like(torch.empty(len(experience_batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
+    target_y = torch.as_tensor(torch.zeros_like(torch.empty(len(experience_batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
+
     logging.debug(f"next_state_images shape: {next_state_images.shape}")
-    y_target[mask_non_terminal_states] = gamma*target(next_state_images) + curr_rewards
+    target_y[mask_non_terminal_states] = target(next_state_images)
+
+    logging.debug(f"Calculate target_output")
+    target_output = gamma*target_y + curr_rewards
     logging.debug("Target value has been calculated")
 
     # Calculate Loss
     logging.debug("Calculate the loss")
-    loss = loss_function(y_hat, y_target)
+    loss = loss_function(y_hat, target_output)
     logging.debug("Loss has been calculated")
 
     # Compute gradient
