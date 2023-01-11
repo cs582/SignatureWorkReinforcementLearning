@@ -66,7 +66,7 @@ class DQN(nn.Module):
         x = self.block6(x)
         x = self.block7(x)
         x = self.block8(x)
-        x = self.add(x, raw_x)
+        x = torch.add(x, raw_x)
 
         x = torch.flatten(x, 1)
 
