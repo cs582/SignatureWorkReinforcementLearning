@@ -7,7 +7,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     logging.info("Called DQN Optimizer")
 
     logging.debug("Creating mask tensor")
-    mask_non_terminal_states = torch.BoolTensor([x[3] is not None for x in experience_batch], device=device)
+    mask_non_terminal_states = torch.BoolTensor([x[3] is not None for x in experience_batch])
     logging.debug("Creating curr_images tensor")
     curr_images = torch.Tensor(np.array([x[0][0].cpu().numpy() for x in experience_batch])).to(device=device).double()
     logging.debug("Creating curr_actions tensor")
