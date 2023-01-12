@@ -44,11 +44,8 @@ class DQN(nn.Module):
         # 2 Blocks of 256 channels
         self.block5 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         self.block6 = Block(in_channels=32, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        # 2 Blocks of 512 channels
-        self.block7 = Block(in_channels=32, out_channels=64, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        self.block8 = Block(in_channels=64, out_channels=64, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
 
-        self.fc1 = nn.Linear(n_classes * n_classes * 64, 256)
+        self.fc1 = nn.Linear(n_classes * n_classes * 32, 256)
         self.fc2 = nn.Linear(256, 128)
         self.fc3 = nn.Linear(128, 64)
         self.fc4 = nn.Linear(64, 128)
