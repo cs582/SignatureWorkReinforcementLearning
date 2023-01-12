@@ -35,13 +35,13 @@ class DQN(nn.Module):
         # ResNet-20 backbone
         self.n_classes = n_classes
 
-        # 2 Blocks of 64 channels
+        # 2 Blocks of 8 channels
         self.block1 = Block(in_channels=1, out_channels=8, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         self.block2 = Block(in_channels=8, out_channels=8, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        # 2 Blocks of 128 channels
+        # 2 Blocks of 16 channels
         self.block3 = Block(in_channels=8, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         self.block4 = Block(in_channels=16, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        # 2 Blocks of 256 channels
+        # 2 Blocks of 32 channels
         self.block5 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         self.block6 = Block(in_channels=32, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
 
@@ -61,8 +61,6 @@ class DQN(nn.Module):
         x = self.block4(x)
         x = self.block5(x)
         x = self.block6(x)
-        x = self.block7(x)
-        x = self.block8(x)
         x = torch.add(x, raw_x)
 
         x = torch.flatten(x, 1)
