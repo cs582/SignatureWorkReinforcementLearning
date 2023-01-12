@@ -66,7 +66,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
             done = False
             current_trading_day = 0
             while not done:
-                logging.info(f"Trading Day {current_trading_day}")
+                logging.info(f"Trading Day {current_trading_day+1}")
 
                 # Initialize gradient to zero
                 optimizer.zero_grad()
@@ -97,6 +97,8 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
                 loss = optimize_dqn(dqn=q, target=t, experience_batch=experience_batch, loss_function=loss_function, gamma=gamma, optimizer=optimizer, device=device)
 
                 episode_loss.append(loss)
+
+                current_trading_day += 1
 
             train_history["metric_history"].append(final_reward)
             train_history["avg_loss"].append(np.mean(loss))
