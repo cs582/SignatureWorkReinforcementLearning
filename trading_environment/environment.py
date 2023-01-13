@@ -177,7 +177,7 @@ class Environment:
         # Move to next prices
         self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device) if not done else None
         self.curr_gas = self.gas_prices[self.data_index] if not done else None
-        self.data_index += 1
+        self.data_index = self.data_index + 1 if not done else 0
         logger.debug(f"Data index: {self.data_index}")
 
         return reward, self.curr_prices_image, done

@@ -22,8 +22,6 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
 
     # Predict the next moves
     logger.debug("Predict next moves")
-    logger.debug(f"curr_images shape: {curr_images.shape}")
-    logger.debug(f"curr_images = {curr_images}")
     y_hat = dqn(curr_images).gather(1, curr_actions)
     logger.debug("Next moves predicted")
 
