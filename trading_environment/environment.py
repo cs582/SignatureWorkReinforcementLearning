@@ -184,6 +184,6 @@ class Environment:
             self.curr_gas = None
             self.data_index = 0
 
-        logger.debug(f"Net data index: {self.data_index}")
+        logger.debug(f"Next data index: {self.data_index}")
 
         return reward, self.curr_prices_image, done
