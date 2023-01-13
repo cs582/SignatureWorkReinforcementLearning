@@ -2,15 +2,19 @@ import numpy as np
 import torch
 import logging
 
+from datetime import datetime
+
 from ReinforcementLearning.model import DQN
 from ReinforcementLearning.optimizing_dqn import optimize_dqn
+from ReinforcementLearning.saving_tools import save_model
+
 from trading_environment.agent import Agent
 from trading_environment.environment import Environment
 
 logger = logging.getLogger("ReinforcementLearning -> training_DQN")
 
 
-def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, print_transactions=False, device=None, token_prices_address=None):
+def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, print_transactions=False, device=None, token_prices_address=None, save_path=None):
     with torch.autograd.set_detect_anomaly(True):
         train_history = {"metric_history": [], "avg_loss": []}
 
@@ -103,5 +107,11 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
 
             train_history["metric_history"].append(final_reward)
             train_history["avg_loss"].append(np.mean(loss))
+
+            if (episode+1)%50 == 0:
+                logger.info(f"Saving model at episode {episode}")
+                current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+                file_path = f"{save_path}/DQN_{episode}_{current_time}.pt"
+                save_model(model=q, episode=episode, optimizer=optimizer, train_history=train_history, PATH=file_path)
 
         return q, train_history

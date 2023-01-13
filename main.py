@@ -18,6 +18,7 @@ logger = logging.getLogger("main")
 
 if __name__ == "__main__":
     data_file = "data//OP1_2022-10-01_to_2022-08-21.csv"
+    save_path = "ReinforcementLearning/models"
 
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
 
@@ -31,7 +32,7 @@ if __name__ == "__main__":
     lr = 1e-4
     momentum = 0.001
 
-    n_transactions = 8
+    n_transactions = 6
     n_trading_days = 1000
 
     initial_cash = 100000
@@ -85,7 +86,8 @@ if __name__ == "__main__":
         reward_metric=reward_metric,
         print_transactions=False,
         device=device,
-        token_prices_address=data_file
+        token_prices_address=data_file,
+        save_path=save_path
     )
 
     logger.info("Training Complete!")
