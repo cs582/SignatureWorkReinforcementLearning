@@ -183,6 +183,8 @@ class Environment:
             self.curr_prices_image = None
             self.curr_gas = None
             self.data_index = 0
+            for tkn in self.token_names:
+                self.portfolio[tkn] = 0.0
 
         logger.debug(f"Next data index: {self.data_index}")
 
