@@ -45,7 +45,7 @@ class Agent:
             rand_action[-self.n_transactions//2:] = 2
             np.random.shuffle(rand_action)
 
-            self.actions = np.random.shuffle(rand_action)
+            self.actions = rand_action
             logger.debug(f"Chosen random actions with epsilon {epsilon}")
             logger.debug(f"actions to be performed: {self.actions}")
             return self.actions
