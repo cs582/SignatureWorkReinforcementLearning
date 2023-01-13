@@ -61,7 +61,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
 
         for episode in range(0, episodes):
             logger.info(f"Training episode {episode}")
-            print(f"Training episode {episode}")
+            print(f"Training episode {episode}", flush=False)
 
             logger.info("Initial Trade call")
             _, cur_state, _ = environment.trade()
@@ -71,8 +71,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
             current_trading_day = 0
             while not done:
                 logger.info(f"Trading Day {current_trading_day+1}")
-                if current_trading_day%100 == 0:
-                    print(f"Trading Day {current_trading_day+1}")
+                print(f"Trading Day {current_trading_day+1}", flush=True)
 
                 # Initialize gradient to zero
                 optimizer.zero_grad()

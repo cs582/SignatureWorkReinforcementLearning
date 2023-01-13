@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 from ReinforcementLearning.training_DQN import train
 
@@ -26,20 +27,20 @@ if __name__ == "__main__":
 
     reward_metric = "roi"
 
-    episodes = 500
-    epsilon = 0.05
+    episodes = 1000
+    epsilon = 0.1
     gamma = 0.8
     lr = 1e-4
     momentum = 0.001
 
-    n_transactions = 6
+    n_transactions = 4
     n_trading_days = 1000
 
     initial_cash = 100000
     buy_limit = 100000
     sell_limit = 100000
 
-    batch_size = 128
+    batch_size = 64
     memory_size = 100000
 
     training_info = f"""
@@ -93,10 +94,12 @@ if __name__ == "__main__":
     logger.info("Training Complete!")
 
     plt.title("Total reward history")
-    plt.plot(history_dqn["total_reward"], color="red")
+    plt.plot(history_dqn["metric_history"], color="red")
     plt.show()
 
     plt.title("Total average loss")
     plt.plot(history_dqn["avg_loss"], color="blue")
 
-    plt.show()
+    current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+
+    plt.savefig(f"ReinforcementLearning/figures/DQN_training_{current_time}.png")
