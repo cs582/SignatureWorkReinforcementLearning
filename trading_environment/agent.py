@@ -47,7 +47,7 @@ class Agent:
 
             self.actions = np.random.shuffle(rand_action)
             logger.debug(f"Chosen random actions with epsilon {epsilon}")
-
+            logger.debug(f"actions to be performed: {self.actions}")
             return self.actions
 
         # Get the highest and lowest scores
