@@ -27,7 +27,7 @@ if __name__ == "__main__":
     lr = 1e-4
     momentum = 0.001
 
-    n_transactions = 20
+    n_transactions = 8
     n_trading_days = 1000
 
     initial_cash = 100000
