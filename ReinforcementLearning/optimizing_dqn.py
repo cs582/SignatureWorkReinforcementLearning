@@ -34,7 +34,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
         target_output[mask_non_terminal_states] = torch.add(gamma*target(next_state_images), curr_rewards)
         logger.debug("Target output has been calculated!!!")
     except:
-        for i in enumerate(experience_batch):
+        for i in range(len(experience_batch)):
             logger.debug(f"index {i} is None? {mask_non_terminal_states[i]}")
             logger.debug(f"next_img is = {next_state_images[i]}")
 
