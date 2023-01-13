@@ -2,11 +2,13 @@ import torch
 import torch.nn as nn
 import logging
 
+logger = logging.getLogger("Reinforcement Learning -> model")
+
 
 class Block(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, padding=1, stride=1, inplace=False, bias=False):
         super(Block, self).__init__()
-        logging.debug("Constructing Block")
+        logger.debug("Constructing Block")
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding, stride=stride, bias=bias)
         self.bn1 = nn.BatchNorm2d(out_channels)
 
@@ -30,7 +32,7 @@ class Block(nn.Module):
 class DQN(nn.Module):
     def __init__(self, n_classes, kernel=3, inplace=True, bias=False):
         super(DQN, self).__init__()
-        logging.info("Constructing DQN")
+        logger.info("Constructing DQN")
 
         # ResNet-20 backbone
         self.n_classes = n_classes

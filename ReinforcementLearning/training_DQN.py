@@ -9,6 +9,8 @@ from trading_environment.environment import Environment
 
 from utils.logging_tools import DQN_logs
 
+logger = logging.getLogger("ReinforcementLearning -> training_DQN")
+
 
 def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, print_transactions=False, device=None, token_prices_address=None):
     with torch.autograd.set_detect_anomaly(True):
@@ -28,14 +30,14 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
             print_transactions=print_transactions,
             device=device
         )
-        logging.info("Environment Initialized!")
+        logger.info("Environment Initialized!")
 
         # If the filenames are given, no parameters are necessary for method initialize portfolio
         environment.initialize_portfolio()
-        logging.info("Portfolio Initialized!")
+        logger.info("Portfolio Initialized!")
 
         n_tokens = environment.n_defi_tokens if n_tokens is None else n_tokens
-        logging.info(f"Number of DeFi tokens: {n_tokens}")
+        logger.info(f"Number of DeFi tokens: {n_tokens}")
 
         # Initialize replay memory D to capacity N
         agent = Agent(
@@ -43,7 +45,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
             n_tokens=environment.n_defi_tokens,
             memory_size=memory_size
         )
-        logging.info("Agent Initialized")
+        logger.info("Agent Initialized")
 
         # Initialize action-value function Q with random weights
         set_inplace = True
@@ -56,17 +58,17 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
         optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
 
         for episode in range(0, episodes):
-            logging.info(f"Training episode {episode}")
+            logger.info(f"Training episode {episode}")
             print(f"Training episode {episode}")
 
-            logging.info("Initial Trade call")
+            logger.info("Initial Trade call")
             _, cur_state, _ = environment.trade()
             final_reward = 0
             episode_loss = []
             done = False
             current_trading_day = 0
             while not done:
-                logging.info(f"Trading Day {current_trading_day+1}")
+                logger.info(f"Trading Day {current_trading_day+1}")
 
                 # Initialize gradient to zero
                 optimizer.zero_grad()
@@ -76,13 +78,13 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
 
                 cur_action = agent.get_action(y_hat, epsilon)
                 if cur_action is None:
-                    logging.warning(f"at episode {episode}, cur_action is None")
+                    logger.warning(f"at episode {episode}, cur_action is None")
 
                 # Trade portfolio with the given instructions
                 cur_reward, next_image, done = environment.trade(cur_action)
 
                 # Store experience in memory
-                logging.debug("Creating current experience")
+                logger.debug("Creating current experience")
                 cur_experience = (cur_state, cur_action, cur_reward, next_image)
                 DQN_logs.check_experience(cur_state, cur_action, cur_reward, next_image)
 

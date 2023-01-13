@@ -1,5 +1,7 @@
 import logging
 
+logger = logging.getLogger("trading_environment -> token_management")
+
 
 def trade_token(cash, gas, available_tokens, price, action, sell_limit, buy_limit, token_name=None, print_transaction=False):
     """
@@ -38,10 +40,10 @@ def trade_token(cash, gas, available_tokens, price, action, sell_limit, buy_limi
 
         if print_transaction:
             if token_name is not None:
-                logging.info(
+                logger.info(
                     f"Bought {units_to_buy} units of {token_name} at {price_per_unit} per unit. Total cash spent {cash_spent}.")
             else:
-                logging.info(
+                logger.info(
                     f"Bought {units_to_buy} units at {price_per_unit} per unit. Total cash spent {cash_spent}.")
 
     # If sell and there is available tokens, then sell
@@ -51,16 +53,16 @@ def trade_token(cash, gas, available_tokens, price, action, sell_limit, buy_limi
 
         if print_transaction:
             if token_name is not None:
-                logging.info(
+                logger.info(
                     f"Sold {units_to_sell} units of {token_name} at {price} per unit with {gas_per_unit} gas. Total cash earned {cash_earned}.")
             else:
-                logging.info(
+                logger.info(
                     f"Sold {units_to_sell} units at {price} per unit with {gas_per_unit} gas. Total cash earned {cash_earned}.")
 
     # Calculate the total remaining tokens and total remaining cash for given token
     remaining_tokens = available_tokens + units_to_buy - units_to_sell
     remaining_cash = cash + cash_earned - cash_spent
 
-    logging.info(f"remaining tokens: {remaining_tokens}, remaining cash: {remaining_cash}")
+    logger.info(f"remaining tokens: {remaining_tokens}, remaining cash: {remaining_cash}")
 
     return remaining_tokens, remaining_cash

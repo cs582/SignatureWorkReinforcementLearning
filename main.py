@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
+
+from ReinforcementLearning.training_DQN import train
+
 import logging
 
 logging.basicConfig(
@@ -10,7 +13,8 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-from ReinforcementLearning.training_DQN import train
+logger = logging.getLogger("main")
+
 
 if __name__ == "__main__":
     data_file = "data//OP1_2022-10-01_to_2022-08-21.csv"
@@ -61,7 +65,7 @@ if __name__ == "__main__":
         memory_size = {memory_size}
     """
 
-    logging.info(training_info)
+    logger.info(training_info)
 
     q, history_dqn = train(
         n_trading_days=n_trading_days,
@@ -84,7 +88,7 @@ if __name__ == "__main__":
         token_prices_address=data_file
     )
 
-    logging.info("Training Complete!")
+    logger.info("Training Complete!")
 
     plt.title("Total reward history")
     plt.plot(history_dqn["total_reward"], color="red")

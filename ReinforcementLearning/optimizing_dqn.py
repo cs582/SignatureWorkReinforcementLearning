@@ -2,53 +2,55 @@ import torch
 import logging
 import numpy as np
 
+logger = logging.getLogger("trading_environment -> optimizing_dqn")
+
 
 def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer, device):
-    logging.info("Called DQN Optimizer")
+    logger.info("Called DQN Optimizer")
 
-    logging.debug("Creating mask tensor")
+    logger.debug("Creating mask tensor")
     mask_non_terminal_states = torch.BoolTensor([x[3] is not None for x in experience_batch])
-    logging.debug("Creating curr_images tensor")
+    logger.debug("Creating curr_images tensor")
     curr_images = torch.Tensor(np.array([x[0][0].cpu().numpy() for x in experience_batch])).double().to(device=device)
-    logging.debug("Creating curr_actions tensor")
+    logger.debug("Creating curr_actions tensor")
     curr_actions = torch.Tensor(np.asanyarray([x[1] for x in experience_batch], dtype=np.int32)).long().to(device=device)
-    logging.debug("Creating curr_rewards tensor")
+    logger.debug("Creating curr_rewards tensor")
     curr_rewards = torch.Tensor(np.asanyarray([[x[2]] for x in experience_batch], dtype=np.float64)).to(device=device)
-    logging.debug("Creating next_state_images tensor")
+    logger.debug("Creating next_state_images tensor")
     next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for x in experience_batch if x[3] is not None])).double().to(device=device)
-    logging.info("Unpacked Batch")
+    logger.info("Unpacked Batch")
 
     # Predict the next moves
-    logging.debug("Predict next moves")
-    logging.debug(f"curr_images shape: {curr_images.shape}")
-    logging.debug(f"curr_images = {curr_images}")
+    logger.debug("Predict next moves")
+    logger.debug(f"curr_images shape: {curr_images.shape}")
+    logger.debug(f"curr_images = {curr_images}")
     y_hat = dqn(curr_images).gather(1, curr_actions)
-    logging.debug("Next moves predicted")
+    logger.debug("Next moves predicted")
 
     # Calculate target value
-    logging.debug("Calculate target input value")
+    logger.debug("Calculate target input value")
     target_raw_output = target(next_state_images)
     target_output = torch.as_tensor(torch.zeros_like(torch.empty(len(experience_batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
-    logging.debug(f"output_raw_output = {target_raw_output.shape}")
-    logging.debug(f"curr_reward = {curr_rewards.shape}")
+    logger.debug(f"output_raw_output = {target_raw_output.shape}")
+    logger.debug(f"curr_reward = {curr_rewards.shape}")
     target_output[mask_non_terminal_states] = torch.add(gamma*target_raw_output, curr_rewards)
-    logging.debug("Target output has been calculated!!!")
+    logger.debug("Target output has been calculated!!!")
 
     # Calculate Loss
-    logging.debug("Calculate the loss")
+    logger.debug("Calculate the loss")
     loss = loss_function(y_hat, target_output)
-    logging.debug("Loss has been calculated")
+    logger.debug("Loss has been calculated")
 
     # Compute gradient
-    logging.debug("Calculate gradient")
+    logger.debug("Calculate gradient")
     optimizer.zero_grad()
     loss.backward()
-    logging.debug("Gradient computed")
+    logger.debug("Gradient computed")
 
     # Take gradient step
-    logging.debug("Taking gradient step")
+    logger.debug("Taking gradient step")
     optimizer.step()
-    logging.debug("Step has been taken")
+    logger.debug("Step has been taken")
 
     return loss.item()
 
