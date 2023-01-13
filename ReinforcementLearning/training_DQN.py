@@ -12,7 +12,7 @@ logger = logging.getLogger("ReinforcementLearning -> training_DQN")
 
 def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, print_transactions=False, device=None, token_prices_address=None):
     with torch.autograd.set_detect_anomaly(True):
-        train_history = {"metric_history": [], "loss": []}
+        train_history = {"metric_history": [], "avg_loss": []}
 
         # Initialize environment and portfolio
         environment = Environment(
