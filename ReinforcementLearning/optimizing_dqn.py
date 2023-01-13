@@ -2,14 +2,15 @@ import torch
 import logging
 import numpy as np
 
-logger = logging.getLogger("trading_environment -> optimizing_dqn")
+logger = logging.getLogger("ReinforcementLearning -> optimizing_dqn")
 
 
 def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer, device):
     logger.info("Called DQN Optimizer")
 
-    for i, nxt_img in enumerate(experience_batch):
-        logger.debug(f"index {i} is None? {nxt_img is None}")
+    for i, exp_info in enumerate(experience_batch):
+        logger.debug(f"index {i} is None? {exp_info[3] is None}")
+        logger.debug(f"next_img is = {exp_info[3]}")
 
     logger.debug("Creating mask tensor")
     mask_non_terminal_states = torch.BoolTensor([(x[3] is not None) for x in experience_batch])
