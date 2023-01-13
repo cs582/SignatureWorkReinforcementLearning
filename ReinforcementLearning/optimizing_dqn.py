@@ -8,8 +8,12 @@ logger = logging.getLogger("trading_environment -> optimizing_dqn")
 def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer, device):
     logger.info("Called DQN Optimizer")
 
+    for i, nxt_img in enumerate(experience_batch):
+        logger.debug(f"index {i} is None? {nxt_img is None}")
+
     logger.debug("Creating mask tensor")
-    mask_non_terminal_states = torch.BoolTensor([x[3] is not None for x in experience_batch])
+    mask_non_terminal_states = torch.BoolTensor([(x[3] is not None) for x in experience_batch])
+
     logger.debug("Creating curr_images tensor")
     curr_images = torch.Tensor(np.array([x[0][0].cpu().numpy() for x in experience_batch])).to(device=device).double()
     logger.debug("Creating curr_actions tensor")
@@ -17,7 +21,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     logger.debug("Creating curr_rewards tensor")
     curr_rewards = torch.Tensor(np.asanyarray([[x[2]] for x in experience_batch])).to(device=device)
     logger.debug("Creating next_state_images tensor")
-    next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for x in experience_batch if x[3] is not None])).to(device=device).double()
+    next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for x in experience_batch if (x[3] is not None)])).to(device=device).double()
     logger.info("Unpacked Batch")
 
     # Predict the next moves
