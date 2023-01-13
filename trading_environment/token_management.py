@@ -28,6 +28,9 @@ def trade_token(cash, gas, available_tokens, price, action, sell_limit, buy_limi
     # Calculate the price per unit after gas fee
     price_per_unit = price + gas_per_unit
 
+    # If price drops to 0, then sell
+    action = action if price != 0 else 0
+
     # If buy and there is available money, then buy
     if action == 2 and cash > 0:
         units_to_buy = cash/price_per_unit if cash/price_per_unit <= buy_limit else buy_limit
@@ -41,7 +44,7 @@ def trade_token(cash, gas, available_tokens, price, action, sell_limit, buy_limi
                 logging.info(
                     f"Bought {units_to_buy} units at {price_per_unit} per unit. Total cash spent {cash_spent}.")
 
-    # If sell and there is available tokens, then buy
+    # If sell and there is available tokens, then sell
     if action == 0 and available_tokens > 0:
         units_to_sell = available_tokens if available_tokens <= sell_limit else sell_limit
         cash_earned = units_to_sell*price - gas_per_unit*units_to_sell
