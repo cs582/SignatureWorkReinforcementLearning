@@ -36,7 +36,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     except:
         for i in range(len(experience_batch)):
             logger.debug(f"index {i} is None? {mask_non_terminal_states[i]}")
-            logger.debug(f"next_img is = {next_state_images[i]}")
+            logger.debug(f"next_img is = {experience_batch[i][3]}")
 
     # Calculate Loss
     logger.debug("Calculate the loss")
