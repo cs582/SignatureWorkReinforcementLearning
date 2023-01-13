@@ -11,13 +11,13 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     logger.debug("Creating mask tensor")
     mask_non_terminal_states = torch.BoolTensor([x[3] is not None for x in experience_batch])
     logger.debug("Creating curr_images tensor")
-    curr_images = torch.Tensor(np.array([x[0][0].cpu().numpy() for x in experience_batch])).double().to(device=device)
+    curr_images = torch.Tensor(np.array([x[0][0].cpu().numpy() for x in experience_batch])).to(device=device).double()
     logger.debug("Creating curr_actions tensor")
-    curr_actions = torch.Tensor(np.asanyarray([x[1] for x in experience_batch], dtype=np.int32)).long().to(device=device)
+    curr_actions = torch.Tensor(np.asanyarray([x[1] for x in experience_batch])).to(device=device).long()
     logger.debug("Creating curr_rewards tensor")
-    curr_rewards = torch.Tensor(np.asanyarray([[x[2]] for x in experience_batch], dtype=np.float64)).to(device=device)
+    curr_rewards = torch.Tensor(np.asanyarray([[x[2]] for x in experience_batch])).to(device=device)
     logger.debug("Creating next_state_images tensor")
-    next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for x in experience_batch if x[3] is not None])).double().to(device=device)
+    next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for x in experience_batch if x[3] is not None])).to(device=device).double()
     logger.info("Unpacked Batch")
 
     # Predict the next moves
