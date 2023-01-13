@@ -7,8 +7,6 @@ from ReinforcementLearning.optimizing_dqn import optimize_dqn
 from trading_environment.agent import Agent
 from trading_environment.environment import Environment
 
-from utils.logging_tools import DQN_logs
-
 logger = logging.getLogger("ReinforcementLearning -> training_DQN")
 
 
@@ -88,7 +86,6 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
                 # Store experience in memory
                 logger.debug("Creating current experience")
                 cur_experience = (cur_state, cur_action, cur_reward, next_image)
-                DQN_logs.check_experience(cur_state, cur_action, cur_reward, next_image)
 
                 agent.store(cur_experience)
 
