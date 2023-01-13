@@ -185,6 +185,9 @@ class Environment:
             self.data_index = 0
             for tkn in self.token_names:
                 self.portfolio[tkn] = 0.0
+                self.curr_cash = self.initial_cash
+                self.curr_units_value = 0
+                self.curr_net_worth = self.curr_cash
 
         logger.debug(f"Next data index: {self.data_index}")
 
