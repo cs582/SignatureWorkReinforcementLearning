@@ -37,6 +37,8 @@ class Agent:
         return self.memory[index_sample]
 
     def get_action(self, y_hat, epsilon):
+        # TODO: Reduce the sample space
+
         logger.debug("Agent called method get_action")
 
         if np.random.rand() < epsilon:

@@ -40,8 +40,8 @@ if __name__ == "__main__":
     buy_limit = 100000
     sell_limit = 100000
 
-    batch_size = 64
-    memory_size = 100000
+    batch_size = 128
+    memory_size = 10000
 
     training_info = f"""
     Training DQN with
