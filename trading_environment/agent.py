@@ -7,8 +7,6 @@ logger = logging.getLogger("Agent -> agent")
 class Agent:
     def __init__(self, n_transactions=10, n_tokens=20, memory_size=100):
         logger.info("Initializing Agent")
-        self.map_actions = [2] * (n_transactions // 2) + [0] * (n_transactions // 2) + [1] * n_tokens
-        self.map_actions = np.asanyarray(self.map_actions)
 
         self.n_transactions = n_transactions
         self.n_tokens = n_tokens
@@ -40,9 +38,16 @@ class Agent:
 
     def get_action(self, y_hat, epsilon):
         logger.debug("Agent called method get_action")
+
         if np.random.rand() < epsilon:
+            rand_action = np.ones(self.n_tokens)
+            rand_action[:self.n_transactions//2] = 0
+            rand_action[-self.n_transactions//2:] = 2
+            np.random.shuffle(rand_action)
+
+            self.actions = np.random.shuffle(rand_action)
             logger.debug(f"Chosen random actions with epsilon {epsilon}")
-            self.actions = np.random.shuffle(self.map_actions)
+
             return self.actions
 
         # Get the highest and lowest scores
