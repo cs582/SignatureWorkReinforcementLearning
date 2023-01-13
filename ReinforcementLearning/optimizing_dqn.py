@@ -17,7 +17,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     logger.debug("Creating curr_rewards tensor")
     curr_rewards = torch.Tensor(np.asanyarray([[x[2]] for x in experience_batch])).to(device=device)
     logger.debug("Creating next_state_images tensor")
-    next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for i, x in enumerate(experience_batch) if mask_non_terminal_states[i] ])).to(device=device).double()
+    next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for x in experience_batch if x[3] is not None])).to(device=device).double()
     logger.info("Unpacked Batch")
 
     # Predict the next moves
