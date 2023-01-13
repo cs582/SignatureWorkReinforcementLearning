@@ -72,7 +72,6 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
             current_trading_day = 0
             while not done:
                 logger.info(f"Trading Day {current_trading_day+1}")
-                print(f"Trading Day {current_trading_day+1}\r")
 
                 # Initialize gradient to zero
                 optimizer.zero_grad()
@@ -103,7 +102,10 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
 
                 episode_loss.append(loss)
 
+                final_reward = cur_reward
                 current_trading_day += 1
+
+            print(f"Last Trading day: {current_trading_day-1}")
 
             train_history["metric_history"].append(final_reward)
             train_history["avg_loss"].append(np.mean(loss))
