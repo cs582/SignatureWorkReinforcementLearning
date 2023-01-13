@@ -37,17 +37,19 @@ class DQN(nn.Module):
         # ResNet-20 backbone
         self.n_classes = n_classes
 
-        # 2 Blocks of 8 channels
-        self.block1 = Block(in_channels=1, out_channels=8, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        self.block2 = Block(in_channels=8, out_channels=8, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         # 2 Blocks of 16 channels
-        self.block3 = Block(in_channels=8, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        self.block4 = Block(in_channels=16, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        # 2 Blocks of 32 channels
-        self.block5 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        self.block6 = Block(in_channels=32, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+        self.block1 = Block(in_channels=1, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+        self.block2 = Block(in_channels=16, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
 
-        self.fc1 = nn.Linear(n_classes * n_classes * 32, 256)
+        # 2 Blocks of 32 channels
+        self.block3 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+        self.block4 = Block(in_channels=32, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+
+        # 2 Blocks of 64 channels
+        self.block5 = Block(in_channels=32, out_channels=64, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+        self.block6 = Block(in_channels=64, out_channels=64, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+
+        self.fc1 = nn.Linear(n_classes * n_classes * 64, 256)
         self.fc2 = nn.Linear(256, 128)
         self.fc3 = nn.Linear(128, 64)
         self.fc4 = nn.Linear(64, 128)
