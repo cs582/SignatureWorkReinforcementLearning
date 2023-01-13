@@ -6,6 +6,7 @@ from sklearn.impute import KNNImputer
 def retrieve_online_gas_prices(address):
     # Read csv and convert to dataframe
     df = pd.read_csv(address)
+    df.sort_index(inplace=True)
     return df
 
 
@@ -25,6 +26,7 @@ def retrieve_online_token_prices(filename):
     """
     # Read csv and convert to dataframe
     df = pd.read_csv(filename, index_col=0)
+    df.sort_index(inplace=True)
     df = df.drop(df.index[0], axis=0)
 
     df_values = KNNImputer(n_neighbors=5).fit_transform(df)

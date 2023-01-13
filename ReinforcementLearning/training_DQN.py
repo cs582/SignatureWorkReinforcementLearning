@@ -10,14 +10,14 @@ from trading_environment.environment import Environment
 from utils.logging_tools import DQN_logs
 
 
-def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, print_transactions=False, device=None):
+def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, print_transactions=False, device=None, token_prices_address=None):
     with torch.autograd.set_detect_anomaly(True):
         train_history = {"metric_history": [], "loss": []}
 
         # Initialize environment and portfolio
         environment = Environment(
             trading_days=n_trading_days,
-            token_prices_address="data//ClosePriceData_2022-10-01_to_2022-08-21.csv",
+            token_prices_address=token_prices_address,
             gas_address=None,
             initial_cash=initial_cash,
             buy_limit=buy_limit,

@@ -77,7 +77,8 @@ if __name__ == "__main__":
         gamma=gamma,
         reward_metric=reward_metric,
         print_transactions=False,
-        device=device
+        device=device,
+        token_prices_address="data//OP1_2022-10-01_to_2022-08-21.csv"
     )
 
     logging.info("Training Complete!")
