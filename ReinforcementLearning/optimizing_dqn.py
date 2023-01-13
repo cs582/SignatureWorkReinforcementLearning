@@ -8,10 +8,6 @@ logger = logging.getLogger("ReinforcementLearning -> optimizing_dqn")
 def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer, device):
     logger.info("Called DQN Optimizer")
 
-    for i, exp_info in enumerate(experience_batch):
-        logger.debug(f"index {i} is None? {exp_info[3] is None}")
-        logger.debug(f"next_img is = {exp_info[3]}")
-
     logger.debug("Creating mask tensor")
     mask_non_terminal_states = torch.BoolTensor([(x[3] is not None) for x in experience_batch])
 
@@ -34,8 +30,13 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     logger.debug("Calculate target input value")
     target_output = torch.as_tensor(torch.zeros_like(torch.empty(len(experience_batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
     logger.debug(f"mask shape: {mask_non_terminal_states.shape}, next images shape: {next_state_images.shape}")
-    target_output[mask_non_terminal_states] = torch.add(gamma*target(next_state_images), curr_rewards)
-    logger.debug("Target output has been calculated!!!")
+    try:
+        target_output[mask_non_terminal_states] = torch.add(gamma*target(next_state_images), curr_rewards)
+        logger.debug("Target output has been calculated!!!")
+    except:
+        for i in enumerate(experience_batch):
+            logger.debug(f"index {i} is None? {mask_non_terminal_states[i]}")
+            logger.debug(f"next_img is = {next_state_images[i]}")
 
     # Calculate Loss
     logger.debug("Calculate the loss")
