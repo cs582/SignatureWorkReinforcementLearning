@@ -69,6 +69,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
             current_trading_day = 0
             while not done:
                 logger.info(f"Trading Day {current_trading_day+1}")
+                print(f"Trading Day {current_trading_day+1}")
 
                 # Initialize gradient to zero
                 optimizer.zero_grad()
