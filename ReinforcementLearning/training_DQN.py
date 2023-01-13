@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import logging
+import sys
 
 from datetime import datetime
 
@@ -61,7 +62,8 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
 
         for episode in range(0, episodes):
             logger.info(f"Training episode {episode}")
-            print(f"Training episode {episode}", flush=False)
+            sys.stdout.write(f"Training episode {episode}")
+            sys.stdout.flush()
 
             logger.info("Initial Trade call")
             _, cur_state, _ = environment.trade()
