@@ -13,6 +13,8 @@ logging.basicConfig(
 from ReinforcementLearning.training_DQN import train
 
 if __name__ == "__main__":
+    data_file = "data//OP1_2022-10-01_to_2022-08-21.csv"
+
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
 
     loss_function = nn.MSELoss()
@@ -37,6 +39,7 @@ if __name__ == "__main__":
 
     training_info = f"""
     Training DQN with
+        data_file = {data_file}
         device = {"CPU" if not torch.cuda.is_available() else torch.cuda.get_device_name(device=device)}
         loss_function = {loss_function}
         reward_metric = {reward_metric}
@@ -78,7 +81,7 @@ if __name__ == "__main__":
         reward_metric=reward_metric,
         print_transactions=False,
         device=device,
-        token_prices_address="data//OP1_2022-10-01_to_2022-08-21.csv"
+        token_prices_address=data_file
     )
 
     logging.info("Training Complete!")
