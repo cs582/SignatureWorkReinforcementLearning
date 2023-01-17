@@ -1,18 +1,17 @@
 import numpy as np
 import torch
 import logging
-import sys
 
 from datetime import datetime
 
-from ReinforcementLearning.model import DQN
-from ReinforcementLearning.optimizing_dqn import optimize_dqn
+from ReinforcementLearning.q_learning_models import DQN
+from ReinforcementLearning.models.DeepQNetwork.optimizing_dqn import optimize_dqn
 from ReinforcementLearning.saving_tools import save_model
 
 from trading_environment.agent import Agent
 from trading_environment.environment import Environment
 
-logger = logging.getLogger("ReinforcementLearning -> training_DQN")
+logger = logging.getLogger("ReinforcementLearning -> models -> DeepQNetwork -> training_dqn")
 
 
 def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, print_transactions=False, device=None, token_prices_address=None, save_path=None):

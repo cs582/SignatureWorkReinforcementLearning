@@ -2,7 +2,7 @@ import torch
 import logging
 import numpy as np
 
-logger = logging.getLogger("ReinforcementLearning -> optimizing_dqn")
+logger = logging.getLogger("ReinforcementLearning -> models -> DeepQNetwork -> optimizing_dqn")
 
 
 def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer, device):
