@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import logging
 
-logger = logging.getLogger("Reinforcement Learning -> q_learning_models")
+logger = logging.getLogger("Reinforcement Learning/q_models")
 
 
 class Block(nn.Module):
@@ -78,3 +78,62 @@ class DQN(nn.Module):
         x = self.softmax(x)
 
         return x
+
+
+class DuelingDQN(nn.Module):
+    def __init__(self, n_classes, kernel=3, inplace=True, bias=False):
+        super(DuelingDQN, self).__init__()
+        logger.info("Constructing Dueling DQN")
+
+        # ResNet-20 backbone
+        self.n_classes = n_classes
+
+        # 2 Blocks of 16 channels
+        self.block1 = Block(in_channels=1, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+        self.block2 = Block(in_channels=16, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+
+        # 2 Blocks of 32 channels
+        self.block3 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+        self.block4 = Block(in_channels=32, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+
+        # 2 Blocks of 64 channels
+        self.block5 = Block(in_channels=32, out_channels=64, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+        self.block6 = Block(in_channels=64, out_channels=64, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+
+        self.val1 = nn.Linear(n_classes * n_classes * 64, 256)
+        self.val2 = nn.Linear(256, 128)
+        self.val3 = nn.Linear(128, 64)
+        self.val4 = nn.Linear(64, 128)
+        self.val5 = nn.Linear(128, 1)
+
+        self.adv1 = nn.Linear(n_classes * n_classes * 64, 256)
+        self.adv2 = nn.Linear(256, 128)
+        self.adv3 = nn.Linear(128, 64)
+        self.adv4 = nn.Linear(64, 128)
+        self.adv5 = nn.Linear(128, self.n_classes)
+
+    def forward(self, x):
+        raw_x = x
+        x = self.block1(x)
+        x = self.block2(x)
+        x = self.block3(x)
+        x = self.block4(x)
+        x = self.block5(x)
+        x = self.block6(x)
+        x = torch.add(x, raw_x)
+
+        x = torch.flatten(x, 1)
+
+        x_val = self.val1(x)
+        x_val = self.val2(x_val)
+        x_val = self.val3(x_val)
+        x_val = self.val4(x_val)
+        x_val = self.val5(x_val).repeat(1, self.n_classes)
+
+        x_adv = self.adv1(x)
+        x_adv = self.adv2(x_adv)
+        x_adv = self.adv3(x_adv)
+        x_adv = self.adv4(x_adv)
+        x_adv = self.adv5(x_adv)
+
+        return x_val.add(x_adv - x_adv.sum()/x_adv.shape[0])

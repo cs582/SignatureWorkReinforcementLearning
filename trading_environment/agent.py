@@ -1,7 +1,7 @@
 import numpy as np
 import logging
 
-logger = logging.getLogger("Agent -> agent")
+logger = logging.getLogger("trading_environment/agent")
 
 
 class Agent:

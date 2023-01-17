@@ -1,6 +1,6 @@
 import logging
 
-logger = logging.getLogger("trading_environment -> token_management")
+logger = logging.getLogger("trading_environment/token_management")
 
 
 def trade_token(cash, gas, available_tokens, price, action, sell_limit, buy_limit, token_name=None, print_transaction=False):

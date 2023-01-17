@@ -9,7 +9,7 @@ from trading_environment.portfolio_management import portfolio_management
 import torch
 import logging
 
-logger = logging.getLogger("trading_environment -> environment")
+logger = logging.getLogger("trading_environment/environment")
 
 
 class Environment:

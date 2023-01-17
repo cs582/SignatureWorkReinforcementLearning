@@ -1,7 +1,7 @@
 from trading_environment.token_management import trade_token
 import logging
 
-logger = logging.getLogger("trading_environment -> portfolio_management")
+logger = logging.getLogger("trading_environment/portfolio_management")
 
 
 def portfolio_management(cash, token_portfolio, current_token_prices, current_gas_price, actions, buy_limit,
