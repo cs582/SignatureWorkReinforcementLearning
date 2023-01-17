@@ -29,7 +29,8 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     # Calculate target value
     logger.debug("Calculate target input value")
     target_output = torch.as_tensor(torch.zeros_like(torch.empty(len(experience_batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
-    target_output[mask_non_terminal_states] = torch.add(gamma*target(next_state_images), curr_rewards[mask_non_terminal_states])
+    target_output[mask_non_terminal_states] = gamma*target(next_state_images)
+    target_output = torch.add(target_output, curr_rewards)
     logger.debug("Target output has been calculated!!!")
 
     # Calculate Loss
