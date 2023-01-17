@@ -10,6 +10,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
 
     logger.info("Unpacking Batch")
     mask_non_terminal_states = torch.BoolTensor([(x[3] is not None) for x in experience_batch])
+
     curr_images = torch.Tensor(np.array([x[0][0].cpu().numpy() for x in experience_batch])).to(device=device).double()
     curr_actions = torch.Tensor(np.asanyarray([x[1] for x in experience_batch])).to(device=device).long()
     curr_rewards = torch.Tensor(np.asanyarray([[x[2]] for x in experience_batch])).to(device=device)
