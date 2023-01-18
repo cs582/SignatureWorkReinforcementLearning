@@ -22,9 +22,10 @@ def preprocessing_correlation(prices, size):
     return X
 
 
-def prepare_dataset(tokens_prices, use_change, use_covariance, lookback):
+def prepare_dataset(tokens_to_use, tokens_prices, use_change, use_covariance, lookback):
     """
 
+    :param tokens_to_use     --list, it gives you the tokens to take into consideration i.e. asset space or portfolio
     :param tokens_prices:       --pd.Dataframe, it gets a dataframe with the token open prices
     :param use_change:          --boolean, if true, then use price change else use raw prices
     :param use_covariance:      --boolean, if true, then use covariance else use open product
@@ -33,8 +34,7 @@ def prepare_dataset(tokens_prices, use_change, use_covariance, lookback):
     """
     X_matrices = None
 
-    tokens_prices = tokens_prices.astype(np.float64)
-    print("token prices shape:", tokens_prices.shape)
+    tokens_prices = tokens_prices[tokens_to_use].astype(np.float64)
 
     if use_change:
         tokens_prices = tokens_prices.pct_change().drop([tokens_prices.index[0]], axis=0)

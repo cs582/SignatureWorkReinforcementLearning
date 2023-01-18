@@ -4,16 +4,17 @@ import logging
 logger = logging.getLogger("trading_environment/portfolio_management")
 
 
-def portfolio_management(cash, token_portfolio, current_token_prices, current_gas_price, actions, buy_limit,
-                         sell_limit):
+def portfolio_management(cash, token_portfolio, current_token_prices, current_gas_price,
+                         priority_fee, gas_limit, actions, buy_limit, sell_limit):
     """
     Manage the portfolio, buying and selling tokens depending on the actions given.
 
-    :param print_transactions:      --boolean, true to print every single transaction taking place, false otherwise
     :param cash:                    --float, current available cash
     :param token_portfolio:         --dictionary, map of available tokens
-    :param current_token_prices:    --dictionary, map of prices of available tokens
+    :param current_token_prices:    --dictionary, map of prices of all tokens
     :param current_gas_price:       --float, current gas price in Gwei
+    :param priority_fee:            --int, priority fee in Gwei
+    :param gas_limit:              --int, gas limit in units
     :param actions:                 --numpy.array, array of actions to perform for each token
     :param buy_limit:               --float, limit of units to buy per transaction
     :param sell_limit:              --float, limit of units to sell per transaction
@@ -31,14 +32,9 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     action_map = {tkn: actions[i] for i, tkn in enumerate(token_portfolio.keys())}
     logger.debug(f"action_map = {action_map}")
 
-    assert length_portfolio == length_token_prices, f"Error: token_portfolio and current_token_prices must have same length, got {length_portfolio} and {length_token_prices}"
-
     # Ensure portfolio and available prices have the exact same tokens
-    logger.debug("Ensuring token_portfolio and current_token_prices have the exact same tokens.")
-    portfolio_tokens = sorted([x for x in token_portfolio.keys()])
-    token_prices_available = sorted([x for x in current_token_prices.keys()])
-
-    assert portfolio_tokens == token_prices_available, f"Error: portfolio tokens and tokens in available prices must match."
+    # portfolio_tokens = sorted([x for x in token_portfolio.keys()])
+    # token_prices_available = sorted([x for x in current_token_prices.keys()])
 
     # Get the names of all tokens in the portfolio
     logger.debug("getting the names of all tokens that need to take action in the action map")
@@ -59,13 +55,16 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
         logger.info(f"Transaction #{i+1}. Trading token {token} with action {action_map[token]}.")
         token_portfolio[token], curr_cash = trade_token(
             cash=cash_ptoken,
-            gas=current_gas_price,
-            available_tokens=token_portfolio[token],
-            price=current_token_prices[token],
+            base_gas=current_gas_price,
+            gas_limit=gas_limit,
+            available_units=token_portfolio[token],
+            token_name=token,
+            token_price=current_token_prices[token],
+            eth_price=current_token_prices['ETH'],
+            priority_fee=priority_fee,
             action=action_map[token],
             buy_limit=buy_limit,
-            sell_limit=sell_limit,
-            token_name=token
+            sell_limit=sell_limit
         )
         logger.info(f"Finished trading token {token}.")
 

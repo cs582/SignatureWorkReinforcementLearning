@@ -15,7 +15,7 @@ from trading_environment.environment import Environment
 logger = logging.getLogger("ReinforcementLearning/q_training.py")
 
 
-def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None):
+def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None):
     with torch.autograd.set_detect_anomaly(True):
         train_history = {"metric_history": [], "avg_loss": []}
 
@@ -24,9 +24,13 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
             trading_days=n_trading_days,
             token_prices_address=token_prices_address,
             gas_address=None,
+            gas_limit=gas_limit,
+            portfolio_json=portfolio_json,
+            portfolio_to_use=portfolio_to_use,
             initial_cash=initial_cash,
             buy_limit=buy_limit,
             sell_limit=sell_limit,
+            priority_fee=priority_fee,
             use_change=use_change,
             use_covariance=use_covariance,
             reward_metric=reward_metric,

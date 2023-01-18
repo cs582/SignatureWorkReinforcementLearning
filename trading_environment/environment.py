@@ -1,4 +1,5 @@
 import numpy as np
+import json
 
 from data_handling.retrieve_prices import retrieve_offline_token_prices, retrieve_offline_gas_prices, \
     retrieve_online_token_prices
@@ -14,13 +15,16 @@ logger = logging.getLogger("trading_environment/environment")
 
 class Environment:
     def __init__(self, trading_days=365, token_prices_address=None, gas_address=None,
-                 initial_cash=100000, buy_limit=100000, sell_limit=1000000, use_change=True, use_covariance=True,
+                 initial_cash=100000, buy_limit=100000, sell_limit=1000000,
+                 priority_fee=2, gas_limit=21000, use_change=True, use_covariance=True,
+                 portfolio_json=None, portfolio_to_use=1,
                  reward_metric="sharpe", device=None):
         logger.info("Initializing Environment")
 
         # Trading Boundaries
         self.n_defi_tokens = -1
         self.curr_transactions = 0
+        self.gas_limit = gas_limit
         self.buy_limit = buy_limit
         self.sell_limit = sell_limit
         self.trading_days = trading_days
@@ -35,6 +39,11 @@ class Environment:
 
         self.token_prices_address = token_prices_address
         self.gas_address = gas_address
+        self.portfolio_json = portfolio_json
+
+        self.priority_fee = priority_fee
+
+        self.portfolio_to_use = portfolio_to_use
 
         self.curr_prices = None
         self.curr_gas = None
@@ -57,7 +66,7 @@ class Environment:
         self.gross_roi_history = [0]
         self.sharpe_history = [0]
 
-        self.token_names = None
+        self.tokens_in_portfolio = None
 
         self.data_index = 0
 
@@ -70,15 +79,17 @@ class Environment:
     def initialize_portfolio(self, starting_price=None, n_defi_tokens=None):
         logger.info("Environment called method initialize_portfolio")
 
+        # Open JSON file with portfolio options
+        self.tokens_in_portfolio = json.loads(open('portfolios/portfolios.json', "r").read())[f"Portfolio {self.portfolio_to_use}"]
+        self.n_defi_tokens = len(self.tokens_in_portfolio)
+
         if self.token_prices_address is not None:
             logger.info("Retrieving token prices from online address: {}".format(self.token_prices_address))
-            self.n_defi_tokens, self.token_names, self.token_prices = retrieve_online_token_prices(self.token_prices_address)
+            _, _, self.full_token_prices = retrieve_online_token_prices(self.token_prices_address)
 
-            # Reset trading days to be the number of available days if trading days is larger than that
-            self.trading_days = min(self.trading_days, len(self.token_prices))
         else:
             logger.info("Getting offline token prices")
-            self.token_prices = retrieve_offline_token_prices(starting_price=starting_price,
+            self.full_token_prices = retrieve_offline_token_prices(starting_price=starting_price,
                                                               n_defi_tockens=n_defi_tokens,
                                                               n_trading_days=self.trading_days)
 
@@ -91,10 +102,14 @@ class Environment:
                                                           n_trading_days=self.trading_days)
 
         logger.info("Preparing the dataset")
-        self.database = prepare_dataset(self.token_prices, use_change=self.use_change, use_covariance=self.use_covariance, lookback=10)
+        self.database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, tokens_prices=self.full_token_prices, use_change=self.use_change, use_covariance=self.use_covariance, lookback=10)
+        self.token_prices = self.full_token_prices.iloc[-len(self.database):]
 
-        for token in self.token_names:
+        for token in self.tokens_in_portfolio:
             self.portfolio[token] = 0
+
+        logger.debug(f"database size: {self.database.shape}, prices size: {self.token_prices.shape}")
+        self.trading_days = min(self.trading_days, len(self.token_prices))
 
         logger.info("Converting token prices to a dictionary")
         self.token_prices = self.token_prices.to_dict("records")
@@ -134,6 +149,8 @@ class Environment:
             token_portfolio=self.portfolio,
             current_token_prices=self.curr_prices,
             current_gas_price=self.curr_gas,
+            priority_fee=self.priority_fee,
+            gas_limit=self.gas_limit,
             actions=trading_vector,
             buy_limit=self.buy_limit,
             sell_limit=self.sell_limit
@@ -183,7 +200,7 @@ class Environment:
             self.curr_prices_image = None
             self.curr_gas = None
             self.data_index = 0
-            for tkn in self.token_names:
+            for tkn in self.tokens_in_portfolio:
                 self.portfolio[tkn] = 0.0
                 self.curr_cash = self.initial_cash
                 self.curr_units_value = 0

@@ -27,6 +27,8 @@ logger = logging.getLogger("main")
 parser.add_argument('-model', type=str, default="Single_DQN", help='Model to use.')
 parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
 
+parser.add_argument('-portfolio', type=int, default=1, help="Choose portfolio to use")
+
 parser.add_argument('-episodes', type=int, default=1000, help="Number of episodes to train.")
 parser.add_argument('-e', type=float, default=0.1, help="Epsilon to train.")
 parser.add_argument('-g', type=float, default=0.8, help="Gamma value for training.")
@@ -40,13 +42,20 @@ parser.add_argument('-ic', type=int, default=100000, help="Set initial cash.")
 parser.add_argument('-bl', type=int, default=100000, help="Buy units upperbound.")
 parser.add_argument('-sl', type=int, default=100000, help="Sell units upperbound.")
 
+parser.add_argument('-tp', type=int, default=2, help="Priority fee in gwei.")
+parser.add_argument('-gl', type=int, default=21000, help="Gas limit in units.")
+
 parser.add_argument('-batch', type=int, default=128, help="Batch size.")
 parser.add_argument('-memory', type=int, default=10000, help="Replay memory size.")
 
 args = parser.parse_args()
 
 if __name__ == "__main__":
-    data_file = "data//OP1_2022-10-01_to_2022-08-21.csv"
+    data_file = "historical_data//ClosePriceData_2022-10-01_to_2022-08-21.csv"
+    portfolios_json = "portfolios//portfolios.json"
+
+    portfolio = args.portfolio
+
     save_path = "ReinforcementLearning/saved_models"
 
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
@@ -68,12 +77,17 @@ if __name__ == "__main__":
     buy_limit = args.bl
     sell_limit = args.sl
 
+    priority_fee = args.tp
+    gas_limit = args.gl
+
     batch_size = args.batch
     memory_size = args.memory
 
     training_info = f"""
-    Training {model_name} with
+    Training {model_name} in portfolio {portfolio} with
         data_file = {data_file}
+        portfolios_json = {portfolios_json}
+        
         device = {"CPU" if not torch.cuda.is_available() else torch.cuda.get_device_name(device=device)}
         loss_function = {loss_function}
         reward_metric = {reward_metric}
@@ -91,6 +105,9 @@ if __name__ == "__main__":
         buy_limit = {buy_limit}
         sell_limit = {sell_limit}
         
+        priority_fee = {priority_fee}
+        gas_limit = {gas_limit}
+        
         batch_size = {batch_size}
         memory_size = {memory_size}
     """
@@ -105,6 +122,8 @@ if __name__ == "__main__":
         initial_cash=initial_cash,
         buy_limit=buy_limit,
         sell_limit=sell_limit,
+        priority_fee=priority_fee,
+        gas_limit=gas_limit,
         loss_function=loss_function,
         episodes=episodes,
         batch_size=batch_size,
@@ -116,7 +135,9 @@ if __name__ == "__main__":
         reward_metric=reward_metric,
         device=device,
         token_prices_address=data_file,
-        save_path=save_path
+        save_path=save_path,
+        portfolio_json=portfolios_json,
+        portfolio_to_use=portfolio
     )
 
     logger.info("Training Complete!")
