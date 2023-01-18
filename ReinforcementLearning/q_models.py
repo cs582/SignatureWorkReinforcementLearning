@@ -42,13 +42,9 @@ class DQN(nn.Module):
         self.block3 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
 
         self.fc1 = nn.Linear(n_classes * n_classes * 32, 128)
-        nn.init.xavier_uniform(self.fc1.weight)
         self.fc2 = nn.Linear(128, 128)
-        nn.init.xavier_uniform(self.fc2.weight)
         self.fc3 = nn.Linear(128, 64)
-        nn.init.xavier_uniform(self.fc3.weight)
         self.fc4 = nn.Linear(64, self.n_classes)
-        nn.init.xavier_uniform(self.fc4.weight)
 
         self.relu = nn.ReLU(inplace=True)
 
@@ -84,22 +80,14 @@ class DuelingDQN(nn.Module):
         self.block3 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
 
         self.val1 = nn.Linear(n_classes * n_classes * 32, 128)
-        nn.init.xavier_uniform(self.val1.weight)
         self.val2 = nn.Linear(128, 128)
-        nn.init.xavier_uniform(self.val2.weight)
         self.val3 = nn.Linear(128, 64)
-        nn.init.xavier_uniform(self.val3.weight)
         self.val4 = nn.Linear(64, 1)
-        nn.init.xavier_uniform(self.val4.weight)
 
         self.adv1 = nn.Linear(n_classes * n_classes * 32, 256)
-        nn.init.xavier_uniform(self.adv1.weight)
         self.adv2 = nn.Linear(256, 128)
-        nn.init.xavier_uniform(self.adv2.weight)
         self.adv3 = nn.Linear(128, 64)
-        nn.init.xavier_uniform(self.adv3.weight)
         self.adv4 = nn.Linear(64, self.n_classes)
-        nn.init.xavier_uniform(self.adv4.weight)
 
         self.relu = nn.ReLU(inplace=True)
 
