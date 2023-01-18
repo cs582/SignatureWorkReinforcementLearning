@@ -40,7 +40,7 @@ class Agent:
         logger.debug("Agent called method get_action")
 
         if np.random.rand() < epsilon:
-            rand_action = np.ones(self.n_tokens)
+            rand_action = np.zeros(self.n_tokens)
             rand_action[-self.n_transactions:] = 1
             np.random.shuffle(rand_action)
 
@@ -53,7 +53,7 @@ class Agent:
         logger.debug(f"raw output from DQN: {y_hat}")
         sorted_indexes = y_hat.detach().cpu().argsort()[0]
         logger.debug(f"sorted indexes: {sorted_indexes}")
-        self.actions = np.ones(self.n_tokens)
+        self.actions = np.zeros(self.n_tokens)
         self.actions[sorted_indexes[-self.n_transactions:]] = 1
         logger.debug(f"actions to be performed: {self.actions}")
 

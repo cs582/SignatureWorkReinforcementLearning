@@ -42,7 +42,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
 
     # Get the names of all tokens in the portfolio
     logger.debug("getting the names of all tokens that need to take action in the action map")
-    tokens = [x for x, y in action_map.items() if y != 1.0]
+    tokens = [x for x, y in action_map.items() if y == 1.0]
     logger.debug(f"tokens to be traded: {tokens}")
 
     # Calculate cash per token
