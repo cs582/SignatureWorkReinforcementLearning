@@ -3,7 +3,7 @@ import logging
 logger = logging.getLogger("trading_environment/token_management")
 
 
-def trade_token(cash, base_gas, gas_limit, priority_fee, available_units, token_price, eth_price, action, sell_limit, buy_limit, token_name=None):
+def trade_token(cash, base_gas, gas_limit, priority_fee, available_units, token_price, eth_price, action, sell_limit, buy_limit, token_name=None, terminal_state=False):
     """
     Performs the corresponding transaction for the given token. It returns the remaining cash and tokens.
     :param cash:                --float, cash available for transaction
@@ -17,6 +17,7 @@ def trade_token(cash, base_gas, gas_limit, priority_fee, available_units, token_
     :param sell_limit:          --float, limit of units to sell per transaction
     :param buy_limit:           --float, limit of units to buy per transaction
     :param token_name:          --string, name of the traded token
+    :param terminal_state:      --boolean, terminal state i.e. last day of trading
     :return:                    --tuple(float, float), returns the units and cash remaining, respectively
     """
 

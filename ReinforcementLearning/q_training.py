@@ -122,7 +122,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
             train_history["metric_history"].append(final_reward)
             train_history["avg_loss"].append(np.mean(loss))
 
-            if (episode+1)%50 == 0:
+            if (episode+1)%10 == 0:
                 logger.info(f"Saving model at episode {episode}")
                 current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
                 file_path = f"{save_path}/{model_name}_{episode}_{current_time}.pt"
