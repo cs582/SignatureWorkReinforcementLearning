@@ -37,14 +37,11 @@ class Agent:
         return self.memory[index_sample]
 
     def get_action(self, y_hat, epsilon):
-        # TODO: Reduce the sample space
-
         logger.debug("Agent called method get_action")
 
         if np.random.rand() < epsilon:
             rand_action = np.ones(self.n_tokens)
-            rand_action[:self.n_transactions//2] = 0
-            rand_action[-self.n_transactions//2:] = 2
+            rand_action[-self.n_transactions:] = 1
             np.random.shuffle(rand_action)
 
             self.actions = rand_action
@@ -57,8 +54,7 @@ class Agent:
         sorted_indexes = y_hat.detach().cpu().argsort()[0]
         logger.debug(f"sorted indexes: {sorted_indexes}")
         self.actions = np.ones(self.n_tokens)
-        self.actions[sorted_indexes[:self.n_transactions // 2]] = 0
-        self.actions[sorted_indexes[-self.n_transactions // 2:]] = 2
+        self.actions[sorted_indexes[-self.n_transactions:]] = 1
         logger.debug(f"actions to be performed: {self.actions}")
 
         return self.actions
