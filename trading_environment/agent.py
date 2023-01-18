@@ -19,9 +19,9 @@ class Agent:
 
     def store(self, info):
         logger.debug("Agent called store method")
-        self.memory[self.curr_index_memory] = info
+        self.memory[self.curr_index_memory % self.memory_size] = info
+        self.curr_index_memory = self.curr_index_memory % self.memory_size + 1
         logger.debug(f"Stored info at memory index {self.curr_index_memory}")
-        self.curr_index_memory = (self.curr_index_memory % self.memory_size) + 1
 
     def draw(self, batch_size):
         logger.debug("Agent called draw method")
