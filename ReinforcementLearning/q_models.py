@@ -41,7 +41,7 @@ class DQN(nn.Module):
         self.block3 = Block(in_channels=32, out_channels=64, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         self.block4 = Block(in_channels=64, out_channels=128, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
 
-        self.fc1 = nn.Linear(n_classes * n_classes * 128, 512)
+        self.fc1 = nn.Linear(n_classes * n_classes * 128, 256)
         self.fc2 = nn.Linear(256, 128)
         self.fc3 = nn.Linear(128, 64)
         self.fc4 = nn.Linear(64, self.n_classes)
@@ -80,12 +80,12 @@ class DuelingDQN(nn.Module):
         self.block3 = Block(in_channels=32, out_channels=64, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         self.block4 = Block(in_channels=64, out_channels=128, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
 
-        self.val1 = nn.Linear(n_classes * n_classes * 128, 512)
+        self.val1 = nn.Linear(n_classes * n_classes * 128, 256)
         self.val2 = nn.Linear(256, 128)
         self.val3 = nn.Linear(128, 64)
         self.val4 = nn.Linear(64, 1)
 
-        self.adv1 = nn.Linear(n_classes * n_classes * 128, 512)
+        self.adv1 = nn.Linear(n_classes * n_classes * 128, 256)
         self.adv2 = nn.Linear(256, 128)
         self.adv3 = nn.Linear(128, 64)
         self.adv4 = nn.Linear(64, self.n_classes)
