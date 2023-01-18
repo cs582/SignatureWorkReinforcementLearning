@@ -3,7 +3,8 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-from ReinforcementLearning.models.DeepQNetwork.training_dqn import train
+#from ReinforcementLearning.models.DeepQNetwork.training_dqn import train
+from ReinforcementLearning.q_training import train
 
 import logging
 
@@ -20,6 +21,8 @@ logger = logging.getLogger("main")
 if __name__ == "__main__":
     data_file = "data//OP1_2022-10-01_to_2022-08-21.csv"
     save_path = "ReinforcementLearning/saved_models"
+
+    model_name = "Single DQN"
 
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
 
@@ -44,7 +47,7 @@ if __name__ == "__main__":
     memory_size = 10000
 
     training_info = f"""
-    Training DQN with
+    Training {model_name} with
         data_file = {data_file}
         device = {"CPU" if not torch.cuda.is_available() else torch.cuda.get_device_name(device=device)}
         loss_function = {loss_function}
