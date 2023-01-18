@@ -55,9 +55,11 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
         set_bias = False
 
         if model_name == "Single_DQN" or model_name == "Double_DQN":
+            logger.info(f"Using Single Stream DQN model")
             q = DQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
         else:
+            logger.info("Using Dueling model")
             q = DuelingDQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DuelingDQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
 

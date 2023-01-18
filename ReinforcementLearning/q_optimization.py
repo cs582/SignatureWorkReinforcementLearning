@@ -24,7 +24,9 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
 
     # Calculate target value
     logger.debug("Calculate target input value")
+
     if model_name == "Dueling_DQN" or model_name == "Double_DQN":
+        # Double Q-Learning
         model_actions = target(next_state_images).data.max(1)[1]
         model_actions = model_actions.view(1, len(experience_batch))
 
@@ -34,6 +36,8 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     if model_name == "Dueling_DQN" or model_name == "Double_DQN":
         # Double Q-Learning
         target_output[mask_non_terminal_states] = target_output_values.gather(1, model_actions)
+    else:
+        target_output[mask_non_terminal_states] = target_output_values
 
     target_output = torch.add(gamma*target_output, curr_rewards)
     logger.debug("Target output has been calculated!!!")
