@@ -22,19 +22,10 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     """
     logger.info("Portfolio Management Function")
 
-    # Ensure portfolio and available prices have the same number of tokens
-    length_portfolio = len(token_portfolio)
-    length_token_prices = len(current_token_prices)
-    logger.debug(f"Portfolio length = {length_portfolio}, Length Token Prices = {length_token_prices}")
-
     # Map actions to their corresponding token name
     logger.debug("Mapping actions to their corresponding token name")
     action_map = {tkn: actions[i] for i, tkn in enumerate(token_portfolio.keys())}
     logger.debug(f"action_map = {action_map}")
-
-    # Ensure portfolio and available prices have the exact same tokens
-    # portfolio_tokens = sorted([x for x in token_portfolio.keys()])
-    # token_prices_available = sorted([x for x in current_token_prices.keys()])
 
     # Get the names of all tokens in the portfolio
     logger.debug("getting the names of all tokens that need to take action in the action map")
@@ -42,7 +33,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     logger.debug(f"tokens to be traded: {tokens}")
 
     # Calculate cash per token
-    cash_ptoken = cash / len(tokens)
+    cash_ptoken = cash / len([x for x, y in action_map.items() if y == 1.0])
     logger.debug(f"Cash per token: {cash_ptoken}")
 
     curr_total_net_worth = 0
@@ -54,7 +45,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
         # Trade and get current tokens and cash
         logger.info(f"Transaction #{i+1}. Trading token {token} with action {action_map[token]}.")
         token_portfolio[token], curr_cash = trade_token(
-            cash=cash_ptoken,
+            cash=cash_ptoken if action_map[token]==1.0 else 0.0,
             base_gas=current_gas_price,
             gas_limit=gas_limit,
             available_units=token_portfolio[token],

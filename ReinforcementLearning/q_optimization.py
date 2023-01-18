@@ -15,7 +15,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
     curr_actions = torch.Tensor(np.asanyarray([x[1] for x in experience_batch])).to(device=device).long()
     curr_rewards = torch.Tensor(np.asanyarray([[x[2]] for x in experience_batch])).to(device=device)
     next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for x in experience_batch if (x[3] is not None)])).to(device=device).double()
-    logger.info("Batch Unpacked")
+    logger.debug("Batch Unpacked")
 
     # Predict the next moves
     logger.debug("Predict next moves")
