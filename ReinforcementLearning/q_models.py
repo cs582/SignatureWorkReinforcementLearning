@@ -10,11 +10,13 @@ class Block(nn.Module):
         super(Block, self).__init__()
         logger.debug("Constructing Block")
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding, stride=stride, bias=bias)
+        nn.init.xavier_uniform(self.conv1.weight)
         self.bn1 = nn.BatchNorm2d(out_channels)
 
         self.relu = nn.ReLU(inplace=inplace)
 
         self.conv2 = nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding, stride=stride, bias=bias)
+        nn.init.xavier_uniform(self.conv2.weight)
         self.bn2 = nn.BatchNorm2d(out_channels)
 
     def forward(self, x):
@@ -36,20 +38,17 @@ class DQN(nn.Module):
         self.n_classes = n_classes
 
         self.block1 = Block(in_channels=1, out_channels=8, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        nn.init.xavier_uniform(self.block1.weight)
         self.block2 = Block(in_channels=8, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        nn.init.xavier_uniform(self.block2.weight)
         self.block3 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        nn.init.xavier_uniform(self.block3.weight)
 
         self.fc1 = nn.Linear(n_classes * n_classes * 32, 128)
-        nn.init.xavier_uniform(self.fc1)
+        nn.init.xavier_uniform(self.fc1.weight)
         self.fc2 = nn.Linear(128, 128)
-        nn.init.xavier_uniform(self.fc2)
+        nn.init.xavier_uniform(self.fc2.weight)
         self.fc3 = nn.Linear(128, 64)
-        nn.init.xavier_uniform(self.fc3)
+        nn.init.xavier_uniform(self.fc3.weight)
         self.fc4 = nn.Linear(64, self.n_classes)
-        nn.init.xavier_uniform(self.fc4)
+        nn.init.xavier_uniform(self.fc4.weight)
 
         self.relu = nn.ReLU(inplace=True)
 
@@ -81,29 +80,26 @@ class DuelingDQN(nn.Module):
         self.n_classes = n_classes
 
         self.block1 = Block(in_channels=1, out_channels=8, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        nn.init.xavier_uniform(self.block1.weight)
         self.block2 = Block(in_channels=8, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        nn.init.xavier_uniform(self.block2.weight)
         self.block3 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        nn.init.xavier_uniform(self.block3.weight)
 
         self.val1 = nn.Linear(n_classes * n_classes * 32, 128)
-        nn.init.xavier_uniform(self.val1)
+        nn.init.xavier_uniform(self.val1.weight)
         self.val2 = nn.Linear(128, 128)
-        nn.init.xavier_uniform(self.val2)
+        nn.init.xavier_uniform(self.val2.weight)
         self.val3 = nn.Linear(128, 64)
-        nn.init.xavier_uniform(self.val3)
+        nn.init.xavier_uniform(self.val3.weight)
         self.val4 = nn.Linear(64, 1)
-        nn.init.xavier_uniform(self.val4)
+        nn.init.xavier_uniform(self.val4.weight)
 
         self.adv1 = nn.Linear(n_classes * n_classes * 32, 256)
-        nn.init.xavier_uniform(self.adv1)
+        nn.init.xavier_uniform(self.adv1.weight)
         self.adv2 = nn.Linear(256, 128)
-        nn.init.xavier_uniform(self.adv2)
+        nn.init.xavier_uniform(self.adv2.weight)
         self.adv3 = nn.Linear(128, 64)
-        nn.init.xavier_uniform(self.adv3)
+        nn.init.xavier_uniform(self.adv3.weight)
         self.adv4 = nn.Linear(64, self.n_classes)
-        nn.init.xavier_uniform(self.adv4)
+        nn.init.xavier_uniform(self.adv4.weight)
 
         self.relu = nn.ReLU(inplace=True)
 
