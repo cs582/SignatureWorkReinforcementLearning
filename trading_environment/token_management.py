@@ -27,33 +27,36 @@ def trade_token(cash, base_gas, gas_limit, priority_fee, available_units, token_
     cash_spent = 0
 
     # Calculate the gas price per unit in ETH
-    gas_per_unit_eth = 1e-9 * gas_limit * (base_gas + priority_fee)
-    gas_per_unit = gas_per_unit_eth * eth_price
+    gas_per_transaction_eth = 1e-9 * gas_limit * (base_gas + priority_fee)
+    gas_per_transaction = gas_per_transaction_eth * eth_price
 
-    # Calculate the price per unit after gas fee
-    price_per_unit = token_price + gas_per_unit
-    revenue_per_unit = token_price - gas_per_unit
+    # Adjust available cash after expected transaction fee
+    available_cash = cash - gas_per_transaction
 
     # If price drops to 0, then sell
     action = action if token_price != 0 else 0
 
     # If buy and there is available money, then buy
-    if action == 1 and cash > 0:
-        units_to_buy = cash/price_per_unit if cash/price_per_unit <= buy_limit else buy_limit
-        cash_spent = units_to_buy * price_per_unit
+    if action == 1 and available_cash > 0:
+        units_to_buy = available_cash/token_price if available_cash/token_price <= buy_limit else buy_limit
+        cash_spent = units_to_buy * token_price + gas_per_transaction
 
         logger.info(f"Token: {token_name}, close price: {token_price}")
-        logger.info(f"Bought {units_to_buy} units at price {price_per_unit} per unit after gas.")
-        logger.info(f"With a {gas_per_unit} gas per unit. Total cash spent {cash_spent}.")
+        logger.info(f"Bought {units_to_buy} units at price {token_price} per unit after gas.")
+        logger.info(f"With a {gas_per_transaction} gas per unit. Total cash spent {cash_spent}.")
 
     # If sell and there is available tokens, then sell
     if action == 0 and available_units > 0:
-        units_to_sell = available_units if available_units <= sell_limit else sell_limit
-        cash_earned = units_to_sell*revenue_per_unit
+        if gas_per_transaction > available_units*token_price:
+            logger.info(f"gas price {gas_per_transaction} per transaction is too high compared to unit current value {available_units*token_price}")
 
-        logger.info(f"Token {token_name}, close price: {token_price}")
-        logger.info(f"Sold {units_to_sell} units at price {revenue_per_unit} per unit after gas")
-        logger.info(f"With a {gas_per_unit} gas per unit. Total cash earned {cash_earned}.")
+        if gas_per_transaction <= available_units*token_price:
+            units_to_sell = available_units if available_units <= sell_limit else sell_limit
+            cash_earned = units_to_sell * token_price - gas_per_transaction
+
+            logger.info(f"Token {token_name}, close price: {token_price}")
+            logger.info(f"Sold {units_to_sell} units at price {token_price} per unit after gas")
+            logger.info(f"With a {gas_per_transaction} gas per unit. Total cash earned {cash_earned}.")
 
     # Calculate the total remaining tokens and total remaining cash for given token
     remaining_tokens = available_units + units_to_buy - units_to_sell
