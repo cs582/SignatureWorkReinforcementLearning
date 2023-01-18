@@ -15,7 +15,7 @@ logger = logging.getLogger("trading_environment/environment")
 class Environment:
     def __init__(self, trading_days=365, token_prices_address=None, gas_address=None,
                  initial_cash=100000, buy_limit=100000, sell_limit=1000000, use_change=True, use_covariance=True,
-                 reward_metric="sharpe", print_transactions=True, device=None):
+                 reward_metric="sharpe", device=None):
         logger.info("Initializing Environment")
 
         # Trading Boundaries
@@ -25,7 +25,6 @@ class Environment:
         self.sell_limit = sell_limit
         self.trading_days = trading_days
         self.reward_metric = reward_metric
-        self.print_transactions = print_transactions
 
         self.use_covariance = use_covariance
         self.use_change = use_change
@@ -137,8 +136,7 @@ class Environment:
             current_gas_price=self.curr_gas,
             actions=trading_vector,
             buy_limit=self.buy_limit,
-            sell_limit=self.sell_limit,
-            print_transactions=self.print_transactions
+            sell_limit=self.sell_limit
         )
         logger.info(f"Completed Portfolio Management!!!")
         logger.info(f"Current net worth = {self.curr_net_worth}")

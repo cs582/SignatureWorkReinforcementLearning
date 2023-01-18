@@ -114,7 +114,6 @@ if __name__ == "__main__":
         epsilon=epsilon,
         gamma=gamma,
         reward_metric=reward_metric,
-        print_transactions=False,
         device=device,
         token_prices_address=data_file,
         save_path=save_path

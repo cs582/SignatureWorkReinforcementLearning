@@ -5,7 +5,7 @@ logger = logging.getLogger("trading_environment/portfolio_management")
 
 
 def portfolio_management(cash, token_portfolio, current_token_prices, current_gas_price, actions, buy_limit,
-                         sell_limit, print_transactions=True):
+                         sell_limit):
     """
     Manage the portfolio, buying and selling tokens depending on the actions given.
 
@@ -65,8 +65,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
             action=action_map[token],
             buy_limit=buy_limit,
             sell_limit=sell_limit,
-            token_name=token,
-            print_transaction=print_transactions
+            token_name=token
         )
         logger.info(f"Finished trading token {token}.")
 
