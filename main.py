@@ -116,6 +116,7 @@ if __name__ == "__main__":
     logger.info(training_info)
 
     q, history_dqn = train(
+        model_name=model_name,
         n_trading_days=n_trading_days,
         n_tokens=None,
         n_transactions=n_transactions,
