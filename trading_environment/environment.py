@@ -88,7 +88,7 @@ class Environment:
             self.gas_prices = retrieve_online_token_prices(self.gas_address)
         else:
             logger.info("Getting offline gas prices")
-            self.gas_prices = retrieve_offline_gas_prices(avg_price=100, std_deviation=25,
+            self.gas_prices = retrieve_offline_gas_prices(avg_price=25, std_deviation=5,
                                                           n_trading_days=self.trading_days)
 
         logger.info("Preparing the dataset")
