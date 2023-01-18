@@ -195,7 +195,7 @@ class Environment:
         if not done:
             self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device)
             self.curr_gas = self.gas_prices[self.data_index]
-            self.data_index = self.data_index
+            self.data_index += 1
         if done:
             self.curr_prices_image = None
             self.curr_gas = None
