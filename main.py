@@ -6,6 +6,7 @@ from datetime import datetime
 from ReinforcementLearning.q_training import train
 
 import logging
+import argparse
 
 logging.basicConfig(
     filename='log.txt',
@@ -14,36 +15,61 @@ logging.basicConfig(
     level=logging.DEBUG
 )
 
+parser = argparse.ArgumentParser(
+    prog='DQN Trainer',
+    description='DQN Training algorithm for Portfolio Management',
+    epilog='Source code for Carlos Gustavo Salas Flores Signature Work at Duke University & Duke Kunshan University '
+           'for the B.S. in Data Science undergrduate degree. '
+)
+
 logger = logging.getLogger("main")
 
+parser.add_argument('-model', type=str, default="Single_DQN", help='Model to use.')
+parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
+
+parser.add_argument('-episodes', type=int, default=1000, help="Number of episodes to train.")
+parser.add_argument('-e', type=float, default=0.1, help="Epsilon to train.")
+parser.add_argument('-g', type=float, default=0.8, help="Gamma value for training.")
+parser.add_argument('-lr', type=float, default=1e-4, help="Learning rate.")
+parser.add_argument('-m', type=float, default=0.001, help="Momentum for training.")
+
+parser.add_argument('-tr', type=int, default=4, help="Number of transactions per day.")
+parser.add_argument('-d', type=int, default=1000, help="Number of trading days.")
+
+parser.add_argument('-ic', type=int, default=100000, help="Set initial cash.")
+parser.add_argument('-bl', type=int, default=100000, help="Buy units upperbound.")
+parser.add_argument('-sl', type=int, default=100000, help="Sell units upperbound.")
+
+parser.add_argument('-batch', type=int, default=128, help="Batch size.")
+parser.add_argument('-memory', type=int, default=10000, help="Replay memory size.")
+
+args = parser.parse_args()
 
 if __name__ == "__main__":
     data_file = "data//OP1_2022-10-01_to_2022-08-21.csv"
     save_path = "ReinforcementLearning/saved_models"
 
-    model_name = "Single_DQN"
-
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
-
     loss_function = nn.MSELoss()
 
-    reward_metric = "roi"
+    model_name = args.model
+    reward_metric = args.reward
 
-    episodes = 1000
-    epsilon = 0.1
-    gamma = 0.8
-    lr = 1e-4
-    momentum = 0.001
+    episodes = args.episodes
+    epsilon = args.e
+    gamma = args.g
+    lr = args.lr
+    momentum = args.m
 
-    n_transactions = 4
-    n_trading_days = 1000
+    n_transactions = args.tr
+    n_trading_days = args.d
 
-    initial_cash = 100000
-    buy_limit = 100000
-    sell_limit = 100000
+    initial_cash = args.ic
+    buy_limit = args.bl
+    sell_limit = args.sl
 
-    batch_size = 128
-    memory_size = 10000
+    batch_size = args.batch
+    memory_size = args.memory
 
     training_info = f"""
     Training {model_name} with
@@ -68,6 +94,7 @@ if __name__ == "__main__":
         batch_size = {batch_size}
         memory_size = {memory_size}
     """
+    print(training_info)
 
     logger.info(training_info)
 
