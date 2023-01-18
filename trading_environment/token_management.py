@@ -38,26 +38,14 @@ def trade_token(cash, gas, available_tokens, price, action, sell_limit, buy_limi
         units_to_buy = cash/price_per_unit if cash/price_per_unit <= buy_limit else buy_limit
         cash_spent = units_to_buy * price_per_unit
 
-        if print_transaction:
-            if token_name is not None:
-                logger.info(
-                    f"Bought {units_to_buy} units of {token_name} at {price_per_unit} per unit. Total cash spent {cash_spent}.")
-            else:
-                logger.info(
-                    f"Bought {units_to_buy} units at {price_per_unit} per unit. Total cash spent {cash_spent}.")
+        logger.info(f"Bought {units_to_buy} units of {token_name} at {price_per_unit} per unit. Total cash spent {cash_spent}.")
 
     # If sell and there is available tokens, then sell
     if action == 0 and available_tokens > 0:
         units_to_sell = available_tokens if available_tokens <= sell_limit else sell_limit
         cash_earned = units_to_sell*price - gas_per_unit*units_to_sell
 
-        if print_transaction:
-            if token_name is not None:
-                logger.info(
-                    f"Sold {units_to_sell} units of {token_name} at {price} per unit with {gas_per_unit} gas. Total cash earned {cash_earned}.")
-            else:
-                logger.info(
-                    f"Sold {units_to_sell} units at {price} per unit with {gas_per_unit} gas. Total cash earned {cash_earned}.")
+        logger.info(f"Sold {units_to_sell} units of {token_name} at {price} per unit with {gas_per_unit} gas. Total cash earned {cash_earned}.")
 
     # Calculate the total remaining tokens and total remaining cash for given token
     remaining_tokens = available_tokens + units_to_buy - units_to_sell
