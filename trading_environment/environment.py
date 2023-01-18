@@ -152,8 +152,10 @@ class Environment:
         self.units_value_history.append(self.curr_units_value)
 
         # Calculate roi and sharpe ratio
-        daily_roi = (self.net_worth_history[-1] / self.net_worth_history[-2]) - 1
-        gross_roi = (self.net_worth_history[-1] / self.initial_cash) - 1
+        yesterday_net_worth = self.net_worth_history[-2] if self.net_worth_history[-2] != 0.0 else 1
+        today_net_worth = self.net_worth_history[-1]
+        daily_roi = (today_net_worth / yesterday_net_worth) - 1
+        gross_roi = (today_net_worth / self.initial_cash) - 1
         logger.info(f"Current daily roi = {daily_roi}")
         logger.info(f"Current gross roi = {gross_roi}")
 
