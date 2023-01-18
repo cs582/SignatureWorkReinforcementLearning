@@ -71,11 +71,12 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
         optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
 
         for episode in range(0, episodes):
+            environment.start_game()
+
             logger.info(f"Training episode {episode}")
             print(f"Training episode {episode}")
 
             logger.info("Initial Trade call")
-            environment.start_game()
             _, cur_state, _ = environment.trade()
             final_reward = 0
             episode_loss = []

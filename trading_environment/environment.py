@@ -77,6 +77,7 @@ class Environment:
         self.device = device
 
     def start_game(self):
+        logger.info("Starting/Restarting the game")
         self.done = False
 
         self.daily_roi_history = [0]
