@@ -20,7 +20,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     :param sell_limit:              --float, limit of units to sell per transaction
     :return: net worth              --float, total cash and value of units held
     """
-    logger.info("Portfolio Management Function")
+    logger.info(f"Calling Portfolio Management Function with {cash}USD available cash")
 
     # Map actions to their corresponding token name
     logger.debug("Mapping actions to their corresponding token name")

@@ -76,6 +76,28 @@ class Environment:
         # Hardware to use
         self.device = device
 
+    def start_game(self):
+        self.done = False
+
+        self.daily_roi_history = [0]
+        self.gross_roi_history = [0]
+        self.sharpe_history = [0]
+
+        self.curr_prices_image = None
+        self.curr_gas = None
+        self.data_index = 0
+
+        self.curr_cash = self.initial_cash
+        self.curr_units_value = 0
+        self.curr_net_worth = self.curr_cash
+
+        self.cash_history = [self.curr_cash]
+        self.units_value_history = [self.curr_units_value]
+        self.net_worth_history = [self.curr_net_worth]
+
+        for tkn in self.tokens_in_portfolio:
+            self.portfolio[tkn] = 0.0
+
     def initialize_portfolio(self, starting_price=None, n_defi_tokens=None):
         logger.info("Environment called method initialize_portfolio")
 
@@ -89,9 +111,7 @@ class Environment:
 
         else:
             logger.info("Getting offline token prices")
-            self.full_token_prices = retrieve_offline_token_prices(starting_price=starting_price,
-                                                              n_defi_tockens=n_defi_tokens,
-                                                              n_trading_days=self.trading_days)
+            self.full_token_prices = retrieve_offline_token_prices(starting_price=starting_price, n_defi_tockens=n_defi_tokens, n_trading_days=self.trading_days)
 
         if self.gas_address is not None:
             logger.info("Retrieving gas prices from online address: {}".format(self.gas_address))
@@ -200,11 +220,14 @@ class Environment:
             self.curr_prices_image = None
             self.curr_gas = None
             self.data_index = 0
+
+            self.curr_cash = self.initial_cash
+            self.curr_units_value = 0
+            self.curr_net_worth = self.curr_cash
+
             for tkn in self.tokens_in_portfolio:
                 self.portfolio[tkn] = 0.0
-                self.curr_cash = self.initial_cash
-                self.curr_units_value = 0
-                self.curr_net_worth = self.curr_cash
+
 
         logger.debug(f"Next data index: {self.data_index}")
 
