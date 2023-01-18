@@ -3,7 +3,6 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-#from ReinforcementLearning.models.DeepQNetwork.training_dqn import train
 from ReinforcementLearning.q_training import train
 
 import logging
@@ -22,7 +21,7 @@ if __name__ == "__main__":
     data_file = "data//OP1_2022-10-01_to_2022-08-21.csv"
     save_path = "ReinforcementLearning/saved_models"
 
-    model_name = "Single DQN"
+    model_name = "Single_DQN"
 
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
 
@@ -105,4 +104,4 @@ if __name__ == "__main__":
 
     current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 
-    plt.savefig(f"ReinforcementLearning/figures/DQN_training_{current_time}.png")
+    plt.savefig(f"ReinforcementLearning/figures/{model_name}_training_{current_time}.png")

@@ -54,7 +54,7 @@ def train(n_trading_days, n_tokens, n_transactions, initial_cash, buy_limit, sel
         set_inplace = True
         set_bias = False
 
-        if model_name == "Single DQN" or model_name == "Double DQN":
+        if model_name == "Single_DQN" or model_name == "Double_DQN":
             q = DQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
         else:
