@@ -188,7 +188,7 @@ class Environment:
 
         # Update environment current state
         reward = self.sharpe_history[-1] if self.reward_metric == "sharpe" else self.daily_roi_history[-1]
-        done = (self.curr_net_worth <= 1.0) or (self.data_index >= len(self.database)-1)
+        done = (self.curr_net_worth <= self.initial_cash*0.25) or (self.data_index >= len(self.database)-1)
         logger.info(f"Reinforcement Learning Reward: {self.reward_metric} = {reward}. Done? {done}")
 
         # If not done, then move to next prices

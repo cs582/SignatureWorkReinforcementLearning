@@ -18,11 +18,12 @@ class Agent:
         self.actions = None
 
     def store(self, info):
-        logger.debug(f"Storing at index {self.curr_index_memory-1}")
         self.curr_index_memory %= self.memory_size
+
+        logger.debug(f"Storing current experience at index {self.curr_index_memory}")
         self.memory[self.curr_index_memory] = info
         self.curr_index_memory += 1
-        logger.debug(f"Info successfully stored!!!")
+        logger.debug(f"Experience successfully stored!!!")
 
     def draw(self, batch_size):
         logger.debug("Agent called draw method")
