@@ -3,7 +3,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-from ReinforcementLearning.q_training import train
+from reinforcement_learning.q_training import train
 
 import logging
 import argparse
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     portfolio = args.portfolio
 
-    save_path = "ReinforcementLearning/saved_models"
+    save_path = "reinforcement_learning/saved_models"
 
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
     loss_function = nn.MSELoss()
@@ -117,10 +117,14 @@ if __name__ == "__main__":
 
     q, history_dqn = train(
         model_name=model_name,
+        token_prices_address=data_file,
+        save_path=save_path,
+        portfolio_json=portfolios_json,
+        portfolio_to_use=portfolio,
+        initial_cash=initial_cash,
         n_trading_days=n_trading_days,
         n_tokens=None,
         n_transactions=n_transactions,
-        initial_cash=initial_cash,
         buy_limit=buy_limit,
         sell_limit=sell_limit,
         priority_fee=priority_fee,
@@ -133,23 +137,17 @@ if __name__ == "__main__":
         memory_size=memory_size,
         epsilon=epsilon,
         gamma=gamma,
-        reward_metric=reward_metric,
         device=device,
-        token_prices_address=data_file,
-        save_path=save_path,
-        portfolio_json=portfolios_json,
-        portfolio_to_use=portfolio
+        reward_metric=reward_metric,
     )
 
     logger.info("Training Complete!")
+    current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 
     plt.title("Total reward history")
     plt.plot(history_dqn["metric_history"], color="red")
-    plt.show()
+    plt.savefig(f"ReinforcementLearning/figures/{model_name}_reward_{current_time}.png")
 
     plt.title("Total average loss")
     plt.plot(history_dqn["avg_loss"], color="blue")
-
-    current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-
-    plt.savefig(f"ReinforcementLearning/figures/{model_name}_training_{current_time}.png")
+    plt.savefig(f"ReinforcementLearning/figures/{model_name}_loss_{current_time}.png")
