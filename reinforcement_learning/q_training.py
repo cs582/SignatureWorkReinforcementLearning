@@ -1,18 +1,15 @@
 import numpy as np
 import torch
 import logging
-
 from datetime import datetime
 
-from ReinforcementLearning.q_models import DQN, DuelingDQN
-from ReinforcementLearning.q_optimization import optimize_dqn
-
-from ReinforcementLearning.saving_tools import save_model
-
+from reinforcement_learning.q_models import DQN, DuelingDQN
+from reinforcement_learning.q_optimization import optimize_dqn
+from reinforcement_learning.saving_tools import save_model
 from trading_environment.agent import Agent
 from trading_environment.environment import Environment
 
-logger = logging.getLogger("ReinforcementLearning/q_training.py")
+logger = logging.getLogger("reinforcement_learning/q_training.py")
 
 
 def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None):
@@ -38,9 +35,9 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
         )
         logger.info("Environment Initialized!")
 
-        # If the filenames are given, no parameters are necessary for method initialize portfolio
-        environment.initialize_portfolio()
-        logger.info("Portfolio Initialized!")
+        # If the filenames are given, no parameters are necessary for method preload_prices
+        environment.preload_prices()
+        logger.info("Prices are Preloaded!")
 
         n_tokens = environment.n_defi_tokens if n_tokens is None else n_tokens
         logger.info(f"Number of DeFi tokens: {n_tokens}")
@@ -57,8 +54,9 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
         set_inplace = True
         set_bias = False
 
+        # Set model to use
         if model_name == "Single_DQN" or model_name == "Double_DQN":
-            logger.info(f"Using Single Stream DQN model")
+            logger.info("Using Single Stream DQN model")
             q = DQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
         else:
@@ -66,63 +64,72 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
             q = DuelingDQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DuelingDQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
 
+        # Load weights from the q to the t model
         t.load_state_dict(q.state_dict())
 
+        # Setting optimizer
         optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
 
+        # Initiate training
         for episode in range(0, episodes):
+            # Start new episode
             environment.start_game()
-
             logger.info(f"Training episode {episode}")
-            print(f"Training episode {episode}")
 
+            # Initialize the current state
             logger.info("Initial Trade call")
             _, cur_state, _ = environment.trade()
-            final_reward = 0
+            rewards = []
             episode_loss = []
             done = False
             current_trading_day = 0
+
+            # Start the trading loop
             while not done:
                 logger.info(f"Trading Day {current_trading_day+1}")
 
-                # Initialize gradient to zero
+                # Initialize gradient
                 optimizer.zero_grad()
 
-                # Predict or randomly choose an action
+                # Predict select random action
                 y_hat = q(cur_state)
-
                 cur_action = agent.get_action(y_hat, epsilon)
-                if cur_action is None:
-                    logger.warning(f"at episode {episode}, cur_action is None")
 
-                # Trade portfolio with the given instructions
+                # Execute the action and get the reward and next state
                 cur_reward, next_image, done = environment.trade(cur_action)
 
-                # Store experience in memory
-                logger.debug("Creating current experience")
+                # Store the experience in memory
                 cur_experience = (cur_state, cur_action, cur_reward, next_image)
-
                 agent.store(cur_experience)
 
-                # Update current state
+                # Update the current state
                 cur_state = next_image
 
-                # Get a random minibatch of transitions from memory
+                # Sample a batch of experiences from memory
                 experience_batch = agent.draw(batch_size=batch_size)
 
+                # Perform the optimization step
                 loss = optimize_dqn(dqn=q, target=t, experience_batch=experience_batch, loss_function=loss_function, gamma=gamma, optimizer=optimizer, device=device, model_name=model_name)
 
+                # Append the current loss and reward to history
                 episode_loss.append(loss)
+                rewards.append(cur_reward)
 
-                final_reward = cur_reward
                 current_trading_day += 1
 
-            print(f"Last Trading day: {current_trading_day-1}")
+            # Calculate the average loss and reward of the episode
+            average_loss = np.mean(loss)
+            average_rewd = np.mean(rewards)
 
-            train_history["metric_history"].append(final_reward)
-            train_history["avg_loss"].append(np.mean(loss))
+            # Print
+            print(f"EPISODE {episode}. Last Trading day: {current_trading_day-1}.\nLOSS: {average_loss}. REWARD: {average_rewd}")
 
-            if (episode+1)%10 == 0:
+            # Append the final reward and average loss for this episode to the training history
+            train_history["metric_history"].append(average_loss)
+            train_history["avg_loss"].append(average_rewd)
+
+            # Save the model every 10 episodes
+            if (episode+1) % 10 == 0:
                 logger.info(f"Saving model at episode {episode}")
                 current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
                 file_path = f"{save_path}/{model_name}_{episode}_{current_time}.pt"
