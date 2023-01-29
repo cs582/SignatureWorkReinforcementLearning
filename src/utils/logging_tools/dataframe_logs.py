@@ -1,9 +1,9 @@
 def prices_and_gas_preview(logger, token_prices, gas_prices):
     logger.debug(f"""
     Head of the token prices:
-    {token_prices.head(5)}
+    {token_prices[:5]}
     Tail of the token prices:
-    {token_prices.tail(5)}
+    {token_prices[-5:]}
     """)
 
     logger.debug(f"""
