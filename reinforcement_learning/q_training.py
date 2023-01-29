@@ -74,6 +74,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
         # Initiate training
         starting_time = time.time()
         for episode in range(0, episodes):
+
             # Start new episode
             environment.start_game()
             logger.info(f"Training episode {episode}")
@@ -83,6 +84,8 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
             _, cur_state, _ = environment.trade()
             rewards = []
             episode_loss = []
+
+            final_reward = None
             done = False
             current_trading_day = 0
 
@@ -116,6 +119,8 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
                 # Append the current loss and reward to history
                 episode_loss.append(loss)
                 rewards.append(cur_reward)
+                if done:
+                    final_reward = environment.gross_roi_history[-1]
 
                 current_trading_day += 1
 
@@ -124,11 +129,11 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
             average_rewd = np.mean(rewards)
 
             # Print
-            print(f"EPISODE {episode}. Last Trading day: {current_trading_day-1}.\nLOSS: {average_loss}. REWARD: {average_rewd}. ELAPSED TIME: {time.time() - starting_time} seconds.")
+            print(f"EPISODE {episode}. Last Trading day: {current_trading_day-1}.\nLOSS: {average_loss}. FINAL REWARD: {final_reward}. ELAPSED TIME: {time.time() - starting_time} seconds.")
 
             # Append the final reward and average loss for this episode to the training history
-            train_history["metric_history"].append(average_loss)
-            train_history["avg_loss"].append(average_rewd)
+            train_history["metric_history"].append(average_rewd)
+            train_history["avg_loss"].append(average_loss)
 
             # Save the model every 10 episodes
             if (episode+1) % 10 == 0:
