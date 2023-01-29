@@ -1,9 +1,9 @@
 import numpy as np
 import json
 
-from data_handling.retrieve_prices import retrieve_token_prices, retrieve_offline_gas_prices, retrieve_online_gas_prices
+from src.data_handling.retrieve_prices import retrieve_token_prices, retrieve_offline_gas_prices, retrieve_online_gas_prices
 from trading_environment import portfolio_management
-from data_handling.preprocessing import prepare_dataset
+from src.data_handling.preprocessing import prepare_dataset
 from trading_environment.portfolio_management import portfolio_management
 
 import torch
