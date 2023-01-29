@@ -7,10 +7,10 @@ logger = logging.getLogger("reinforcement_learning/q_optimization.py")
 
 def unpack_experience_batch(experience_batch, device):
     curr_images, actions, rewards, next_state_images = zip(*experience_batch)
-    curr_images = torch.stack(curr_images).to(device=device).double()
+    curr_images = torch.stack([x[0] for x in curr_images]).to(device=device).double()
     curr_actions = torch.tensor(actions, device=device, dtype=torch.long)
     curr_rewards = torch.tensor(rewards, device=device, dtype=torch.double).unsqueeze(-1)
-    next_state_images = torch.stack([x for x in next_state_images if x is not None]).to(device=device).double()
+    next_state_images = torch.stack([x[0] for x in next_state_images if x is not None]).to(device=device).double()
     mask_non_terminal_states = torch.tensor([x is not None for x in next_state_images], device=device, dtype=torch.bool)
     return curr_images, curr_actions, curr_rewards, next_state_images, mask_non_terminal_states
 
