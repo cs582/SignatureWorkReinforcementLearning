@@ -9,19 +9,19 @@ class RealTimeCashFlow:
         Initialize the class by creating a figure and subplot for the real-time plot, 
         and initializing empty lists to store net worth, cash, and asset value history.
         """
-        self.fig = plt.figure()
+        self.fig = plt.figure(figsize=(15,8))
         self.ax = self.fig.add_subplot(111)
 
         self.net_worth_hist = []
         self.cash_hist = []
         self.asset_value_hist = []
 
-    def update(self, curr_net_worth, curr_cash, curr_asset_val):
+    def update(self, curr_cash, curr_asset_val, curr_net_worth):
         """
         Update the real-time plot with the current net worth, cash, and asset value.
-        :param (float) curr_net_worth: Current net worth
         :param (float) curr_cash: Current cash
         :param (float) curr_asset_val: Current asset value
+        :param (float) curr_net_worth: Current net worth
         """
         # Append the current values to their respective lists
         self.net_worth_hist.append(curr_net_worth)
@@ -45,3 +45,12 @@ class RealTimeCashFlow:
         # Display the plot and clear any previous output
         display(self.fig)
         clear_output(wait=True)
+
+    def reset(self):
+        """
+        Reset the time history of cashflow back.
+        WARNING: This will erase the whole previous history.
+        """
+        self.net_worth_hist = []
+        self.cash_hist = []
+        self.asset_value_hist = []

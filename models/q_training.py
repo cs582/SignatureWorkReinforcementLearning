@@ -9,12 +9,15 @@ from models.q_optimization import optimize_dqn
 from models.saving_tools import save_model
 from src.trading_environment.agent import Agent
 from src.trading_environment.environment import Environment
+from src.visualization.real_time_cash_flow import RealTimeCashFlow
 
 logger = logging.getLogger("reinforcement_learning/q_training.py")
 
 
 def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None):
     with torch.autograd.set_detect_anomaly(True):
+        real_time_chart = RealTimeCashFlow()
+
         train_history = {"metric_history": [], "avg_loss": []}
 
         # Initialize environment and portfolio
@@ -74,7 +77,6 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
         # Initiate training
         starting_time = time.time()
         for episode in range(0, episodes):
-
             # Start new episode
             environment.start_game()
             logger.info(f"Training episode {episode}")
@@ -106,6 +108,9 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
                 # Store the experience in memory
                 cur_experience = (cur_state, cur_action, cur_reward, next_image)
                 agent.store(cur_experience)
+
+                # Update the cash flow information to the real time chart
+                real_time_chart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1])
 
                 # Update the current state
                 cur_state = next_image
@@ -141,5 +146,8 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
                 current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
                 file_path = f"{save_path}/{model_name}_{episode}_{current_time}.pt"
                 save_model(model=q, episode=episode, optimizer=optimizer, train_history=train_history, PATH=file_path)
+
+            # Reset the cash flow history for a new episode
+            real_time_chart.reset()
 
         return q, train_history
