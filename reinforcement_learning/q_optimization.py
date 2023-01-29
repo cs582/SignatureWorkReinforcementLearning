@@ -5,16 +5,28 @@ import numpy as np
 logger = logging.getLogger("reinforcement_learning/q_optimization.py")
 
 
+def unpack_experience_batch(experience_batch, device):
+    curr_images = torch.zeros((len(experience_batch), *experience_batch[0][0].shape), device=device, dtype=torch.double)
+    curr_actions = torch.zeros((len(experience_batch),), device=device, dtype=torch.long)
+    curr_rewards = torch.zeros((len(experience_batch), 1), device=device, dtype=torch.double)
+    next_state_images = torch.zeros((len(experience_batch), *experience_batch[0][3].shape), device=device, dtype=torch.double)
+    mask_non_terminal_states = torch.zeros((len(experience_batch),), device=device, dtype=torch.bool)
+
+    for i, exp in enumerate(experience_batch):
+        curr_images[i] = exp[0]
+        curr_actions[i] = exp[1]
+        curr_rewards[i] = exp[2]
+        if exp[3] is not None:
+            next_state_images[i] = exp[3]
+            mask_non_terminal_states[i] = 1
+    return curr_images, curr_actions, curr_rewards, next_state_images, mask_non_terminal_states
+
+
 def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer, device, model_name):
     logger.info(f"Called {model_name} Optimizer")
 
     logger.debug("Unpacking Batch")
-    mask_non_terminal_states = torch.BoolTensor([(x[3] is not None) for x in experience_batch])
-
-    curr_images = torch.Tensor(np.array([x[0][0].cpu().numpy() for x in experience_batch])).to(device=device).double()
-    curr_actions = torch.Tensor(np.asanyarray([x[1] for x in experience_batch])).to(device=device).long()
-    curr_rewards = torch.Tensor(np.asanyarray([[x[2]] for x in experience_batch])).to(device=device)
-    next_state_images = torch.Tensor(np.array([x[3][0].cpu().numpy() for x in experience_batch if (x[3] is not None)])).to(device=device).double()
+    curr_images, curr_actions, curr_rewards, next_state_images, mask_non_terminal_states = unpack_experience_batch(experience_batch, device)
     logger.debug("Batch Unpacked")
 
     # Predict the next moves
