@@ -38,11 +38,4 @@ def retrieve_token_prices(filename):
 
     assert df.isnull().sum().sum() == 0, f"there are {df.isnull().sum().sum()} missing values."
 
-    logger.debug(f"""
-    Top of the dataframe
-    {df.head(5)}
-    Bottom of the dataframe
-    {df.tail(5)}
-    """)
-
     return df
