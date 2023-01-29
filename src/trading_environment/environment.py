@@ -5,6 +5,7 @@ from src.data_handling.retrieve_prices import retrieve_token_prices, retrieve_of
 from src.trading_environment import portfolio_management
 from src.data_handling.preprocessing import prepare_dataset
 from src.trading_environment.portfolio_management import portfolio_management
+from src.utils.logging_tools.dataframe_logs import prices_and_gas_preview, images_preview
 
 import torch
 import logging
@@ -125,6 +126,12 @@ class Environment:
         logger.info("Token Prices Successfully Loaded!!!")
         self.gas_prices = retrieve_online_gas_prices(self.gas_address) if self.gas_address is not None else retrieve_offline_gas_prices(avg_price=fake_avg_gas, std_deviation=fake_gas_std, n_trading_days=self.trading_days)
         logger.info("Gas Prices Successfully Loaded!!!")
+
+        # Checking the token prices and gas prices in the log file
+        prices_and_gas_preview(logger, self.token_prices, self.gas_prices)
+
+        # Checking the database in the log file
+        images_preview(logger, self.database)
 
     def trade(self, actions=None):
         """Executes the corresponding trades on the current day's prices.
