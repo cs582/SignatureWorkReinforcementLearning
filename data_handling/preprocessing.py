@@ -22,11 +22,11 @@ def preprocessing_correlation(prices, size):
     return X
 
 
-def prepare_dataset(tokens_to_use, tokens_prices, use_change, use_covariance, lookback):
+def prepare_dataset(tokens_to_use, token_prices, use_change, use_covariance, lookback):
     """
 
     :param tokens_to_use     --list, it gives you the tokens to take into consideration i.e. asset space or portfolio
-    :param tokens_prices:       --pd.Dataframe, it gets a dataframe with the token open prices
+    :param token_prices:       --pd.Dataframe, it gets a dataframe with the token open prices
     :param use_change:          --boolean, if true, then use price change else use raw prices
     :param use_covariance:      --boolean, if true, then use covariance else use open product
     :param lookback:            --int, when using covariance, it tells how many days back to look at. To trade for n days, it would be necessary to have n+lookback days as input.
@@ -34,19 +34,14 @@ def prepare_dataset(tokens_to_use, tokens_prices, use_change, use_covariance, lo
     """
     X_matrices = None
 
-    tokens_prices = tokens_prices[tokens_to_use].astype(np.float64)
+    token_prices = token_prices[tokens_to_use].astype(np.float64)
 
     if use_change:
-        tokens_prices = tokens_prices.pct_change().drop([tokens_prices.index[0]], axis=0)
+        token_prices = token_prices.pct_change().drop([token_prices.index[0]], axis=0)
 
     if use_covariance:
         size = lookback
-        X_matrices = preprocessing_correlation([tokens_prices], size)
-        X_matrices = np.asanyarray(X_matrices)
-
-    if not use_covariance:
-        print("Use Outer Product")
-        X_matrices = preprocessing_open_product([tokens_prices], tokens_prices)
+        X_matrices = preprocessing_correlation([token_prices], size)
         X_matrices = np.asanyarray(X_matrices)
 
     return X_matrices
