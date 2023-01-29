@@ -25,4 +25,4 @@ class RealTimeCashFlow:
         self.ax.plot(x, self.cash_hist, color='black')
 
         display(self.fig)
-        clear_output()
+        clear_output(wait=True)
