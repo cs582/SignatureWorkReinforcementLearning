@@ -1,8 +1,7 @@
 import numpy as np
 import json
 
-from data_handling.retrieve_prices import retrieve_offline_token_prices, retrieve_offline_gas_prices, \
-    retrieve_online_token_prices
+from data_handling.retrieve_prices import retrieve_token_prices, retrieve_offline_gas_prices, retrieve_online_gas_prices
 from trading_environment import portfolio_management
 from data_handling.preprocessing import prepare_dataset
 from trading_environment.portfolio_management import portfolio_management
@@ -14,154 +13,141 @@ logger = logging.getLogger("trading_environment/environment")
 
 
 class Environment:
-    def __init__(self, trading_days=365, token_prices_address=None, gas_address=None,
-                 initial_cash=100000, buy_limit=100000, sell_limit=1000000,
-                 priority_fee=2, gas_limit=21000, use_change=True, use_covariance=True,
-                 portfolio_json=None, portfolio_to_use=1,
-                 reward_metric="sharpe", device=None):
-        logger.info("Initializing Environment")
-
-        # Trading Boundaries
-        self.n_defi_tokens = -1
-        self.curr_transactions = 0
-        self.gas_limit = gas_limit
+    def __init__(
+            self,
+            trading_days: int = 365,
+            token_prices_address: str = None,
+            gas_address: str = None,
+            initial_cash: float = 100000.0,
+            buy_limit: float = 100000.0,
+            sell_limit: float = 1000000.0,
+            priority_fee: float = 2.0,
+            gas_limit: int = 21000,
+            use_change: bool = True,
+            use_covariance: bool = True,
+            portfolio_json: dict = None,
+            portfolio_to_use: int = 1,
+            reward_metric: str = "sharpe",
+            device: str = None,
+    ):
+        """Initialize the trading environment.
+        Args:
+            trading_days (int, optional): The number of trading days in the simulation. Defaults to 365.
+            token_prices_address (str, optional): The address of the file containing token prices. Defaults to None.
+            gas_address (str, optional): The address of the file containing gas prices. Defaults to None.
+            initial_cash (float, optional): The initial cash endowment of the agent. Defaults to 100000.0.
+            buy_limit (float, optional): The maximum amount of cash that can be used to buy tokens. Defaults to 100000.0.
+            sell_limit (float, optional): The maximum number of tokens that can be sold. Defaults to 1000000.0.
+            priority_fee (float, optional): The fee applied to priority trades. Defaults to 2.0.
+            gas_limit (int, optional): The maximum amount of gas that can be used in trades. Defaults to 21000.
+            use_change (bool, optional): Whether to use the change in token prices as a feature. Defaults to True.
+            use_covariance (bool, optional): Whether to use the covariance between tokens as a feature. Defaults to True.
+            portfolio_json (dict, optional): The initial portfolio of tokens. Defaults to None.
+            portfolio_to_use (int, optional): The index of the portfolio to use. Defaults to 1.
+            reward_metric (str, optional): The metric used to evaluate the agent's performance. Defaults to "sharpe".
+            device (str, optional): The device to use for computations. Defaults to None.
+        """
+        logger.info("Initializing the trading environment")
+        self.trading_days = trading_days
+        self.token_prices_address = token_prices_address
+        self.gas_address = gas_address
+        self.initial_cash = initial_cash
         self.buy_limit = buy_limit
         self.sell_limit = sell_limit
-        self.trading_days = trading_days
-        self.reward_metric = reward_metric
-
-        self.use_covariance = use_covariance
+        self.priority_fee = priority_fee
+        self.gas_limit = gas_limit
         self.use_change = use_change
+        self.use_covariance = use_covariance
+        self.portfolio_json = portfolio_json
+        self.portfolio_to_use = portfolio_to_use
+        self.reward_metric = reward_metric
+        self.device = device
 
+        self.n_defi_tokens = -1
+        self.curr_transactions = 0
         self.database = None
         self.token_prices = None
         self.gas_prices = None
-
-        self.token_prices_address = token_prices_address
-        self.gas_address = gas_address
-        self.portfolio_json = portfolio_json
-
-        self.priority_fee = priority_fee
-
-        self.portfolio_to_use = portfolio_to_use
-
         self.curr_prices = None
         self.curr_gas = None
         self.curr_prices_image = None
-
-        # Endowment
-        self.initial_cash = initial_cash
         self.curr_cash = self.initial_cash
         self.curr_units_value = 0
         self.curr_net_worth = self.curr_cash
         self.portfolio = {}
-
-        # Endowment history
         self.cash_history = [self.curr_cash]
         self.units_value_history = [self.curr_units_value]
         self.net_worth_history = [self.curr_net_worth]
-
-        # Performance metrics history
         self.daily_roi_history = [0]
         self.gross_roi_history = [0]
         self.sharpe_history = [0]
-
         self.tokens_in_portfolio = None
-
         self.data_index = 0
-
-        # Done
         self.done = False
-
-        # Hardware to use
-        self.device = device
 
     def start_game(self):
+        """Resets the environment to its initial state.
+        """
         logger.info("Starting/Restarting the game")
         self.done = False
-
         self.daily_roi_history = [0]
         self.gross_roi_history = [0]
         self.sharpe_history = [0]
-
         self.curr_prices_image = None
         self.curr_gas = None
         self.data_index = 0
-
         self.curr_cash = self.initial_cash
         self.curr_units_value = 0
         self.curr_net_worth = self.curr_cash
-
         self.cash_history = [self.curr_cash]
         self.units_value_history = [self.curr_units_value]
         self.net_worth_history = [self.curr_net_worth]
-
-        for tkn in self.tokens_in_portfolio:
-            self.portfolio[tkn] = 0.0
-
-    def initialize_portfolio(self, starting_price=None, n_defi_tokens=None):
-        logger.info("Environment called method initialize_portfolio")
-
-        # Open JSON file with portfolio options
-        self.tokens_in_portfolio = json.loads(open('portfolios/portfolios.json', "r").read())[f"Portfolio {self.portfolio_to_use}"]
-        self.n_defi_tokens = len(self.tokens_in_portfolio)
-
-        if self.token_prices_address is not None:
-            logger.info("Retrieving token prices from online address: {}".format(self.token_prices_address))
-            _, _, self.full_token_prices = retrieve_online_token_prices(self.token_prices_address)
-
-        else:
-            logger.info("Getting offline token prices")
-            self.full_token_prices = retrieve_offline_token_prices(starting_price=starting_price, n_defi_tockens=n_defi_tokens, n_trading_days=self.trading_days)
-
-        if self.gas_address is not None:
-            logger.info("Retrieving gas prices from online address: {}".format(self.gas_address))
-            self.gas_prices = retrieve_online_token_prices(self.gas_address)
-        else:
-            logger.info("Getting offline gas prices")
-            self.gas_prices = retrieve_offline_gas_prices(avg_price=25, std_deviation=5,
-                                                          n_trading_days=self.trading_days)
-
-        logger.info("Preparing the dataset")
-        self.database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, tokens_prices=self.full_token_prices, use_change=self.use_change, use_covariance=self.use_covariance, lookback=10)
-        self.token_prices = self.full_token_prices.iloc[-len(self.database):]
-
+        logger.info("Resetting token values in portfolio")
         for token in self.tokens_in_portfolio:
-            self.portfolio[token] = 0
+            self.portfolio[token] = 0.0
+        logger.info("Game restarted successfully")
 
-        logger.debug(f"database size: {self.database.shape}, prices size: {self.token_prices.shape}")
-        self.trading_days = min(self.trading_days, len(self.token_prices))
-
-        logger.info("Converting token prices to a dictionary")
-        self.token_prices = self.token_prices.to_dict("records")
+    def preload_prices(self, fake_avg_gas: float = 25.0, fake_gas_std: float = 5.0):
+        """Initializes the portfolio with the given parameters.
+        Args:
+            fake_avg_gas (float, optional): The average gas price to create.
+            fake_gas_std (float, optional): The standard deviation of the gas prices to create.
+        """
+        logger.info("Preloading the prices")
+        with open('portfolios/portfolios.json', "r") as file:
+            portfolio_options = json.load(file)
+        self.tokens_in_portfolio = portfolio_options[f"Portfolio {self.portfolio_to_use}"]
+        self.n_defi_tokens = len(self.tokens_in_portfolio)
+        self.token_prices = retrieve_token_prices(self.token_prices_address)
+        self.database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=self.token_prices, use_change=self.use_change, use_covariance=self.use_covariance, lookback=10)
+        self.trading_days = min(len(self.database), self.trading_days)
+        self.token_prices = self.token_prices.iloc[-len(self.database):].to_dict("records")
+        logger.info("Token Prices Successfully Loaded!!!")
+        self.gas_prices = retrieve_online_gas_prices(self.gas_address) if self.gas_address is not None else retrieve_offline_gas_prices(avg_price=fake_avg_gas, std_deviation=fake_gas_std, n_trading_days=self.trading_days)
+        logger.info("Gas Prices Successfully Loaded!!!")
 
     def trade(self, actions=None):
-        logger.info("Environment called method trade")
+        """Executes the corresponding trades on the current day's prices.
+        :param actions: (np.array, optional) the actions to take.
+        :return: (float) reward for this trade.
+        """
+        if self.data_index >= self.trading_days:
+            logger.debug("Game Over!!!")
+            self.done = True
+            return None, None, self.done
+
         if actions is None:
-            logger.debug("Actions is None")
-
-            # Update environment current state
-            reward = None
-            done = len(self.token_prices) == 0
-
-            # Retrieving the current prices, input image, and gas price
-            logger.debug("Retrieving the current prices, input image, and gas price.")
-            self.curr_prices = self.token_prices[self.data_index] if not done else None
-            self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device) if not done else None
-            self.curr_gas = self.gas_prices[self.data_index] if not done else None
-
+            logger.debug("Getting Initial State")
+            self.curr_prices = self.token_prices[self.data_index]
+            self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device)
+            self.curr_gas = self.gas_prices[self.data_index]
             self.data_index += 1
-
-            return reward, self.curr_prices_image, done
-
-        logger.debug("Actions is not None")
+            return None, self.curr_prices_image, None
 
         assert self.n_defi_tokens==len(actions.reshape(-1,1)), f"actions don't match size expected {self.n_defi_tokens}, got {len(actions)}"
 
         # Sort indexes and get trading vector
-        logger.debug("Transform actions to list")
         trading_vector = actions.tolist()
-        logger.debug(f"Trading Vector: {trading_vector}")
 
         # Performing portfolio management
         logger.info("Performing Portfolio Management")
@@ -176,11 +162,12 @@ class Environment:
             buy_limit=self.buy_limit,
             sell_limit=self.sell_limit
         )
-        logger.info(f"Completed Portfolio Management!!!")
-        logger.info(f"Current net worth = {self.curr_net_worth}")
-        logger.info(f"Current cash = {self.curr_cash}")
-        logger.info(f"Current assets value = {self.curr_units_value}")
-        logger.debug(f"Portfolio = {self.portfolio}")
+        logger.info(f"""Completed Portfolio Management!!!
+        Current net worth = {self.curr_net_worth}
+        Current cash = {self.curr_cash}
+        Current assets value = {self.curr_units_value}
+        Portfolio = {self.portfolio}
+        """)
 
         # Store the current net_worth, cash, and units value
         self.net_worth_history.append(self.curr_net_worth)
@@ -200,7 +187,6 @@ class Environment:
 
         # Obtain the current number of days since the beginning of the transaction period
         n_days = len(self.net_worth_history)
-        logger.info(f"Number of days since beginning of trading: {n_days}")
 
         # Calculate sharpe ratio
         sharpe = (n_days ** 0.5) * np.mean(self.daily_roi_history) / np.std(self.daily_roi_history)
@@ -217,18 +203,6 @@ class Environment:
             self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device)
             self.curr_gas = self.gas_prices[self.data_index]
             self.data_index += 1
-        if done:
-            self.curr_prices_image = None
-            self.curr_gas = None
-            self.data_index = 0
-
-            self.curr_cash = self.initial_cash
-            self.curr_units_value = 0
-            self.curr_net_worth = self.curr_cash
-
-            for tkn in self.tokens_in_portfolio:
-                self.portfolio[tkn] = 0.0
-
 
         logger.debug(f"Next data index: {self.data_index}")
 
