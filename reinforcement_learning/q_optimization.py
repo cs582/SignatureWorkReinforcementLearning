@@ -6,19 +6,12 @@ logger = logging.getLogger("reinforcement_learning/q_optimization.py")
 
 
 def unpack_experience_batch(experience_batch, device):
-    curr_images = torch.zeros((len(experience_batch), *experience_batch[0][0].shape), device=device, dtype=torch.double)
-    curr_actions = torch.zeros((len(experience_batch),), device=device, dtype=torch.long)
-    curr_rewards = torch.zeros((len(experience_batch), 1), device=device, dtype=torch.double)
-    next_state_images = torch.zeros((len(experience_batch), *experience_batch[0][3].shape), device=device, dtype=torch.double)
-    mask_non_terminal_states = torch.zeros((len(experience_batch),), device=device, dtype=torch.bool)
-
-    for i, exp in enumerate(experience_batch):
-        curr_images[i] = exp[0]
-        curr_actions[i] = exp[1]
-        curr_rewards[i] = exp[2]
-        if exp[3] is not None:
-            next_state_images[i] = exp[3]
-            mask_non_terminal_states[i] = 1
+    curr_images, actions, rewards, next_state_images = zip(*experience_batch)
+    curr_images = torch.stack(curr_images).to(device=device).double()
+    curr_actions = torch.tensor(actions, device=device, dtype=torch.long)
+    curr_rewards = torch.tensor(rewards, device=device, dtype=torch.double).unsqueeze(-1)
+    next_state_images = torch.stack([x for x in next_state_images if x is not None]).to(device=device).double()
+    mask_non_terminal_states = torch.tensor([x is not None for x in next_state_images], device=device, dtype=torch.bool)
     return curr_images, curr_actions, curr_rewards, next_state_images, mask_non_terminal_states
 
 
