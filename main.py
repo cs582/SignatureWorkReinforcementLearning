@@ -3,7 +3,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-from reinforcement_learning.q_training import train
+from models.q_training import train
 
 import logging
 import argparse
@@ -51,12 +51,12 @@ parser.add_argument('-memory', type=int, default=10000, help="Replay memory size
 args = parser.parse_args()
 
 if __name__ == "__main__":
-    data_file = "historical_data//ClosePriceData_2022-10-01_to_2022-08-21.csv"
+    data_file = "data/raw//ClosePriceData_2022-10-01_to_2022-08-21.csv"
     portfolios_json = "portfolios//portfolios.json"
 
     portfolio = args.portfolio
 
-    save_path = "reinforcement_learning/saved_models"
+    save_path = "models/saved_models"
 
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
     loss_function = nn.MSELoss()

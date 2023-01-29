@@ -4,11 +4,11 @@ import time
 import logging
 from datetime import datetime
 
-from reinforcement_learning.q_models import DQN, DuelingDQN
-from reinforcement_learning.q_optimization import optimize_dqn
-from reinforcement_learning.saving_tools import save_model
-from trading_environment.agent import Agent
-from trading_environment.environment import Environment
+from models.q_models import DQN, DuelingDQN
+from models.q_optimization import optimize_dqn
+from models.saving_tools import save_model
+from src.trading_environment.agent import Agent
+from src.trading_environment.environment import Environment
 
 logger = logging.getLogger("reinforcement_learning/q_training.py")
 

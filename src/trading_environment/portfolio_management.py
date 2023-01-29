@@ -1,4 +1,4 @@
-from trading_environment.token_management import trade_token
+from src.trading_environment.token_management import trade_token
 import logging
 
 logger = logging.getLogger("trading_environment/portfolio_management")
