@@ -9,7 +9,7 @@ from src.trading_environment.portfolio_management import portfolio_management
 import torch
 import logging
 
-logger = logging.getLogger("trading_environment/environment")
+logger = logging.getLogger("src/trading_environment/environment")
 
 
 class Environment:
@@ -139,7 +139,7 @@ class Environment:
         if actions is None:
             logger.debug("Getting Initial State")
             self.curr_prices = self.token_prices[self.data_index]
-            self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device)
+            self.curr_prices_image = torch.from_numpy(np.array([self.database[self.data_index]])).to(self.device).double()
             self.curr_gas = self.gas_prices[self.data_index]
             self.data_index += 1
             return None, self.curr_prices_image, None

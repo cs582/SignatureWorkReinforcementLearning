@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 from sklearn.impute import KNNImputer
 
+import logging
+
+logger = logging.getLogger("src/data_handling/retrieve_prices")
 
 def retrieve_online_gas_prices(address):
     # Read csv and convert to dataframe
@@ -34,5 +37,12 @@ def retrieve_token_prices(filename):
         df[col] = df_values[:, i]
 
     assert df.isnull().sum().sum() == 0, f"there are {df.isnull().sum().sum()} missing values."
+
+    logger.debug(f"""
+    Top of the dataframe
+    {df.head(5)}
+    Bottom of the dataframe
+    {df.tail(5)}
+    """)
 
     return df
