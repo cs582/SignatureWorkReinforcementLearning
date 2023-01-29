@@ -2,12 +2,12 @@ from IPython.display import display, clear_output
 import numpy as np
 import matplotlib.pyplot as plt
 
-fig = plt.figure()
-ax = fig.add_subplot(111)
-
 
 class RealTimeCashFlow:
-    def __init__(self, ):
+    def __init__(self):
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(111)
+
         self.net_worth_hist = []
         self.cash_hist = []
         self.asset_value_hist = []
@@ -19,10 +19,10 @@ class RealTimeCashFlow:
 
         x = np.arange(0, len(self.net_worth_hist))
 
-        ax.clear()
-        ax.plot(x, self.net_worth_hist, color='green')
-        ax.plot(x, self.asset_value_hist, color='blue')
-        ax.plot(x, self.cash_hist, color='black')
+        self.ax.clear()
+        self.ax.plot(x, self.net_worth_hist, color='green')
+        self.ax.plot(x, self.asset_value_hist, color='blue')
+        self.ax.plot(x, self.cash_hist, color='black')
 
-        display(fig)
+        display(self.fig)
         clear_output()
