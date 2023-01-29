@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import time
 import logging
 from datetime import datetime
 
@@ -71,6 +72,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
         optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
 
         # Initiate training
+        starting_time = time.time()
         for episode in range(0, episodes):
             # Start new episode
             environment.start_game()
@@ -122,7 +124,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
             average_rewd = np.mean(rewards)
 
             # Print
-            print(f"EPISODE {episode}. Last Trading day: {current_trading_day-1}.\nLOSS: {average_loss}. REWARD: {average_rewd}")
+            print(f"EPISODE {episode}. Last Trading day: {current_trading_day-1}.\nLOSS: {average_loss}. REWARD: {average_rewd}. ELAPSED TIME: {time.time() - starting_time} seconds.")
 
             # Append the final reward and average loss for this episode to the training history
             train_history["metric_history"].append(average_loss)
