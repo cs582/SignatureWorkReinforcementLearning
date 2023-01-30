@@ -169,7 +169,7 @@ class Environment:
         :return: (float) reward for this trade.
         """
 
-        if self.data_index >= len(self.database):
+        if self.data_index >= len(self.database)-1:
             logger.debug("Game Over!!!")
             self.done = True
             return None, None, self.done
@@ -243,6 +243,6 @@ class Environment:
             self.curr_gas = self.gas_prices[self.data_index]
             self.data_index += 1
 
-        logger.debug(f"Next data index: {self.data_index}")
+        logger.debug(f"Next data index: {self.data_index}. Max index: {len(self.database)-1}")
 
         return reward, self.curr_prices_image, done
