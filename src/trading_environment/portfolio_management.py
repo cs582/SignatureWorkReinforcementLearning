@@ -39,7 +39,6 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     cash_ptoken = (cash / n_tokens_to_buy) if n_tokens_to_buy > 0.0 else 0.0
     logger.debug(f"Cash per token: {cash_ptoken} for {n_tokens_to_buy} tokens.")
 
-    curr_total_net_worth = 0
     curr_total_units_value = 0
     curr_total_cash = 0 if cash_ptoken > 0.0 else cash
 
@@ -72,7 +71,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
 
         # Calculate current net worth i.e. cash + units value
         curr_net_worth = curr_cash + curr_units_value
-        curr_total_net_worth += curr_net_worth
-        logger.debug(f"current total net worth = {curr_total_net_worth}, added curr_net_worth = {curr_net_worth}")
+        logger.debug(f"current total net worth = {curr_total_units_value + curr_total_cash}, added curr_net_worth = {curr_net_worth}")
 
+    curr_total_net_worth = curr_total_cash + curr_total_units_value
     return token_portfolio, curr_total_net_worth, curr_total_cash, curr_total_units_value
