@@ -233,16 +233,16 @@ class Environment:
 
         # Update environment current state
         reward = self.sharpe_history[-1] if self.reward_metric == "sharpe" else self.daily_roi_history[-1]
+
+        # Move to next prices
+        self.curr_prices = self.token_prices[self.data_index]
+        self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device)
+        self.curr_gas = self.gas_prices[self.data_index]
+        self.data_index += 1
+        logger.debug(f"Next data index: {self.data_index}. Max index: {len(self.database)-1}")
+
+        # Check if done
         done = (self.curr_net_worth <= self.initial_cash*0.25) or (self.data_index >= len(self.database)-1)
         logger.info(f"Reinforcement Learning Reward: {self.reward_metric} = {reward}. Done? {done}")
-
-        # If not done, then move to next prices
-        if not done:
-            self.curr_prices = self.token_prices[self.data_index]
-            self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device)
-            self.curr_gas = self.gas_prices[self.data_index]
-            self.data_index += 1
-
-        logger.debug(f"Next data index: {self.data_index}. Max index: {len(self.database)-1}")
 
         return reward, self.curr_prices_image, done
