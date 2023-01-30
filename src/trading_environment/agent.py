@@ -56,11 +56,11 @@ class Agent:
             # Choose random actions
             logger.debug(f"Choosing random action with epsilon {epsilon}")
             self.actions = np.zeros(self.n_tokens)
-            self.actions[np.random.choice(self.n_tokens, self.n_transactions, replace=False)] = 1
+            self.actions[np.random.choice(self.n_tokens, np.random.randint(self.n_transactions), replace=False)] = 1
         else:
             # Choose actions with the highest Q-values
             logger.debug("Choosing action with highest Q-values")
             self.actions = np.zeros(self.n_tokens)
-            top_k_indices = y_hat.detach().cpu().argsort()[0][-self.n_transactions:]
+            top_k_indices = y_hat.detach().cpu() > 0.5
             self.actions[top_k_indices] = 1
         return self.actions

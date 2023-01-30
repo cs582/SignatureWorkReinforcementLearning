@@ -146,8 +146,8 @@ if __name__ == "__main__":
 
     plt.title("Total reward history")
     plt.plot(history_dqn["metric_history"], color="red")
-    plt.savefig(f"ReinforcementLearning/figures/{model_name}_reward_{current_time}.png")
+    plt.savefig(f"data/figures/{model_name}_reward_{current_time}.png")
 
     plt.title("Total average loss")
     plt.plot(history_dqn["avg_loss"], color="blue")
-    plt.savefig(f"ReinforcementLearning/figures/{model_name}_loss_{current_time}.png")
+    plt.savefig(f"data/figures/{model_name}_loss_{current_time}.png")
