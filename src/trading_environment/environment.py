@@ -66,9 +66,19 @@ class Environment:
 
         self.n_defi_tokens = -1
         self.curr_transactions = 0
+
         self.database = None
         self.token_prices = None
         self.gas_prices = None
+
+        self.database_train = None
+        self.token_prices_train = None
+        self.gas_prices_train = None
+
+        self.database_eval = None
+        self.token_prices_eval = None
+        self.gas_prices_eval = None
+
         self.curr_prices = None
         self.curr_gas = None
         self.curr_prices_image = None
@@ -86,8 +96,9 @@ class Environment:
         self.data_index = 0
         self.done = False
 
-    def start_game(self):
+    def start_game(self, mode=None):
         """Resets the environment to its initial state.
+        :param mode (str) set to train for training or eval to evaluate
         """
         logger.info("Starting/Restarting the game")
         self.done = False
@@ -108,6 +119,11 @@ class Environment:
             self.portfolio[token] = 0.0
         logger.info("Game restarted successfully")
 
+        # Assign the corresponding prices to the variables
+        self.token_prices = self.token_prices_train if mode == "train" else self.token_prices_eval
+        self.database = self.database_train if mode == "train" else self.database_eval
+        self.gas_prices = self.gas_prices_train if mode == "train" else self.gas_prices_eval
+
     def preload_prices(self, fake_avg_gas: float = 25.0, fake_gas_std: float = 5.0):
         """Initializes the portfolio with the given parameters.
         Args:
@@ -119,26 +135,41 @@ class Environment:
             portfolio_options = json.load(file)
         self.tokens_in_portfolio = portfolio_options[f"Portfolio {self.portfolio_to_use}"]
         self.n_defi_tokens = len(self.tokens_in_portfolio)
-        self.token_prices = retrieve_token_prices(self.token_prices_address)
-        self.database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=self.token_prices, use_change=self.use_change, use_covariance=self.use_covariance, lookback=10)
-        self.trading_days = min(len(self.database), self.trading_days)
-        self.token_prices = self.token_prices.iloc[-len(self.database):].to_dict("records")
+
+        # RETRIEVING WHOLE DATA
+        token_prices = retrieve_token_prices(self.token_prices_address)
+        database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=self.token_prices, use_change=self.use_change, use_covariance=self.use_covariance, lookback=10)
+        trading_days = min(len(database), self.trading_days)
+        token_prices = token_prices.iloc[-len(database):].to_dict("records")
         logger.info("Token Prices Successfully Loaded!!!")
-        self.gas_prices = retrieve_online_gas_prices(self.gas_address) if self.gas_address is not None else retrieve_offline_gas_prices(avg_price=fake_avg_gas, std_deviation=fake_gas_std, n_trading_days=self.trading_days)
+        gas_prices = retrieve_online_gas_prices(self.gas_address) if self.gas_address is not None else retrieve_offline_gas_prices(avg_price=fake_avg_gas, std_deviation=fake_gas_std, n_trading_days=self.trading_days)
         logger.info("Gas Prices Successfully Loaded!!!")
 
         # Checking the token prices and gas prices in the log file
-        prices_and_gas_preview(logger, self.token_prices, self.gas_prices)
+        prices_and_gas_preview(logger, token_prices, gas_prices)
 
         # Checking the database in the log file
-        images_preview(logger, self.database)
+        images_preview(logger, database)
 
-    def trade(self, actions=None):
+        # Create TRAINING DATA
+        training_days = int(trading_days * 0.75)
+        self.token_prices_train = token_prices[:training_days]
+        self.database_train = database[:training_days]
+        self.gas_prices_train = gas_prices[:training_days]
+
+        # Create EVALUATION DATA
+        self.token_prices_train = token_prices[training_days:]
+        self.database_train = database[training_days:]
+        self.gas_prices_train = gas_prices[training_days:]
+
+    def trade(self, actions=None, mode=None):
         """Executes the corresponding trades on the current day's prices.
+        :param mode: (str, optional) trading mode can be either training or evaluating
         :param actions: (np.array, optional) the actions to take.
         :return: (float) reward for this trade.
         """
-        if self.data_index >= self.trading_days:
+
+        if self.data_index >= len(self.database):
             logger.debug("Game Over!!!")
             self.done = True
             return None, None, self.done

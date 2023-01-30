@@ -16,12 +16,13 @@ class RealTimeCashFlow:
         self.cash_hist = []
         self.asset_value_hist = []
 
-    def update(self, curr_cash, curr_asset_val, curr_net_worth):
+    def update(self, curr_cash, curr_asset_val, curr_net_worth, mode):
         """
         Update the real-time plot with the current net worth, cash, and asset value.
         :param (float) curr_cash: Current cash
         :param (float) curr_asset_val: Current asset value
         :param (float) curr_net_worth: Current net worth
+        :param (str) mode: evaluating or training
         """
         # Append the current values to their respective lists
         self.net_worth_hist.append(curr_net_worth)
@@ -33,9 +34,9 @@ class RealTimeCashFlow:
 
         # Clear the current plot and update it with the new values
         self.ax.clear()
-        self.ax.plot(x, self.net_worth_hist, color='green', label='Net Worth')
-        self.ax.plot(x, self.asset_value_hist, color='blue', label='Asset Value')
-        self.ax.plot(x, self.cash_hist, color='black', label='Cash')
+        self.ax.plot(x, self.net_worth_hist, color='green' if mode == 'train' else 'g', label='Net Worth')
+        self.ax.plot(x, self.asset_value_hist, color='blue' if mode == 'train' else 'cian', label='Asset Value')
+        self.ax.plot(x, self.cash_hist, color='black' if mode == 'train' else 'gray', label='Cash')
 
         self.ax.legend()
         self.ax.set_xlabel("Time Step")

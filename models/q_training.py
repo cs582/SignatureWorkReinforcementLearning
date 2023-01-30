@@ -18,7 +18,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
     with torch.autograd.set_detect_anomaly(True):
         real_time_chart = RealTimeCashFlow()
 
-        train_history = {"metric_history": [], "avg_loss": []}
+        train_history = {"metric_history": [], "metric_history_eval": [], "avg_loss": []}
 
         # Initialize environment and portfolio
         environment = Environment(
@@ -77,8 +77,8 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
         # Initiate training
         starting_time = time.time()
         for episode in range(0, episodes):
-            # Start new episode
-            environment.start_game()
+            # Start new training episode
+            environment.start_game(mode='train')
             logger.info(f"Training episode {episode}")
 
             # Initialize the current state
@@ -110,7 +110,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
                 agent.store(cur_experience)
 
                 # Update the cash flow information to the real time chart
-                real_time_chart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1])
+                real_time_chart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1], mode='train')
 
                 # Update the current state
                 cur_state = next_image
@@ -146,6 +146,49 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
                 current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
                 file_path = f"{save_path}/{model_name}_{episode}_{current_time}.pt"
                 save_model(model=q, episode=episode, optimizer=optimizer, train_history=train_history, PATH=file_path)
+
+            #####################
+            #  EVALUATING LOOP  #
+            #####################
+            environment.start_game(mode='eval')
+
+            # Initialize the current state
+            logger.info("Initial Trade EVAL call")
+            rewards_eval = []
+
+            final_reward_eval = None
+            done_eval = False
+            current_trading_day_eval = 0
+
+            # Start the trading loop
+            while not done_eval:
+                logger.info(f"EVAL Trading Day {current_trading_day_eval+1}")
+
+                # Predict select random action
+                y_hat = q(cur_state)
+                cur_action = agent.get_action(y_hat, epsilon)
+
+                # Execute the action and get the reward and next state
+                cur_reward, next_image, done = environment.trade(cur_action)
+
+                # Update the cash flow information to the real time chart
+                real_time_chart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1], mode='eval')
+
+                # Store current evaluating reward
+                rewards_eval.append(cur_reward)
+                if done:
+                    final_reward_eval = environment.gross_roi_history[-1]
+
+                current_trading_day += 1
+
+            # Calculate the average loss and reward of the episode
+            average_rewd_eval = np.mean(rewards_eval)
+
+            # Print
+            print(f"EPISODE {episode}. Last Trading day: {current_trading_day-1}.\nFINAL REWARD: {final_reward_eval}. ELAPSED TIME: {time.time() - starting_time} seconds.")
+
+            # Append the final reward and average loss for this episode to the training history
+            train_history["metric_history_eval"].append(average_rewd_eval)
 
             # Reset the cash flow history for a new episode
             real_time_chart.reset()
