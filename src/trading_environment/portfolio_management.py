@@ -41,7 +41,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
 
     curr_total_net_worth = 0
     curr_total_units_value = 0
-    curr_total_cash = 0
+    curr_total_cash = 0 if cash_ptoken > 0.0 else cash
 
     # Perform the corresponding action for each token
     for i, token in enumerate(tokens):
