@@ -32,9 +32,12 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     tokens = [x for x, y in action_map.items() if y==1.0 or (token_portfolio[x] > 0.0 and y==0.0)]
     logger.debug(f"tokens to be traded: {tokens}")
 
+    # Calculate number of tokens to buy
+    n_tokens_to_buy = len([x for x, y in action_map.items() if y == 1.0])
+
     # Calculate cash per token
-    cash_ptoken = cash / len([x for x, y in action_map.items() if y == 1.0])
-    logger.debug(f"Cash per token: {cash_ptoken}")
+    cash_ptoken = (cash / n_tokens_to_buy) if n_tokens_to_buy > 0.0 else 0.0
+    logger.debug(f"Cash per token: {cash_ptoken} for {n_tokens_to_buy} tokens.")
 
     curr_total_net_worth = 0
     curr_total_units_value = 0
