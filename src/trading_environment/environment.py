@@ -158,9 +158,9 @@ class Environment:
         self.gas_prices_train = gas_prices[:training_days]
 
         # Create EVALUATION DATA
-        self.token_prices_train = token_prices[training_days:]
-        self.database_train = database[training_days:]
-        self.gas_prices_train = gas_prices[training_days:]
+        self.token_prices_eval = token_prices[training_days:]
+        self.database_eval = database[training_days:]
+        self.gas_prices_eval = gas_prices[training_days:]
 
     def trade(self, actions=None, mode=None):
         """Executes the corresponding trades on the current day's prices.
