@@ -34,8 +34,8 @@ class RealTimeCashFlow:
 
         # Clear the current plot and update it with the new values
         self.ax.clear()
-        self.ax.plot(x, self.net_worth_hist, color='green' if mode == 'train' else 'g', label='Net Worth')
-        self.ax.plot(x, self.asset_value_hist, color='blue' if mode == 'train' else 'cian', label='Asset Value')
+        self.ax.plot(x, self.net_worth_hist, color='green' if mode == 'train' else 'lime', label='Net Worth')
+        self.ax.plot(x, self.asset_value_hist, color='blue' if mode == 'train' else 'cyan', label='Asset Value')
         self.ax.plot(x, self.cash_hist, color='black' if mode == 'train' else 'gray', label='Cash')
 
         self.ax.legend()
