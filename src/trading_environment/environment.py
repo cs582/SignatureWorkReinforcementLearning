@@ -138,8 +138,8 @@ class Environment:
 
         # RETRIEVING WHOLE DATA
         token_prices = retrieve_token_prices(self.token_prices_address)
-        database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=self.token_prices, use_change=self.use_change, use_covariance=self.use_covariance, lookback=10)
-        trading_days = min(len(database), self.trading_days)
+        database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=token_prices, use_change=self.use_change, use_covariance=self.use_covariance, lookback=10)
+        self.trading_days = min(len(database), self.trading_days)
         token_prices = token_prices.iloc[-len(database):].to_dict("records")
         logger.info("Token Prices Successfully Loaded!!!")
         gas_prices = retrieve_online_gas_prices(self.gas_address) if self.gas_address is not None else retrieve_offline_gas_prices(avg_price=fake_avg_gas, std_deviation=fake_gas_std, n_trading_days=self.trading_days)
@@ -152,7 +152,7 @@ class Environment:
         images_preview(logger, database)
 
         # Create TRAINING DATA
-        training_days = int(trading_days * 0.75)
+        training_days = int(self.trading_days * 0.75)
         self.token_prices_train = token_prices[:training_days]
         self.database_train = database[:training_days]
         self.gas_prices_train = gas_prices[:training_days]
