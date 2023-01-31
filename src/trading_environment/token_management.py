@@ -35,10 +35,10 @@ def trade_token(cash, base_gas, gas_limit, priority_fee, available_units, token_
     available_cash = cash - gas_per_transaction
 
     # If price drops to 0, then sell
-    action = action if token_price != 0 else 0
+    action = action if token_price >= 0.0 else 0
 
     # If buy and there is available money, then buy
-    if action == 1 and available_cash > 0:
+    if action == 1 and cash > 0.0 and available_cash > 0.0:
         units_to_buy = available_cash/token_price if available_cash/token_price <= buy_limit else buy_limit
         cash_spent = units_to_buy * token_price + gas_per_transaction
 
