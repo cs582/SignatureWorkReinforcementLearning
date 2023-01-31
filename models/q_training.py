@@ -169,7 +169,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
                 cur_action = agent.get_action(y_hat, epsilon)
 
                 # Execute the action and get the reward and next state
-                cur_reward, next_image, done = environment.trade(cur_action)
+                cur_reward, next_image, done_eval = environment.trade(cur_action)
 
                 # Update the cash flow information to the real time chart
                 real_time_chart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1], mode='eval')
