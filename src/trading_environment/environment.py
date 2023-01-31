@@ -227,7 +227,8 @@ class Environment:
         n_days = len(self.net_worth_history)
 
         # Calculate sharpe ratio
-        sharpe = (n_days ** 0.5) * np.mean(self.daily_roi_history) / np.std(self.daily_roi_history)
+        stddev = np.std(self.daily_roi_history)
+        sharpe = (n_days ** 0.5) * np.mean(self.daily_roi_history) / (stddev if stddev != np.nan else 1.0)
         self.sharpe_history.append(float(sharpe))
         logger.info(f"Sharpe Ratio: {sharpe}")
 
