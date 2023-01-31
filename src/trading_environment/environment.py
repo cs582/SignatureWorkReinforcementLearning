@@ -228,9 +228,8 @@ class Environment:
 
         # Calculate sharpe ratio
         stddev = np.std(self.daily_roi_history)
-        mmean = np.mean(self.daily_roi_history)
-        logger.debug(f"std = {stddev} and mean = {mmean}")
-        sharpe = (n_days ** 0.5) * mmean / (stddev if stddev != np.nan else 1.0)
+        sharpe = (n_days ** 0.5) * np.mean(self.daily_roi_history)
+        sharpe = sharpe/stddev if stddev!=0.0 else sharpe
         self.sharpe_history.append(float(sharpe))
         logger.info(f"Sharpe Ratio: {sharpe}")
 
