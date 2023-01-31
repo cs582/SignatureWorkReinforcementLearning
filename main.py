@@ -30,7 +30,7 @@ parser.add_argument('-reward', type=str, default='roi', help="Reward metric to u
 parser.add_argument('-portfolio', type=int, default=1, help="Choose portfolio to use")
 
 parser.add_argument('-episodes', type=int, default=1000, help="Number of episodes to train.")
-parser.add_argument('-e', type=float, default=0.1, help="Epsilon to train.")
+parser.add_argument('-e', type=float, default=0.01, help="Epsilon to train.")
 parser.add_argument('-g', type=float, default=0.8, help="Gamma value for training.")
 parser.add_argument('-lr', type=float, default=1e-4, help="Learning rate.")
 parser.add_argument('-m', type=float, default=0.001, help="Momentum for training.")
