@@ -48,7 +48,7 @@ class DQN(nn.Module):
 
         self.relu = nn.ReLU(inplace=True)
 
-        self.softmax = nn.Softmax(dim=-1)
+        self.out = nn.Tanh()
 
     def forward(self, x):
         x = self.block1(x)
@@ -62,7 +62,7 @@ class DQN(nn.Module):
         x = self.fc3(x)
         x = self.fc4(x)
 
-        x = self.softmax(x)
+        x = self.out(x)
 
         return x
 

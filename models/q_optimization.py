@@ -24,7 +24,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
 
     # Predict the next moves
     logger.debug("Predict next moves")
-    y_hat = dqn(curr_images).gather(1, curr_actions)
+    y_hat = dqn(curr_images) #.gather(1, curr_actions)
     logger.debug(f"Next moves predicted: {y_hat}")
 
     # Calculate target value
@@ -46,7 +46,7 @@ def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer,
         # Single Stream Q-Learning
         target_output[mask_non_terminal_states] = gamma*target_output_values
 
-    target_output = torch.add(target_output, curr_rewards)
+    target_output = torch.add(target_output, curr_rewards*(2*(target_output > 0.0).double() - 1))
     logger.debug(f"Target output has been calculated!!!: {target_output}")
 
     # Calculate Loss
