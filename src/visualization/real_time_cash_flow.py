@@ -44,14 +44,14 @@ class RealTimeCashFlow:
 
         # Clear the current plot and update it with the new values
         self.ax.clear()
-        self.ax.plot(x_train, self.net_worth_hist_train, color='green', label='Net Worth')
-        self.ax.plot(x_train, self.asset_value_hist_train, color='blue', label='Asset Value')
-        self.ax.plot(x_train, self.cash_hist_train, color='black', label='Cash')
+        self.ax.plot(x_train, self.net_worth_hist_train, color='green', label='Net Worth train')
+        self.ax.plot(x_train, self.asset_value_hist_train, color='blue', label='Asset Value train')
+        self.ax.plot(x_train, self.cash_hist_train, color='black', label='Cash train')
 
         if len(x_test) > 0:
-            self.ax.plot(x_test, self.net_worth_hist_test, color='lime', label='Net Worth')
-            self.ax.plot(x_test, self.asset_value_hist_test, color='cyan', label='Asset Value')
-            self.ax.plot(x_test, self.cash_hist_test, color='gray', label='Cash')
+            self.ax.plot(x_test, self.net_worth_hist_test, color='lime', label='Net Worth eval')
+            self.ax.plot(x_test, self.asset_value_hist_test, color='cyan', label='Asset Value eval')
+            self.ax.plot(x_test, self.cash_hist_test, color='gray', label='Cash eval')
 
         self.ax.legend()
         self.ax.set_xlabel("Time Step")
