@@ -8,7 +8,7 @@ from datetime import datetime
 from logs.logs_handler import set_log_file
 from models.q_models import DQN, DuelingDQN
 from models.q_optimization import optimize_dqn
-from models.saving_tools import save_model
+from models.saving_tools import save_model, load_model
 from src.trading_environment.agent import Agent
 from src.trading_environment.environment import Environment
 from src.visualization.real_time_cash_flow import RealTimeCashFlow
@@ -72,25 +72,22 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilo
             q = DuelingDQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DuelingDQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
 
+        # Setting optimizer
+        optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
+
+        # Setting starting episode
+        starting_episode = 0
+
+        # If using a checkpoint, load from checkpoint
         if load_from_checkpoint:
-            # Get a list of all the saved models in the directory
-            model_files = [f for f in os.listdir(save_path) if (f.endswith(".pt") and model_name in f)]
-
-            # Get the latest saved model (based on modification time)
-            latest_model = max(model_files, key=lambda x: os.path.getmtime(f"{save_path}/" + x))
-
-            # Load latest model
-            q.load_state_dict(torch.load(f"{save_path}/{latest_model}"))
+            q, optimizer, train_history, starting_episode = load_model(save_path, model_name, q, optimizer)
 
         # Load weights from the q to the t model
         t.load_state_dict(q.state_dict())
 
-        # Setting optimizer
-        optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
-
         # Initiate training
         starting_time = time.time()
-        for episode in range(0, episodes):
+        for episode in range(starting_episode, episodes):
             # Set models in train mode
             q.train()
             t.train()
