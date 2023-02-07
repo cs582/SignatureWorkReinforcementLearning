@@ -12,9 +12,13 @@ class RealTimeCashFlow:
         self.fig = plt.figure(figsize=(15,8))
         self.ax = self.fig.add_subplot(111)
 
-        self.net_worth_hist = []
-        self.cash_hist = []
-        self.asset_value_hist = []
+        self.net_worth_hist_train = []
+        self.cash_hist_train = []
+        self.asset_value_hist_train = []
+
+        self.net_worth_hist_test = []
+        self.cash_hist_test = []
+        self.asset_value_hist_test = []
 
     def update(self, curr_cash, curr_asset_val, curr_net_worth, mode):
         """
@@ -25,18 +29,29 @@ class RealTimeCashFlow:
         :param (str) mode: evaluating or training
         """
         # Append the current values to their respective lists
-        self.net_worth_hist.append(curr_net_worth)
-        self.cash_hist.append(curr_cash)
-        self.asset_value_hist.append(curr_asset_val)
+        if mode == 'train':
+            self.net_worth_hist_train.append(curr_net_worth)
+            self.cash_hist_train.append(curr_cash)
+            self.asset_value_hist_train.append(curr_asset_val)
+        if mode == 'eval':
+            self.net_worth_hist_test.append(curr_net_worth)
+            self.cash_hist_test.append(curr_cash)
+            self.asset_value_hist_test.append(curr_asset_val)
 
         # Create an x-axis that ranges from 0 to the length of the net worth history
-        x = np.arange(0, len(self.net_worth_hist))
+        x_train = np.arange(0, len(self.net_worth_hist_train))
+        x_test = np.arange(0, len(self.net_worth_hist_test))
 
         # Clear the current plot and update it with the new values
         self.ax.clear()
-        self.ax.plot(x, self.net_worth_hist, color='green' if mode == 'train' else 'lime', label='Net Worth')
-        self.ax.plot(x, self.asset_value_hist, color='blue' if mode == 'train' else 'cyan', label='Asset Value')
-        self.ax.plot(x, self.cash_hist, color='black' if mode == 'train' else 'gray', label='Cash')
+        self.ax.plot(x_train, self.net_worth_hist_train, color='green', label='Net Worth')
+        self.ax.plot(x_train, self.asset_value_hist_train, color='blue', label='Asset Value')
+        self.ax.plot(x_train, self.cash_hist_train, color='black', label='Cash')
+
+        if len(x_test) > 0:
+            self.ax.plot(x_test, self.net_worth_hist_test, color='lime', label='Net Worth')
+            self.ax.plot(x_test, self.asset_value_hist_test, color='cyan', label='Asset Value')
+            self.ax.plot(x_test, self.cash_hist_test, color='gray', label='Cash')
 
         self.ax.legend()
         self.ax.set_xlabel("Time Step")
