@@ -49,6 +49,8 @@ parser.add_argument('-gl', type=int, default=21000, help="Gas limit in units.")
 parser.add_argument('-batch', type=int, default=128, help="Batch size.")
 parser.add_argument('-memory', type=int, default=10000, help="Replay memory size.")
 
+parser.add_argument('-us', type=bool, default=False, help="Load or not a saved model")
+
 args = parser.parse_args()
 
 if __name__ == "__main__":
@@ -87,6 +89,8 @@ if __name__ == "__main__":
     batch_size = args.batch
     memory_size = args.memory
 
+    load_from_checkpoint = args.us
+
     training_info = f"""
     Training {model_name} in portfolio {portfolio} with
         data_file = {data_file}
@@ -117,6 +121,8 @@ if __name__ == "__main__":
         
         batch_size = {batch_size}
         memory_size = {memory_size}
+        
+        load_from_checkpoint = {load_from_checkpoint}
     """
     print(training_info)
 
@@ -148,6 +154,7 @@ if __name__ == "__main__":
         gamma=gamma,
         device=device,
         reward_metric=reward_metric,
+        load_from_checkpoint=load_from_checkpoint
     )
 
     logger.info("Training Complete!")
