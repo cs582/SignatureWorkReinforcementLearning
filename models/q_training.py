@@ -15,7 +15,7 @@ from src.visualization.real_time_cash_flow import RealTimeCashFlow
 logger = logging.getLogger("reinforcement_learning/q_training.py")
 
 
-def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None):
+def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
     with torch.autograd.set_detect_anomaly(True):
         real_time_chart = RealTimeCashFlow()
 
@@ -150,8 +150,8 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilo
             if (episode+1) % 10 == 0:
                 logger.info(f"Saving model at episode {episode}")
                 current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-                file_path = f"{save_path}/{model_name}_{episode}_{current_time}.pt"
-                save_model(model=q, episode=episode, optimizer=optimizer, train_history=train_history, PATH=file_path)
+                filename = f"{model_name}_{episode}_{current_time}.pt"
+                save_model(model=q, episode=episode, optimizer=optimizer, train_history=train_history, PATH=save_path, filename=filename)
 
             #####################
             #  EVALUATING LOOP  #
