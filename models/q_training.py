@@ -15,7 +15,7 @@ from src.visualization.real_time_cash_flow import RealTimeCashFlow
 logger = logging.getLogger("reinforcement_learning/q_training.py")
 
 
-def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None):
+def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None):
     with torch.autograd.set_detect_anomaly(True):
         real_time_chart = RealTimeCashFlow()
 
@@ -51,7 +51,9 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
         agent = Agent(
             n_transactions=n_transactions,
             n_tokens=environment.n_defi_tokens,
-            memory_size=memory_size
+            memory_size=memory_size,
+            min_epsilon=min_epsilon,
+            decay_rate=decay_rate
         )
         logger.info("Agent Initialized")
 
@@ -104,7 +106,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
 
                 # Predict select random action
                 y_hat = q(cur_state)
-                cur_action = agent.get_action(y_hat, epsilon)
+                cur_action = agent.get_action(y_hat, epsilon, episode)
 
                 # Execute the action and get the reward and next state
                 cur_reward, next_image, done = environment.trade(cur_action)
@@ -171,7 +173,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
 
                 # Predict select random action
                 y_hat = q(cur_state)
-                cur_action = agent.get_action(y_hat, epsilon)
+                cur_action = agent.get_action(y_hat, min_epsilon, episode)
 
                 # Execute the action and get the reward and next state
                 cur_reward, next_image, done_eval = environment.trade(cur_action)

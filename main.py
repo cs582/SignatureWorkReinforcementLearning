@@ -33,6 +33,9 @@ parser.add_argument('-g', type=float, default=0.8, help="Gamma value for trainin
 parser.add_argument('-lr', type=float, default=1e-4, help="Learning rate.")
 parser.add_argument('-m', type=float, default=0.001, help="Momentum for training.")
 
+parser.add_argument('-me', type=float, default=1e-4, help="Minimum value epsilon can take.")
+parser.add_argument('-dr', type=float, default=0.995, help="Decay rate for epsilon each episode.")
+
 parser.add_argument('-tr', type=int, default=4, help="Number of transactions per day.")
 parser.add_argument('-d', type=int, default=1000, help="Number of trading days.")
 
@@ -68,6 +71,9 @@ if __name__ == "__main__":
     lr = args.lr
     momentum = args.m
 
+    min_epsilon = args.me
+    decay_rate = args.dr
+
     n_transactions = args.tr
     n_trading_days = args.d
 
@@ -95,6 +101,9 @@ if __name__ == "__main__":
         gamma = {gamma}
         lr = {lr}
         momentum = {momentum}
+        
+        min_epsilon = {min_epsilon}
+        decay_rate = {decay_rate}
         
         n_transactions = {n_transactions}
         n_trading_days = {n_trading_days}
@@ -132,6 +141,8 @@ if __name__ == "__main__":
         batch_size=batch_size,
         lr=lr,
         momentum=momentum,
+        decay_rate=decay_rate,
+        min_epsilon=min_epsilon,
         memory_size=memory_size,
         epsilon=epsilon,
         gamma=gamma,

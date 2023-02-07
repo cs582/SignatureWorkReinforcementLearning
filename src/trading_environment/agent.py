@@ -6,18 +6,22 @@ logger = logging.getLogger("trading_environment/agent")
 
 
 class Agent:
-    def __init__(self, n_transactions: int = 10, n_tokens: int = 10, memory_size: int = 1000):
+    def __init__(self, n_transactions: int = 10, n_tokens: int = 10, memory_size: int = 1000, min_epsilon: float = 1e-4, decay_rate: float = 0.99):
         """Initialize the Agent object.
         Args:
             n_transactions (int): Number of transactions to make per day.
             n_tokens (int): Number of tokens in the portfolio.
             memory_size (int): Maximum size of the experience replay memory.
+            min_epsilon (float): Minimum probability of choosing a random action.
+            decay_rate (float): Rate of decay of the epsilon probability.
         """
         logger.info("Initializing Agent")
         self.n_transactions = n_transactions
         self.n_tokens = n_tokens
         self.memory_size = memory_size
         self.memory = []
+        self.min_epsilon = min_epsilon
+        self.decay_rate = decay_rate
         self.actions = None
 
     def store(self, info):
@@ -43,15 +47,17 @@ class Agent:
         logger.debug(f"Sample of size {len(sample)} drawn from replay memory")
         return sample
 
-    def get_action(self, y_hat, epsilon):
+    def get_action(self, y_hat, epsilon, episode):
         """Choose an action to take based on the estimated Q-values from the DQN.
         Args:
             y_hat (torch.Tensor): Estimated Q-values from the DQN.
-            epsilon (float): Exploration rate, used to determine the probability of taking a random action.
+            epsilon (float): Probability of choosing a random action.
+            episode (int): Current training episode.
         Returns:
             numpy.ndarray: Binary array representing the action to take on each token.
         """
         logger.debug("Choosing action based on estimated Q-values")
+        epsilon = max(epsilon * (self.decay_rate ** episode), self.min_epsilon)
         if np.random.rand() < epsilon:
             # Choose random actions
             logger.debug(f"Choosing random action with epsilon {epsilon}")
