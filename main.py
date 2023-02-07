@@ -1,19 +1,17 @@
+import os
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
 from datetime import datetime
 
+
+from logs.logs_handler import set_log_file
 from models.q_training import train
 
 import logging
 import argparse
 
-logging.basicConfig(
-    filename='log.txt',
-    format='%(levelname)s %(asctime)s: %(name)s - %(message)s ',
-    datefmt='%m/%d/%Y %I:%M:%S %p',
-    level=logging.INFO
-)
+set_log_file('logs/log.txt')
 
 parser = argparse.ArgumentParser(
     prog='DQN Trainer',

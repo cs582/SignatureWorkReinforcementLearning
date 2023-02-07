@@ -1,9 +1,11 @@
+import os
 import numpy as np
 import torch
 import time
 import logging
 from datetime import datetime
 
+from logs.logs_handler import set_log_file
 from models.q_models import DQN, DuelingDQN
 from models.q_optimization import optimize_dqn
 from models.saving_tools import save_model
@@ -77,6 +79,9 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
         # Initiate training
         starting_time = time.time()
         for episode in range(0, episodes):
+            # Create new log file if it does not exist and set config
+            set_log_file(f'logs/log_episode_{episode}.txt')
+
             # Start new training episode
             environment.start_game(mode='train')
             logger.info(f"Training episode {episode}")
@@ -192,5 +197,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
 
             # Reset the cash flow history for a new episode
             real_time_chart.reset()
+
+        set_log_file(f'logs/log.txt')
 
         return q, train_history
