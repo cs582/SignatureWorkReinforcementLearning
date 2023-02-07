@@ -40,7 +40,7 @@ class RealTimeCashFlow:
 
         # Create an x-axis that ranges from 0 to the length of the net worth history
         x_train = np.arange(0, len(self.net_worth_hist_train))
-        x_test = np.arange(0, len(self.net_worth_hist_test))
+        x_test = np.arange(len(x_train), len(x_train) + len(self.net_worth_hist_test))
 
         # Clear the current plot and update it with the new values
         self.ax.clear()
