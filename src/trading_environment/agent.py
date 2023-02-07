@@ -60,6 +60,5 @@ class Agent:
         else:
             # Choose actions with the highest Q-values
             logger.debug("Choosing action with highest Q-values")
-            self.actions = np.zeros(self.n_tokens)
-            self.actions[(y_hat > 0.0).detach().cpu()] = 1
+            self.actions = (y_hat > 0.0).int().detach().cpu().reshape(1, -1)
         return self.actions
