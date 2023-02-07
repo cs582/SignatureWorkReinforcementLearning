@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import time
+import os
 import logging
 from datetime import datetime
 
@@ -71,6 +72,16 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilo
             q = DuelingDQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DuelingDQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
 
+        if load_from_checkpoint:
+            # Get a list of all the saved models in the directory
+            model_files = [f for f in os.listdir(save_path) if (f.endswith(".pt") and model_name in f)]
+
+            # Get the latest saved model (based on modification time)
+            latest_model = max(model_files, key=lambda x: os.path.getmtime(f"{save_path}/" + x))
+
+            # Load latest model
+            q.load_state_dict(torch.load(f"{save_path}/{latest_model}"))
+
         # Load weights from the q to the t model
         t.load_state_dict(q.state_dict())
 
@@ -80,6 +91,10 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilo
         # Initiate training
         starting_time = time.time()
         for episode in range(0, episodes):
+            # Set models in train mode
+            q.train()
+            t.train()
+
             # Create new log file if it does not exist and set config
             set_log_file(f'logs/log_episode_{episode}.txt')
 
@@ -157,6 +172,10 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilo
             #  EVALUATING LOOP  #
             #####################
             environment.start_game(mode='eval')
+
+            # Set models in evaluation mode
+            q.eval()
+            t.eval()
 
             # Initialize the current state
             logger.info("Initial Trade EVAL call")
