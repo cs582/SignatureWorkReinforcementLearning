@@ -67,6 +67,12 @@ class RealTimeCashFlow:
         Reset the time history of cashflow back.
         WARNING: This will erase the whole previous history.
         """
-        self.net_worth_hist = []
-        self.cash_hist = []
-        self.asset_value_hist = []
+        # Clear train history
+        self.net_worth_hist_train = []
+        self.cash_hist_train = []
+        self.asset_value_hist_train = []
+
+        # Clear test history
+        self.net_worth_hist_test = []
+        self.cash_hist_test = []
+        self.asset_value_hist_test = []
