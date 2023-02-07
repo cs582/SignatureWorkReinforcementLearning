@@ -158,6 +158,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, initial_ca
 
             # Initialize the current state
             logger.info("Initial Trade EVAL call")
+            _, cur_state, _ = environment.trade()
             rewards_eval = []
 
             final_reward_eval = None
