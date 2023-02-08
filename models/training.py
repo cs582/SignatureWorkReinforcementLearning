@@ -6,14 +6,14 @@ import logging
 from datetime import datetime
 
 from logs.logs_handler import set_log_file
-from models.q_models import DQN, DuelingDQN
-from models.q_optimization import optimize_dqn
+from models.models import DQN, DuelingDQN
+from models.optimization import optimize_dqn
 from models.saving_tools import save_model, load_model
 from src.trading_environment.agent import Agent
 from src.trading_environment.environment import Environment
 from src.visualization.real_time_cash_flow import RealTimeCashFlow
 
-logger = logging.getLogger("reinforcement_learning/q_training.py")
+logger = logging.getLogger("reinforcement_learning/training.py")
 
 
 def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):

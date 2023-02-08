@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 from logs.logs_handler import set_log_file
-from models.q_training import train
+from models.training import train
 
 import logging
 import argparse

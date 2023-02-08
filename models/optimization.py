@@ -2,7 +2,7 @@ import torch
 import logging
 import numpy as np
 
-logger = logging.getLogger("reinforcement_learning/q_optimization.py")
+logger = logging.getLogger("reinforcement_learning/optimization.py")
 
 
 def unpack_experience_batch(experience_batch, device):

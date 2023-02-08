@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import logging
 
-logger = logging.getLogger("reinforcement_learning/q_models.py")
+logger = logging.getLogger("reinforcement_learning/models.py")
 
 
 class Block(nn.Module):
