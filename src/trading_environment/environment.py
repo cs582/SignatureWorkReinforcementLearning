@@ -184,6 +184,8 @@ class Environment:
 
         assert self.n_defi_tokens==len(actions.reshape(-1,1)), f"actions don't match size expected {self.n_defi_tokens}, got {len(actions)}"
 
+        # TODO: Introduce a Policy PI to map my action to the defined set of assets to own
+
         # Sort indexes and get trading vector
         trading_vector = actions.tolist()
 

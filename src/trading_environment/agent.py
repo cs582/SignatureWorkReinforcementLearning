@@ -56,6 +56,7 @@ class Agent:
         Returns:
             numpy.ndarray: Binary array representing the action to take on each token.
         """
+        # TODO: Change Action Making to a discrete set of actions
         logger.debug("Choosing action based on estimated Q-values")
         epsilon = max(epsilon * (self.decay_rate ** episode), self.min_epsilon)
         if np.random.rand() < epsilon:
