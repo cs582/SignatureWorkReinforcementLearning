@@ -204,11 +204,12 @@ class Environment:
             buy_limit=self.buy_limit,
             sell_limit=self.sell_limit
         )
-        logger.info(f"""Completed Portfolio Management!!!
-        Current net worth = {self.curr_net_worth}
-        Current cash = {self.curr_cash}
-        Current tokens value = {self.curr_units_value}
-        Portfolio = {self.portfolio}
+        logger.info(f"""
+        Completed Portfolio Management!!!
+        Current net worth: {self.curr_net_worth}
+        Current cash: {self.curr_cash}
+        Current tokens value: {self.curr_units_value}
+        Portfolio: {self.portfolio}
         """)
 
         # Store the current net_worth, cash, and units value

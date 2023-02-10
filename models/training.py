@@ -15,7 +15,7 @@ from src.utils.visualization.real_time_cash_flow import RealTimeCashFlow
 logger = logging.getLogger("reinforcement_learning/training.py")
 
 
-def train(portfolio_to_use, n_trading_days, in_size, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
+def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
     with torch.autograd.set_detect_anomaly(True):
         real_time_chart = RealTimeCashFlow()
 
@@ -46,6 +46,9 @@ def train(portfolio_to_use, n_trading_days, in_size, n_tokens, min_epsilon, deca
 
         n_tokens = environment.n_defi_tokens if n_tokens is None else n_tokens
         logger.info(f"Number of DeFi tokens: {n_tokens}")
+
+        # Calculate in_size
+        in_size = (n_tokens, n_tokens)
 
         # Initialize replay memory D to capacity N
         agent = Agent(
