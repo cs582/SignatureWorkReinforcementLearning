@@ -44,11 +44,13 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
         environment.preload_prices()
         logger.info("Prices are Preloaded!")
 
+        # Calculate in-size and n_tokens
         n_tokens = environment.n_defi_tokens if n_tokens is None else n_tokens
-        logger.info(f"Number of DeFi tokens: {n_tokens}")
-
-        # Calculate in_size
         in_size = (n_tokens, n_tokens)
+        logger.info(f"Input size {in_size}. N tokens: {n_tokens}")
+
+        # Calculate out-size
+        out_size = len(environment.action_map.items())
 
         # Initialize replay memory D to capacity N
         agent = Agent(
@@ -66,12 +68,12 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
         # Set model to use
         if model_name == "Single_DQN" or model_name == "Double_DQN":
             logger.info("Using Single Stream DQN model")
-            q = DQN(in_size=in_size, n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
-            t = DQN(in_size=in_size, n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
+            q = DQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
+            t = DQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
         else:
             logger.info("Using Dueling model")
-            q = DuelingDQN(in_size=in_size, n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
-            t = DuelingDQN(in_size=in_size, n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
+            q = DuelingDQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
+            t = DuelingDQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
 
         # Setting optimizer
         optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
