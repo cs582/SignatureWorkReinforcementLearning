@@ -31,10 +31,13 @@ def optimize_dqn(dqn, target, batch, loss_fn, gamma, optimizer, device):
     logger.debug("Calculating target Q-values")
 
     # Compute the best action for the next state
-    actions = target(next_states).data.max(1)[1].view(1, len(batch))
+    actions = target(next_states).data.max(1)[1].view(1,-1)
 
     # Initialize a tensor to hold the Q-values
     target_q_val = torch.as_tensor(torch.zeros_like(torch.empty(len(batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
+    print("y_hat shape:", y_hat.shape)
+    print("target_holder shape:", target_q_val.shape)
+    print("y_target_non_terminal shape:", target(next_states).gather(1, actions).shape)
 
     # Use the predicted Q-values to update the target Q-values only for non-terminal states
     target_q_val[is_not_terminal] = gamma * target(next_states).gather(1, actions)

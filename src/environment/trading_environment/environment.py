@@ -140,10 +140,6 @@ class Environment:
             portfolio_options = json.load(file)[f"Portfolio {self.portfolio_to_use}"]
         self.tokens_in_portfolio = portfolio_options["tokens"]
         self.action_map = portfolio_options['action_map']
-        print("Portfolio:")
-        print(self.tokens_in_portfolio)
-        print("Action Map:")
-        print(self.action_map)
         self.n_defi_tokens = len(self.tokens_in_portfolio)
 
         # RETRIEVING WHOLE DATA
