@@ -34,21 +34,18 @@ def optimize_dqn(dqn, target, batch, loss_fn, gamma, optimizer, device):
     actions = target(next_states).data.max(1)[1].view(1, len(batch))
 
     # Initialize a tensor to hold the Q-values
-    target_q_vals = torch.as_tensor(torch.zeros_like(torch.empty(len(batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
-
-    # Compute the predicted Q-values
-    target_q_val_output = target(next_states)
+    target_q_val = torch.as_tensor(torch.zeros_like(torch.empty(len(batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
 
     # Use the predicted Q-values to update the target Q-values only for non-terminal states
-    target_q_val_output[is_not_terminal] = gamma * target_q_vals.gather(1, actions)
+    target_q_val[is_not_terminal] = gamma * target(next_states).gather(1, actions)
 
     # Add the immediate rewards to the target Q-values
-    target_output = torch.add(target_q_val_output, curr_rewards*(2*(target_q_val_output > 0.0).double() - 1))
-    logger.debug(f"Target Q-values calculated: {target_output}")
+    y_target = torch.add(target_q_val, curr_rewards*(2*(target_q_val > 0.0).double() - 1))
+    logger.debug(f"Target Q-values calculated: {y_target}")
 
     # Calculate Loss
     logger.debug("Calculate the loss")
-    loss = loss_fn(y_hat, target_output)
+    loss = loss_fn(y_hat, y_target)
     logger.debug("Loss has been calculated")
 
     # Compute gradient
