@@ -67,7 +67,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     tokens_to_buy = [k for k, v in token_portfolio.items() if token_portfolio[k] == 0 and k in tokens]
 
     # Selling
-    tokens_value_after_selling, cash_after_selling = performing_actions(
+    cash_after_selling, tokens_value_after_selling = performing_actions(
         cash=cash,
         tokens=tokens_to_sell,
         portfolio=token_portfolio,
@@ -81,7 +81,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     )
 
     # Buying
-    tokens_value_after_buying, cash_after_buying = performing_actions(
+    cash_after_buying, tokens_value_after_buying = performing_actions(
         cash=cash,
         tokens=tokens_to_buy,
         portfolio=token_portfolio,

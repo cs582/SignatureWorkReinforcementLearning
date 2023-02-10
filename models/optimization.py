@@ -1,6 +1,5 @@
 import torch
 import logging
-import numpy as np
 
 logger = logging.getLogger("reinforcement_learning/optimization.py")
 
@@ -34,7 +33,7 @@ def optimize_dqn(dqn, target, batch, loss_fn, gamma, optimizer, device):
     actions = target(next_states).data.max(1)[1].view(-1, 1)
 
     # Initialize a tensor to hold the Q-values
-    target_q_val = torch.as_tensor(torch.zeros_like(torch.empty(len(batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
+    target_q_val = torch.as_tensor(torch.zeros_like(torch.empty(len(batch), y_hat[0].shape, device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
 
     # Use the predicted Q-values to update the target Q-values only for non-terminal states
     target_q_val[is_not_terminal] = gamma * target(next_states).gather(1, actions)
