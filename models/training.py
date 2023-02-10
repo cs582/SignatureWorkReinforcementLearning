@@ -140,7 +140,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
                 experience_batch = agent.draw(batch_size=batch_size)
 
                 # Perform the optimization step
-                loss = optimize_dqn(dqn=q, target=t, experience_batch=experience_batch, loss_function=loss_function, gamma=gamma, optimizer=optimizer, device=device, model_name=model_name)
+                loss = optimize_dqn(dqn=q, target=t, batch=experience_batch, loss_fn=loss_function, gamma=gamma, optimizer=optimizer, device=device)
 
                 # Append the current loss and reward to history
                 episode_loss.append(loss)
