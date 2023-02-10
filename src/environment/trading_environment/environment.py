@@ -1,11 +1,12 @@
 import numpy as np
 import json
 
-from src.data_handling.retrieve_prices import retrieve_token_prices, retrieve_offline_gas_prices, retrieve_online_gas_prices
-from src.trading_environment import portfolio_management
-from src.data_handling.preprocessing import prepare_dataset
-from src.trading_environment.portfolio_management import portfolio_management
+from src.preprocessing.data_handling.retrieve_prices import retrieve_token_prices, retrieve_offline_gas_prices, retrieve_online_gas_prices
+from src.environment.trading_environment import portfolio_management
+from src.preprocessing.data_handling.preprocessing import prepare_dataset
+from src.environment.trading_environment.portfolio_management import portfolio_management
 from src.utils.logging_tools.dataframe_logs import prices_and_gas_preview, images_preview
+from src.utils.environment_tools import map_actions_to_tokens
 
 import torch
 import logging
@@ -92,7 +93,10 @@ class Environment:
         self.daily_roi_history = [0]
         self.gross_roi_history = [0]
         self.sharpe_history = [0]
+
         self.tokens_in_portfolio = None
+        self.action_map = None
+
         self.data_index = 0
         self.done = False
 
@@ -130,10 +134,12 @@ class Environment:
             fake_avg_gas (float, optional): The average gas price to create.
             fake_gas_std (float, optional): The standard deviation of the gas prices to create.
         """
+        # Load Prices
         logger.info("Preloading the prices")
-        with open('portfolios/portfolios.json', "r") as file:
-            portfolio_options = json.load(file)
-        self.tokens_in_portfolio = portfolio_options[f"Portfolio {self.portfolio_to_use}"]
+        with open(self.portfolio_json, "r") as file:
+            portfolio_options = json.load(file)[f"Portfolio {self.portfolio_to_use}"]
+        self.tokens_in_portfolio = portfolio_options["tokens"]
+        self.action_map = portfolio_options['action_map']
         self.n_defi_tokens = len(self.tokens_in_portfolio)
 
         # RETRIEVING WHOLE DATA
@@ -162,10 +168,10 @@ class Environment:
         self.database_eval = database[training_days:]
         self.gas_prices_eval = gas_prices[training_days:]
 
-    def trade(self, actions=None, mode=None):
+    def trade(self, action=None, mode=None):
         """Executes the corresponding trades on the current day's prices.
         :param mode: (str, optional) trading mode can be either training or evaluating
-        :param actions: (np.array, optional) the actions to take.
+        :param action: (int, required) the actions to take.
         :return: (float) reward for this trade.
         """
 
@@ -174,7 +180,7 @@ class Environment:
             self.done = True
             return None, None, self.done
 
-        if actions is None:
+        if action is None:
             logger.debug("Getting Initial State")
             self.curr_prices = self.token_prices[self.data_index]
             self.curr_prices_image = torch.from_numpy(np.array([self.database[self.data_index]])).to(self.device).double()
@@ -182,12 +188,8 @@ class Environment:
             self.data_index += 1
             return None, self.curr_prices_image, None
 
-        assert self.n_defi_tokens==len(actions.reshape(-1,1)), f"actions don't match size expected {self.n_defi_tokens}, got {len(actions)}"
-
-        # TODO: Introduce a Policy PI to map my action to the defined set of assets to own
-
-        # Sort indexes and get trading vector
-        trading_vector = actions.tolist()
+        # Sort indexes and get tokens to trade
+        tokens_to_trade = map_actions_to_tokens(action, self.action_map)
 
         # Performing portfolio management
         logger.info("Performing Portfolio Management")
@@ -198,14 +200,14 @@ class Environment:
             current_gas_price=self.curr_gas,
             priority_fee=self.priority_fee,
             gas_limit=self.gas_limit,
-            actions=trading_vector,
+            tokens=tokens_to_trade,
             buy_limit=self.buy_limit,
             sell_limit=self.sell_limit
         )
         logger.info(f"""Completed Portfolio Management!!!
         Current net worth = {self.curr_net_worth}
         Current cash = {self.curr_cash}
-        Current assets value = {self.curr_units_value}
+        Current tokens value = {self.curr_units_value}
         Portfolio = {self.portfolio}
         """)
 

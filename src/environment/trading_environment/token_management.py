@@ -62,7 +62,8 @@ def trade_token(cash, base_gas, gas_limit, priority_fee, available_units, token_
     # Calculate the total remaining tokens and total remaining cash for given token
     remaining_tokens = available_units + units_to_buy - units_to_sell
     remaining_cash = cash + cash_earned - cash_spent
+    remaining_units_value = token_price * remaining_tokens
 
     logger.info(f"remaining tokens: {remaining_tokens} with value {remaining_tokens*token_price}, remaining cash: {remaining_cash}")
 
-    return remaining_tokens, remaining_cash
+    return remaining_tokens, remaining_cash, remaining_units_value

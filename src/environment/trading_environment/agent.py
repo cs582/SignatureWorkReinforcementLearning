@@ -6,23 +6,21 @@ logger = logging.getLogger("trading_environment/agent")
 
 
 class Agent:
-    def __init__(self, n_transactions: int = 10, n_tokens: int = 10, memory_size: int = 1000, min_epsilon: float = 1e-4, decay_rate: float = 0.99):
+    def __init__(self, n_tokens: int = 10, memory_size: int = 1000, min_epsilon: float = 1e-4, decay_rate: float = 0.99):
         """Initialize the Agent object.
         Args:
-            n_transactions (int): Number of transactions to make per day.
             n_tokens (int): Number of tokens in the portfolio.
             memory_size (int): Maximum size of the experience replay memory.
             min_epsilon (float): Minimum probability of choosing a random action.
             decay_rate (float): Rate of decay of the epsilon probability.
         """
         logger.info("Initializing Agent")
-        self.n_transactions = n_transactions
         self.n_tokens = n_tokens
         self.memory_size = memory_size
         self.memory = []
         self.min_epsilon = min_epsilon
         self.decay_rate = decay_rate
-        self.actions = None
+        self.action = None
 
     def store(self, info):
         """Store the current experience in the replay memory.
@@ -56,17 +54,16 @@ class Agent:
         Returns:
             numpy.ndarray: Binary array representing the action to take on each token.
         """
-        # TODO: Change Action Making to a discrete set of actions
+        # Change Action Making to a discrete set of actions
         logger.debug("Choosing action based on estimated Q-values")
         epsilon = max(epsilon * (self.decay_rate ** episode), self.min_epsilon)
         if np.random.rand() < epsilon:
             # Choose random actions
             logger.debug(f"Choosing random action with epsilon {epsilon}")
-            self.actions = np.zeros(self.n_tokens)
-            self.actions[np.random.choice(self.n_tokens, self.n_tokens//4, replace=False)] = 1
+            self.action = np.random.randint(0, self.n_tokens)
         else:
             # Choose actions with the highest Q-values
             logger.debug("Choosing action with highest Q-values")
-            self.actions = (y_hat > 0.0).int().detach().cpu().numpy().reshape(-1,)
-        logger.debug(f"Actions preview: {self.actions}")
-        return self.actions
+            self.action = y_hat.argmax().item()
+        logger.debug(f"Action selected: {self.action}")
+        return self.action
