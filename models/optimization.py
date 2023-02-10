@@ -5,53 +5,50 @@ import numpy as np
 logger = logging.getLogger("reinforcement_learning/optimization.py")
 
 
-def unpack_experience_batch(experience_batch, device):
-    curr_images, curr_actions, curr_rewards, next_state_images = zip(*experience_batch)
-    curr_images = torch.stack([x[0] for x in curr_images]).to(device=device).double()
-    curr_actions = torch.from_numpy(np.stack(curr_actions)).to(device=device).long()
+def unpack_batch(batch, device):
+    curr_states, curr_actions, curr_rewards, next_states = zip(*batch)
+    curr_states = torch.stack([x[0] for x in curr_states]).to(device=device).double()
+    curr_actions = torch.tensor(curr_actions, device=device).view(-1, 1)
     curr_rewards = torch.tensor(curr_rewards, device=device).view(-1, 1)
-    next_state_images = torch.stack([x[0] for x in next_state_images if x is not None]).to(device=device).double()
-    mask_non_terminal_states = torch.BoolTensor([x is not None for x in next_state_images])
-    return curr_images, curr_actions, curr_rewards, next_state_images, mask_non_terminal_states
+    next_states = torch.stack([x[0] for x in next_states if x is not None]).to(device=device).double()
+    is_not_terminal = torch.BoolTensor([x is not None for x in next_states])
+    return curr_states, curr_actions, curr_rewards, next_states, is_not_terminal
 
 
-def optimize_dqn(dqn, target, experience_batch, loss_function, gamma, optimizer, device, model_name):
-    logger.info(f"Called {model_name} Optimizer")
+def optimize_dqn(dqn, target, batch, loss_fn, gamma, optimizer, device):
+    logger.info(f"Q-Learning Optimization")
 
-    logger.debug("Unpacking Batch")
-    curr_images, curr_actions, curr_rewards, next_state_images, mask_non_terminal_states = unpack_experience_batch(experience_batch, device)
+    logger.debug("Unpacking experience Batch")
+    curr_states, curr_actions, curr_rewards, next_states, is_not_terminal = unpack_batch(batch, device)
     logger.debug("Batch Unpacked")
 
-    # Predict the next moves
+    # Predict next Q-values
     logger.debug("Predict next moves")
-    y_hat = dqn(curr_images) #.gather(1, curr_actions)
+    y_hat = dqn(curr_states).gather(1, curr_actions)
     logger.debug(f"Next moves predicted: {y_hat}")
 
-    # Calculate target value
-    logger.debug("Calculate target input value")
+    # Calculate target Q-values
+    logger.debug("Calculating target Q-values")
 
-    if model_name in ["Dueling_DQN", "Double_DQN"]:
-        # Double Q-Learning
-        model_actions = target(next_state_images).data.max(1)[1]
-        model_actions = model_actions.view(1, len(experience_batch))
+    # Compute the best action for the next state
+    actions = target(next_states).data.max(1)[1].view(1, len(batch))
 
-    target_output = torch.as_tensor(torch.zeros_like(torch.empty(len(experience_batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
-    target_output_values = target(next_state_images)
+    # Initialize a tensor to hold the Q-values
+    target_q_vals = torch.as_tensor(torch.zeros_like(torch.empty(len(batch), y_hat.shape[1], device=device, dtype=torch.double), device=device, dtype=torch.double), dtype=torch.double, device=device)
 
-    if model_name in ["Dueling_DQN", "Double_DQN"]:
-        # Double Q-Learning
-        target_output[mask_non_terminal_states] = gamma*target_output_values.gather(1, model_actions)
+    # Compute the predicted Q-values
+    target_q_val_output = target(next_states)
 
-    if model_name == "Single_DQN":
-        # Single Stream Q-Learning
-        target_output[mask_non_terminal_states] = gamma*target_output_values
+    # Use the predicted Q-values to update the target Q-values only for non-terminal states
+    target_q_val_output[is_not_terminal] = gamma * target_q_vals.gather(1, actions)
 
-    target_output = torch.add(target_output, curr_rewards*(2*(target_output > 0.0).double() - 1))
-    logger.debug(f"Target output has been calculated!!!: {target_output}")
+    # Add the immediate rewards to the target Q-values
+    target_output = torch.add(target_q_val_output, curr_rewards*(2*(target_q_val_output > 0.0).double() - 1))
+    logger.debug(f"Target Q-values calculated: {target_output}")
 
     # Calculate Loss
     logger.debug("Calculate the loss")
-    loss = loss_function(y_hat, target_output)
+    loss = loss_fn(y_hat, target_output)
     logger.debug("Loss has been calculated")
 
     # Compute gradient

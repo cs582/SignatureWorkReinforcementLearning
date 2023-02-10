@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 import time
-import os
 import logging
 from datetime import datetime
 
@@ -9,14 +8,14 @@ from logs.logs_handler import set_log_file
 from models.models import DQN, DuelingDQN
 from models.optimization import optimize_dqn
 from models.saving_tools import save_model, load_model
-from src.trading_environment.agent import Agent
-from src.trading_environment.environment import Environment
-from src.visualization.real_time_cash_flow import RealTimeCashFlow
+from src.environment.trading_environment.agent import Agent
+from src.environment.trading_environment.environment import Environment
+from src.utils.visualization.real_time_cash_flow import RealTimeCashFlow
 
 logger = logging.getLogger("reinforcement_learning/training.py")
 
 
-def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
+def train(portfolio_to_use, n_trading_days, in_size, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
     with torch.autograd.set_detect_anomaly(True):
         real_time_chart = RealTimeCashFlow()
 
@@ -50,7 +49,6 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilo
 
         # Initialize replay memory D to capacity N
         agent = Agent(
-            n_transactions=n_transactions,
             n_tokens=environment.n_defi_tokens,
             memory_size=memory_size,
             min_epsilon=min_epsilon,
@@ -65,12 +63,12 @@ def train(portfolio_to_use, n_trading_days, n_tokens, n_transactions, min_epsilo
         # Set model to use
         if model_name == "Single_DQN" or model_name == "Double_DQN":
             logger.info("Using Single Stream DQN model")
-            q = DQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
-            t = DQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
+            q = DQN(in_size=in_size, n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
+            t = DQN(in_size=in_size, n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
         else:
             logger.info("Using Dueling model")
-            q = DuelingDQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
-            t = DuelingDQN(n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
+            q = DuelingDQN(in_size=in_size, n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
+            t = DuelingDQN(in_size=in_size, n_classes=n_tokens, inplace=set_inplace, bias=set_bias).double().to(device=device)
 
         # Setting optimizer
         optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)

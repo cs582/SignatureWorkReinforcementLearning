@@ -30,21 +30,19 @@ class Block(nn.Module):
 
 
 class DQN(nn.Module):
-    def __init__(self, n_classes, kernel=3, inplace=True, bias=False):
+    def __init__(self, in_size, n_classes, kernel=3, inplace=True, bias=False):
         super(DQN, self).__init__()
         logger.info("Constructing DQN")
 
-        # ResNet-20 backbone
-        self.n_classes = n_classes
-
+        # backbone
         self.block1 = Block(in_channels=1, out_channels=8, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         self.block2 = Block(in_channels=8, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         self.block3 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
 
-        self.fc1 = nn.Linear(n_classes * n_classes * 32, 128)
+        self.fc1 = nn.Linear(in_size[0] * in_size[1] * 32, 128)
         self.fc2 = nn.Linear(128, 128)
         self.fc3 = nn.Linear(128, 64)
-        self.fc4 = nn.Linear(64, self.n_classes)
+        self.fc4 = nn.Linear(64, n_classes)
 
         self.relu = nn.ReLU(inplace=True)
 
@@ -68,26 +66,26 @@ class DQN(nn.Module):
 
 
 class DuelingDQN(nn.Module):
-    def __init__(self, n_classes, kernel=3, inplace=True, bias=False):
+    def __init__(self, in_size, n_classes, kernel=3, inplace=True, bias=False):
         super(DuelingDQN, self).__init__()
         logger.info("Constructing Dueling DQN")
 
-        # ResNet-20 backbone
         self.n_classes = n_classes
 
+        # ResNet-20 backbone
         self.block1 = Block(in_channels=1, out_channels=8, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         self.block2 = Block(in_channels=8, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
         self.block3 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
 
-        self.val1 = nn.Linear(n_classes * n_classes * 32, 128)
+        self.val1 = nn.Linear(in_size[0] * in_size[1] * 32, 128)
         self.val2 = nn.Linear(128, 128)
         self.val3 = nn.Linear(128, 64)
         self.val4 = nn.Linear(64, 1)
 
-        self.adv1 = nn.Linear(n_classes * n_classes * 32, 256)
+        self.adv1 = nn.Linear(in_size[0] * in_size[1] * 32, 256)
         self.adv2 = nn.Linear(256, 128)
         self.adv3 = nn.Linear(128, 64)
-        self.adv4 = nn.Linear(64, self.n_classes)
+        self.adv4 = nn.Linear(64, n_classes)
 
         self.relu = nn.ReLU(inplace=True)
 
