@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from src.trading_environment.environment import Environment
+from src.environment.trading_environment.environment import Environment
 
 data_file = "data/raw//ClosePriceData_2022-10-01_to_2022-08-21.csv"
 portfolio_file = "portfolios//portfolios.json"
