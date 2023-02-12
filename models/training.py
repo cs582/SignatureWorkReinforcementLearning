@@ -50,7 +50,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
         logger.info(f"Input size {in_size}. N tokens: {n_tokens}")
 
         # Calculate out-size
-        out_size = len(environment.action_map.items())
+        out_size = len(environment.action_map.items())+1
 
         # Initialize replay memory D to capacity N
         agent = Agent(
@@ -74,6 +74,11 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
             logger.info("Using Dueling model")
             q = DuelingDQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DuelingDQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
+
+        logger.debug(f"""
+        Chosen Model {model_name}:
+        {q}
+        """)
 
         # Setting optimizer
         optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
