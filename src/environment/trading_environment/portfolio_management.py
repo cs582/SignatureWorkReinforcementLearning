@@ -59,12 +59,9 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     """
     logger.info(f"Calling Portfolio Management Function with {cash}USD available cash")
 
-    # Getting all tokens to buy and sell
+    # Getting all tokens to sell
     logger.debug("Getting the names of all tokens to sell")
     tokens_to_sell = [k for k, v in token_portfolio.items() if token_portfolio[k] > 0 and k not in tokens]
-
-    logger.debug("Getting the names of all tokens to buy")
-    tokens_to_buy = [k for k, v in token_portfolio.items() if token_portfolio[k] == 0 and k in tokens]
 
     # Selling
     cash_after_selling, tokens_value_after_selling = performing_actions(
@@ -79,6 +76,10 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
         buy_limit=buy_limit,
         sell_limit=sell_limit
     )
+
+    # buying
+    logger.debug("Getting the names of all tokens to buy")
+    tokens_to_buy = [k for k, v in token_portfolio.items() if token_portfolio[k] == 0 and k in tokens]
 
     # Buying
     cash_after_buying, tokens_value_after_buying = performing_actions(

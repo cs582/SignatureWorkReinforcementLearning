@@ -191,26 +191,36 @@ class Environment:
         # Sort indexes and get tokens to trade
         tokens_to_trade = map_actions_to_tokens(action, self.action_map)
 
-        # Performing portfolio management
-        logger.info("Performing Portfolio Management")
-        self.portfolio, self.curr_net_worth, self.curr_cash, self.curr_units_value = portfolio_management(
-            cash=self.curr_cash,
-            token_portfolio=self.portfolio,
-            current_token_prices=self.curr_prices,
-            current_gas_price=self.curr_gas,
-            priority_fee=self.priority_fee,
-            gas_limit=self.gas_limit,
-            tokens=tokens_to_trade,
-            buy_limit=self.buy_limit,
-            sell_limit=self.sell_limit
-        )
-        logger.info(f"""
-        Completed Portfolio Management!!!
-        Current net worth: {self.curr_net_worth}
-        Current cash: {self.curr_cash}
-        Current tokens value: {self.curr_units_value}
-        Portfolio: {self.portfolio}
-        """)
+        if len(tokens_to_trade) > 0:
+            # Performing portfolio management
+            logger.info("Performing Portfolio Management")
+            self.portfolio, self.curr_net_worth, self.curr_cash, self.curr_units_value = portfolio_management(
+                cash=self.curr_cash,
+                token_portfolio=self.portfolio,
+                current_token_prices=self.curr_prices,
+                current_gas_price=self.curr_gas,
+                priority_fee=self.priority_fee,
+                gas_limit=self.gas_limit,
+                tokens=tokens_to_trade,
+                buy_limit=self.buy_limit,
+                sell_limit=self.sell_limit
+            )
+            logger.info(f"""
+            Completed Portfolio Management!!!
+            Current net worth: {self.curr_net_worth}
+            Current cash: {self.curr_cash}
+            Current tokens value: {self.curr_units_value}
+            Portfolio: {self.portfolio}
+            """)
+
+        else:
+            logger.info(f"""
+            Holding Position or Neutral Position with
+            Current net worth: {self.curr_net_worth}
+            Current cash: {self.curr_cash}
+            Current tokens value: {self.curr_units_value}
+            Portfolio: {self.portfolio}
+            """)
 
         # Store the current net_worth, cash, and units value
         self.net_worth_history.append(self.curr_net_worth)
