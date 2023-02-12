@@ -6,13 +6,14 @@ logger = logging.getLogger("trading_environment/agent")
 
 
 class Agent:
-    def __init__(self, n_tokens: int = 10, memory_size: int = 1000, min_epsilon: float = 1e-4, decay_rate: float = 0.99):
+    def __init__(self, n_tokens: int = 10, memory_size: int = 1000, min_epsilon: float = 1e-4, decay_rate: float = 0.99, n_classes: int = 8):
         """Initialize the Agent object.
         Args:
             n_tokens (int): Number of tokens in the portfolio.
             memory_size (int): Maximum size of the experience replay memory.
             min_epsilon (float): Minimum probability of choosing a random action.
             decay_rate (float): Rate of decay of the epsilon probability.
+            n_classes (int): Number of classes in the environment
         """
         logger.info("Initializing Agent")
         self.n_tokens = n_tokens
@@ -20,6 +21,7 @@ class Agent:
         self.memory = []
         self.min_epsilon = min_epsilon
         self.decay_rate = decay_rate
+        self.n_classes = n_classes
         self.action = None
 
     def store(self, info):
@@ -60,7 +62,7 @@ class Agent:
         if np.random.rand() < epsilon:
             # Choose random actions
             logger.debug(f"Choosing random action with epsilon {epsilon}")
-            self.action = np.random.randint(0, self.n_tokens)
+            self.action = np.random.randint(0, self.n_classes)
         else:
             # Choose actions with the highest Q-values
             logger.debug("Choosing action with highest Q-values")
