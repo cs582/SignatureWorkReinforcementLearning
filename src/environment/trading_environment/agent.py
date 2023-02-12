@@ -64,6 +64,6 @@ class Agent:
         else:
             # Choose actions with the highest Q-values
             logger.debug("Choosing action with highest Q-values")
-            self.action = y_hat.argmax().item()
+            self.action = y_hat.data.max(1)[1].view(-1, 1).item()
         logger.debug(f"Action selected: {self.action}")
         return self.action
