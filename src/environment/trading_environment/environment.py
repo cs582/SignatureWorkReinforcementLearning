@@ -83,6 +83,7 @@ class Environment:
         self.curr_prices = None
         self.curr_gas = None
         self.curr_prices_image = None
+
         self.curr_cash = self.initial_cash
         self.curr_units_value = 0
         self.curr_net_worth = self.curr_cash
@@ -141,8 +142,7 @@ class Environment:
         self.tokens_in_portfolio = portfolio_options["tokens"]
         self.action_map = portfolio_options['action_map']
         self.n_defi_tokens = len(self.tokens_in_portfolio)
-        self.n_classes = len(self.action_map.keys())
-        print(f"action map: {self.action_map}. N Tokens : {self.n_defi_tokens}. Clases : {self.n_classes}")
+        self.n_classes = len(self.action_map.keys())+1
 
         # RETRIEVING WHOLE DATA
         token_prices = retrieve_token_prices(self.token_prices_address)

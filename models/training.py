@@ -50,7 +50,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
         logger.info(f"Input size {in_size}. N tokens: {n_tokens}")
 
         # Calculate out-size
-        out_size = len(environment.action_map.items())+1
+        out_size = environment.n_classes
 
         # Initialize replay memory D to capacity N
         agent = Agent(
