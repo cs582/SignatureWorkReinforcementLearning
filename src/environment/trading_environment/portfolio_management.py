@@ -61,7 +61,7 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     :param buy_limit:               --float, limit of units to buy per transaction
     :param sell_limit:              --float, limit of units to sell per transaction
     """
-    logger.info(f"Calling Portfolio Management Function with {cash}USD available cash")
+    logger.info(f"Calling Portfolio Management Function with {cash} USD available cash")
 
     # Holding/Neutral
     if len(tokens) == 0:
@@ -77,6 +77,8 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
         # If Holding Position just recalculate unit values
         if len(tokens_to_hold) > 0:
             logger.debug("Holding position")
+
+            # Recalculating new value for tokens
             cash_after_holding, tokens_value_after_holding = performing_actions(
                 cash=cash,
                 tokens=tokens_to_hold,
@@ -89,6 +91,10 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
                 buy_limit=buy_limit,
                 sell_limit=sell_limit
             )
+
+            # Calculating Net Worth
+            net_worth_after_holding = cash_after_holding + tokens_value_after_holding
+            return token_portfolio, net_worth_after_holding, cash_after_holding, tokens_value_after_holding
 
     # Getting all tokens to sell
     logger.debug("Getting the names of all tokens to sell")
