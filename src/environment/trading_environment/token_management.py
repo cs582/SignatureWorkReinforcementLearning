@@ -20,6 +20,9 @@ def trade_token(cash, base_gas, gas_limit, priority_fee, available_units, token_
     :param terminal_state:      --boolean, terminal state i.e. last day of trading
     :return:                    --tuple(float, float), returns the units and cash remaining, respectively
     """
+    # Just calculate new tokens value if hold
+    if action == 0:
+        return available_units, cash, available_units*token_price
 
     # Initialize cash flow variables
     units_to_buy = 0
@@ -47,7 +50,7 @@ def trade_token(cash, base_gas, gas_limit, priority_fee, available_units, token_
         logger.info(f"With a {gas_per_transaction} gas per unit. Total cash spent {cash_spent}.")
 
     # If sell and there is available tokens, then sell
-    if action == 0 and available_units > 0:
+    if action == -1 and available_units > 0:
         if gas_per_transaction > available_units*token_price:
             logger.info(f"gas price {gas_per_transaction} per transaction is too high compared to unit current value {available_units*token_price}")
 

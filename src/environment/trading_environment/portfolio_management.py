@@ -6,7 +6,11 @@ logger = logging.getLogger("trading_environment/portfolio_management")
 
 def performing_actions(cash, tokens, portfolio, gas_price, gas_limit, action_code, token_prices, priority_fee,
                        buy_limit, sell_limit):
-    action = 1 if action_code == "Buy" else -1
+    action = 0
+    if action_code == "Buy":
+        action = 1
+    if action_code == "Sell":
+        action = -1
 
     cash_p_token = cash / len(tokens) if action == 1 and len(tokens) > 0 else 0.0
 
@@ -58,6 +62,33 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     :param sell_limit:              --float, limit of units to sell per transaction
     """
     logger.info(f"Calling Portfolio Management Function with {cash}USD available cash")
+
+    # Holding/Neutral
+    if len(tokens) == 0:
+        logger.debug("Getting the names of all tokens to hold")
+        tokens_to_hold = [k for k, v in token_portfolio.items() if token_portfolio[k] == 0]
+        logger.debug(f"{tokens_to_hold}")
+
+        # If Neutral Position
+        if len(tokens_to_hold) == 0:
+            logger.debug("Neutral Position")
+            return token_portfolio, cash, 0, cash
+
+        # If Holding Position just recalculate unit values
+        if len(tokens_to_hold) > 0:
+            logger.debug("Holding position")
+            cash_after_holding, tokens_value_after_holding = performing_actions(
+                cash=cash,
+                tokens=tokens_to_hold,
+                portfolio=token_portfolio,
+                gas_price=current_gas_price,
+                gas_limit=gas_limit,
+                action_code="Hold",
+                token_prices=current_token_prices,
+                priority_fee=priority_fee,
+                buy_limit=buy_limit,
+                sell_limit=sell_limit
+            )
 
     # Getting all tokens to sell
     logger.debug("Getting the names of all tokens to sell")
