@@ -63,12 +63,12 @@ def portfolio_management(cash, token_portfolio, current_token_prices, current_ga
     """
     logger.info(f"Calling Portfolio Management Function with {cash} USD available cash")
 
-    # Holding/Neutral
-    if len(tokens) == 0:
-        logger.debug("Getting the names of all tokens to hold")
-        tokens_to_hold = [k for k, v in token_portfolio.items() if token_portfolio[k] == 0]
-        logger.debug(f"{tokens_to_hold}")
+    logger.debug("Getting the names of all tokens to hold")
+    tokens_to_hold = [k for k, v in token_portfolio.items() if token_portfolio[k] > 0 and k in tokens]
+    logger.debug(f"{tokens_to_hold}")
 
+    # Holding/Neutral
+    if len(tokens_to_hold) > 0:
         # If Neutral Position
         if len(tokens_to_hold) == 0:
             logger.debug("Neutral Position")
