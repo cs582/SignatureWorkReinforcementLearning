@@ -39,7 +39,7 @@ def optimize_dqn(dqn, target, batch, loss_fn, gamma, optimizer, device):
     target_q_val[is_not_terminal] = gamma * target(next_states).gather(1, actions)
 
     # Add the immediate rewards to the target Q-values
-    y_target = torch.add(target_q_val, curr_rewards*(2*(target_q_val > 0.0).double() - 1))
+    y_target = torch.add(target_q_val, curr_rewards)
     logger.debug(f"Target Q-values calculated: {y_target}")
 
     # Calculate Loss

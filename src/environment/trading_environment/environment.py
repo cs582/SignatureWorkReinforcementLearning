@@ -190,10 +190,10 @@ class Environment:
 
         # Sort indexes and get tokens to trade
         tokens_to_trade = map_actions_to_tokens(action, self.action_map)
+        logger.info(f"Tokens to trade: {tokens_to_trade}")
 
         if len(tokens_to_trade) > 0:
             # Performing portfolio management
-            logger.info("Performing Portfolio Management")
             self.portfolio, self.curr_net_worth, self.curr_cash, self.curr_units_value = portfolio_management(
                 cash=self.curr_cash,
                 token_portfolio=self.portfolio,
