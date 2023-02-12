@@ -141,6 +141,8 @@ class Environment:
         self.tokens_in_portfolio = portfolio_options["tokens"]
         self.action_map = portfolio_options['action_map']
         self.n_defi_tokens = len(self.tokens_in_portfolio)
+        self.n_classes = len(self.action_map.item())
+        print(f"action map: {self.action_map}. N Tokens : {self.n_defi_tokens}. Clases : {self.n_classes}")
 
         # RETRIEVING WHOLE DATA
         token_prices = retrieve_token_prices(self.token_prices_address)
