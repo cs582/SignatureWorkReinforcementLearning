@@ -9,7 +9,7 @@ from models.optimization import optimize_dqn
 from models.saving_tools import save_model, load_model
 from src.environment.trading_environment.agent import Agent
 from src.environment.trading_environment.environment import Environment
-from src.utils.visualization.real_time_cash_flow import TradingCycleCashFlow
+from src.utils.visualization.timeseries_cashflow import TradingCycleCashFlow
 
 
 logger = logging.getLogger("models/training.py")
