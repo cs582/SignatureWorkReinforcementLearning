@@ -13,7 +13,7 @@ def show_swap_position_orange(day, prev_action, curr_action, tokens_value, cash,
     tokens_value = np.round(tokens_value, 2)
     cash = np.round(cash, 2)
     net_worth = np.round(net_worth, 2)
-    message = f"\033[1;33mTD[{day}], ACTION[{curr_action}]: Swapped from group {prev_action} to group {curr_cation}\n"
+    message = f"\033[1;33mTD[{day}], ACTION[{curr_action}]: Swapped from group {prev_action}.\n"
     message += f"Current Cash {cash}; Current Units Value {tokens_value}. Net Worth {net_worth}.\033[0m"
     print(message)
 
