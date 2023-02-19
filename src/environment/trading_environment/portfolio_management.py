@@ -44,6 +44,6 @@ def portfolio_management(day, prev_action, curr_action, position, cash, token_po
     if position == "Neutral":
         logger.info("Neutral Position.")
         total_cash_remaining, total_tokens_value_remaining, curr_total_net_worth = neutral_position(day=day, cash=cash, curr_action=curr_action, portfolio=token_portfolio, token_prices=current_token_prices)
-    else:
-        logger.warn(f"UNKNOWN POSITION! AT DAY {day}. Previous Action: {prev_action} and Curr Action: {curr_action}")
+    if position not in ['Hold', 'Buy', 'Sell', 'Swap', 'Neutral']:
+        logger.warn(f"UNKNOWN POSITION! AT DAY {day}. Previous Action: {prev_action} and Curr Action: {curr_action}.")
     return token_portfolio, curr_total_net_worth, total_cash_remaining, total_tokens_value_remaining
