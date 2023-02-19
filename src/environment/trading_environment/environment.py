@@ -212,7 +212,10 @@ class Environment:
 
         # Performing portfolio management
         self.portfolio, self.curr_net_worth, self.curr_cash, self.curr_units_value = portfolio_management(
+            day=trading_day,
             position=position,
+            prev_action=self.prev_action,
+            curr_action=action,
             cash=self.curr_cash,
             token_portfolio=self.portfolio,
             current_token_prices=self.curr_prices,
