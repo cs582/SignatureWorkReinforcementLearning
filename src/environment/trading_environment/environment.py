@@ -205,7 +205,9 @@ class Environment:
 
         # Sort indexes and get tokens to trade
         tokens_to_buyorhold = map_actions_to_tokens(action, self.action_map)
+        tokens_to_sell = [tkn for tkn in self.tokens_in_portfolio if self.portfolio[tkn] > 0]
         logger.info(f"Tokens to buy/hold: {tokens_to_buyorhold}")
+        logger.info(f"Tokens to sell: {tokens_to_sell}")
 
         # Get the current position
         position = get_trading_action(prev_action=self.prev_action, curr_action=action)

@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger("trading_environment/portfolio_management")
 
 
-def portfolio_management(day, prev_action, curr_action, position, cash, token_portfolio, current_token_prices, current_gas_price, priority_fee, gas_limit, tokens_to_buyorhold):
+def portfolio_management(day, prev_action, curr_action, position, cash, token_portfolio, current_token_prices, current_gas_price, priority_fee, gas_limit, tokens_to_buyorhold, tokens_to_sell):
     """
     Manage the portfolio, buying and selling tokens depending on the actions given.
 
@@ -22,8 +22,6 @@ def portfolio_management(day, prev_action, curr_action, position, cash, token_po
     :param tokens_to_buyorhold:     --list, list of tokens to trade
     """
     logger.info(f"Calling Portfolio Management Function with {cash} USD available cash.")
-
-    tokens_to_sell = [tkn for tkn, ownd in token_portfolio.items() if token_portfolio[tkn] > 0]
 
     curr_total_net_worth = 0
     total_cash_remaining = 0
