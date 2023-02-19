@@ -15,9 +15,9 @@ from src.utils.visualization.timeseries_cashflow import TradingCycleCashFlow
 logger = logging.getLogger("models/training.py")
 
 
-def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
+def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
     with torch.autograd.set_detect_anomaly(True):
-        timeseries_linechart = TradingCycleCashFlow()
+        timeseries_linechart = TradingCycleCashFlow(saving_path=images_saving_path)
 
         train_history = {"metric_history": [], "metric_history_eval": [], "avg_loss": []}
 

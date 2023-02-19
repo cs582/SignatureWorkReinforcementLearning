@@ -57,86 +57,10 @@ parser.add_argument('-us', type=bool, default=False, help="Load or not a saved m
 args = parser.parse_args()
 
 
-def training_stage(model_name, portfolio, data_file, portfolios_json, device, loss_function, reward_metric, episodes, epsilon, gamma, lr, momentum, min_epsilon, decay_rate, n_trading_days, initial_cash, buy_limit, sell_limit, priority_fee, gas_limit, batch_size, memory_size, load_from_checkpoint):
-    training_info = f"""
-    Training {model_name} in portfolio {portfolio} with
-        data_file = {data_file}
-        portfolios_json = {portfolios_json}
-        
-        device = {"CPU" if not torch.cuda.is_available() else torch.cuda.get_device_name(device=device)}
-        loss_function = {loss_function}
-        reward_metric = {reward_metric}
-        
-        episodes = {episodes}
-        epsilon = {epsilon}
-        gamma = {gamma}
-        lr = {lr}
-        momentum = {momentum}
-        
-        min_epsilon = {min_epsilon}
-        decay_rate = {decay_rate}
-        
-        n_trading_days = {n_trading_days}
-        
-        initial_cash = {initial_cash}
-        buy_limit = {buy_limit}
-        sell_limit = {sell_limit}
-        
-        priority_fee = {priority_fee}
-        gas_limit = {gas_limit}
-        
-        batch_size = {batch_size}
-        memory_size = {memory_size}
-        
-        load_from_checkpoint = {load_from_checkpoint}
-    """
-    print(training_info)
-
-    logger.info(training_info)
-
-    q, history_dqn = train(
-        model_name=model_name,
-        token_prices_address=data_file,
-        save_path=save_path,
-        portfolio_json=portfolios_json,
-        portfolio_to_use=portfolio,
-        initial_cash=initial_cash,
-        n_trading_days=n_trading_days,
-        n_tokens=None,
-        priority_fee=priority_fee,
-        gas_limit=gas_limit,
-        loss_function=loss_function,
-        episodes=episodes,
-        batch_size=batch_size,
-        lr=lr,
-        momentum=momentum,
-        decay_rate=decay_rate,
-        min_epsilon=min_epsilon,
-        memory_size=memory_size,
-        epsilon=epsilon,
-        gamma=gamma,
-        device=device,
-        reward_metric=reward_metric,
-        load_from_checkpoint=load_from_checkpoint
-    )
-
-    logger.info("Training Complete!")
-    current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-
-    plt.title("Total reward history")
-    plt.plot(history_dqn["metric_history"], color="red")
-    plt.savefig(f"data/figures/{model_name}_reward_{current_time}.png")
-
-    plt.title("Total average loss")
-    plt.plot(history_dqn["avg_loss"], color="blue")
-    plt.savefig(f"data/figures/{model_name}_loss_{current_time}.png")
-
-    return q, history_dqn
-
-
 if __name__ == "__main__":
     data_file = "data/raw//ClosePriceData_2022-10-01_to_2022-08-21.csv"
     portfolios_json = "portfolios//portfolios.json"
+    images_saving_path = "data/figures/trading_cycles"
 
     portfolio = args.portfolio
 
@@ -171,4 +95,77 @@ if __name__ == "__main__":
 
     load_from_checkpoint = args.us
 
-    q, history_dqn = training_stage(model_name, portfolio, data_file, portfolios_json, device, loss_function, reward_metric, episodes, epsilon, gamma, lr, momentum, min_epsilon, decay_rate, n_trading_days, initial_cash, buy_limit, sell_limit, priority_fee, gas_limit, batch_size, memory_size, load_from_checkpoint)
+    training_info = f"""
+    Training {model_name} in portfolio {portfolio} with
+        data_file = {data_file}
+        portfolios_json = {portfolios_json}
+        images_saving_path = {images_saving_path}
+        
+        device = {"CPU" if not torch.cuda.is_available() else torch.cuda.get_device_name(device=device)}
+        loss_function = {loss_function}
+        reward_metric = {reward_metric}
+        
+        episodes = {episodes}
+        epsilon = {epsilon}
+        gamma = {gamma}
+        lr = {lr}
+        momentum = {momentum}
+        
+        min_epsilon = {min_epsilon}
+        decay_rate = {decay_rate}
+        
+        n_trading_days = {n_trading_days}
+        
+        initial_cash = {initial_cash}
+        buy_limit = {buy_limit}
+        sell_limit = {sell_limit}
+        
+        priority_fee = {priority_fee}
+        gas_limit = {gas_limit}
+        
+        batch_size = {batch_size}
+        memory_size = {memory_size}
+        
+        load_from_checkpoint = {load_from_checkpoint}
+    """
+    print(training_info)
+
+    logger.info(training_info)
+
+    q, history_dqn = train(
+        model_name=model_name,
+        images_saving_path=images_saving_path,
+        token_prices_address=data_file,
+        save_path=save_path,
+        portfolio_json=portfolios_json,
+        portfolio_to_use=portfolio,
+        initial_cash=initial_cash,
+        n_trading_days=n_trading_days,
+        n_tokens=None,
+        priority_fee=priority_fee,
+        gas_limit=gas_limit,
+        loss_function=loss_function,
+        episodes=episodes,
+        batch_size=batch_size,
+        lr=lr,
+        momentum=momentum,
+        decay_rate=decay_rate,
+        min_epsilon=min_epsilon,
+        memory_size=memory_size,
+        epsilon=epsilon,
+        gamma=gamma,
+        device=device,
+        reward_metric=reward_metric,
+        load_from_checkpoint=load_from_checkpoint
+    )
+
+    logger.info("Training Complete!")
+    current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+
+    plt.title("Total reward history")
+    plt.plot(history_dqn["metric_history"], color="red")
+    plt.savefig(f"data/figures/{model_name}_reward_{current_time}.png")
+
+    plt.title("Total average loss")
+    plt.plot(history_dqn["avg_loss"], color="blue")
+    plt.savefig(f"data/figures/{model_name}_loss_{current_time}.png")
