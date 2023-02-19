@@ -1,17 +1,7 @@
 from src.environment.trading_environment.token_management import trade_token
 import logging
 
-log_file = "logs/log_portfolio.txt"
-
-logging.basicConfig(
-    filename=log_file,
-    format='%(levelname)s %(asctime)s: %(name)s - %(message)s ',
-    datefmt='%m/%d/%Y %I:%M:%S %p',
-    level=logging.INFO
-)
-
 logger = logging.getLogger("trading_environment/portfolio_management")
-
 
 
 def performing_actions(cash, tokens, portfolio, gas_price, gas_limit, action_code, token_prices, priority_fee,

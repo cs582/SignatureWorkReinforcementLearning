@@ -11,17 +11,6 @@ from src.utils.environment_tools import map_actions_to_tokens
 import torch
 import logging
 
-log_file = "logs/log_environment.txt"
-
-logging.basicConfig(
-    filename=log_file,
-    format='%(levelname)s %(asctime)s: %(name)s - %(message)s ',
-    datefmt='%m/%d/%Y %I:%M:%S %p',
-    level=logging.INFO
-)
-
-logger = logging.getLogger("reinforcement_learning/training.py")
-
 logger = logging.getLogger("src/trading_environment/environment")
 
 

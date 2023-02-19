@@ -2,16 +2,8 @@ import numpy as np
 import logging
 import random
 
-log_file = "logs/log_agent.txt"
-
-logging.basicConfig(
-    filename=log_file,
-    format='%(levelname)s %(asctime)s: %(name)s - %(message)s ',
-    datefmt='%m/%d/%Y %I:%M:%S %p',
-    level=logging.INFO
-)
-
 logger = logging.getLogger("trading_environment/agent")
+
 
 class Agent:
     def __init__(self, n_tokens: int = 10, memory_size: int = 1000, min_epsilon: float = 1e-4, decay_rate: float = 0.99, n_classes: int = 8):

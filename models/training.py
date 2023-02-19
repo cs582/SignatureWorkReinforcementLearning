@@ -11,16 +11,8 @@ from src.environment.trading_environment.agent import Agent
 from src.environment.trading_environment.environment import Environment
 from src.utils.visualization.real_time_cash_flow import RealTimeCashFlow
 
-log_file = "logs/log.txt"
 
-logging.basicConfig(
-    filename=log_file,
-    format='%(levelname)s %(asctime)s: %(name)s - %(message)s ',
-    datefmt='%m/%d/%Y %I:%M:%S %p',
-    level=logging.INFO
-)
-
-logger = logging.getLogger("reinforcement_learning/training.py")
+logger = logging.getLogger("models/training.py")
 
 
 def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
