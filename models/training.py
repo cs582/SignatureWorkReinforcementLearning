@@ -9,7 +9,7 @@ from models.optimization import optimize_dqn
 from models.saving_tools import save_model, load_model
 from src.environment.trading_environment.agent import Agent
 from src.environment.trading_environment.environment import Environment
-from src.utils.visualization.real_time_cash_flow import RealTimeCashFlow
+from src.utils.visualization.real_time_cash_flow import TradingCycleCashFlow
 
 
 logger = logging.getLogger("models/training.py")
@@ -17,7 +17,7 @@ logger = logging.getLogger("models/training.py")
 
 def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
     with torch.autograd.set_detect_anomaly(True):
-        real_time_chart = RealTimeCashFlow()
+        timeseries_linechart = TradingCycleCashFlow()
 
         train_history = {"metric_history": [], "metric_history_eval": [], "avg_loss": []}
 
@@ -133,7 +133,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
                 agent.store(cur_experience)
 
                 # Update the cash flow information to the real time chart
-                real_time_chart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1], mode='train')
+                timeseries_linechart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1], mode='train')
 
                 # Update the current state
                 cur_state = next_image
@@ -200,7 +200,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
                 cur_reward, next_image, done_eval = environment.trade(cur_action)
 
                 # Update the cash flow information to the real time chart
-                real_time_chart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1], mode='eval')
+                timeseries_linechart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1], mode='eval')
 
                 # Store current evaluating reward
                 rewards_eval.append(cur_reward)
