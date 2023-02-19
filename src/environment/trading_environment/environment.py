@@ -224,7 +224,8 @@ class Environment:
             current_gas_price=self.curr_gas,
             priority_fee=self.priority_fee,
             gas_limit=self.gas_limit,
-            tokens_to_buyorhold=tokens_to_buyorhold
+            tokens_to_buyorhold=tokens_to_buyorhold,
+            tokens_to_sell=tokens_to_sell
         )
 
         logger.info(f"""
