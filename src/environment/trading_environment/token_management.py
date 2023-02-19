@@ -63,7 +63,7 @@ def buy_position(day, curr_action, cash, base_gas, gas_limit, priority_fee, toke
 
 
 def swap_position(day, prev_action, curr_action, cash, base_gas, gas_limit, priority_fee, tokens_to_sell, tokens_to_buy, portfolio, token_prices):
-    cash, tokens_value, net_worth, portfolio = sell_position(day=day, cash=cash, tokens=tokens_to_sell, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=portfolio, token_prices=token_prices)
-    cash, tokens_value, net_worth, portfolio = buy_position(day=day, cash=cash, tokens=tokens_to_buy, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=portfolio, token_prices=token_prices)
+    cash, tokens_value, net_worth, portfolio = sell_position(day=day, curr_action=curr_action, cash=cash, tokens=tokens_to_sell, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=portfolio, token_prices=token_prices)
+    cash, tokens_value, net_worth, portfolio = buy_position(day=day, curr_action=curr_action, cash=cash, tokens=tokens_to_buy, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=portfolio, token_prices=token_prices)
     show_swap_position_orange(day=day, prev_action=prev_action, curr_action=curr_action, tokens_value=tokens_value, cash=cash, net_worth=net_worth)
     return cash, tokens_value, net_worth, portfolio
