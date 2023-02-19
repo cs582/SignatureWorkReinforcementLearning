@@ -30,7 +30,7 @@ def show_sell_position_red(day, curr_action, tokens_value, cash, net_worth):
     tokens_value = np.round(tokens_value, 2)
     cash = np.round(cash, 2)
     net_worth = np.round(net_worth, 2)
-    message = f"\033[1;34mTD[{day}], ACTION[{curr_action}]: Sold units for {tokens_value}. Remaining Cash {cash}. Net Worth {net_worth}.\033[0m"
+    message = f"\033[1;34mTD[{day}], ACTION[{curr_action}]: Sold units for {tokens_value}. Cash Earned {cash}. Net Worth {net_worth}.\033[0m"
     print(message)
 
 

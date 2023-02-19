@@ -42,10 +42,9 @@ def buy_token(cash, base_gas, gas_limit, priority_fee, token_price, eth_price, t
     return 0, cash, 0
 
 
-def sell_token(cash, base_gas, gas_limit, priority_fee, available_tokens, token_price, eth_price, token_name=None, terminal_state=False):
+def sell_token(base_gas, gas_limit, priority_fee, available_tokens, token_price, eth_price, token_name=None, terminal_state=False):
     """
     Performs the corresponding transaction for the given token. It returns the remaining cash and tokens.
-    :param cash:                --float, cash available for transaction
     :param base_gas:            --float, base gas price in Gwei
     :param gas_limit:           --int, gas limit in units
     :param priority_fee:        --floar, priority fee (tip per transaction) in Gwei
@@ -65,7 +64,7 @@ def sell_token(cash, base_gas, gas_limit, priority_fee, available_tokens, token_
     if available_tokens > 0:
         if gas_per_transaction > available_tokens*token_price:
             logger.info(f"gas price {gas_per_transaction} per transaction is too high compared to unit current value {available_tokens*token_price}")
-            return available_tokens, cash, available_tokens*token_price
+            return available_tokens, 0, available_tokens*token_price
 
         if gas_per_transaction <= available_tokens*token_price:
             tokens_to_sell = available_tokens if available_tokens <= gas_limit else gas_limit
@@ -76,12 +75,11 @@ def sell_token(cash, base_gas, gas_limit, priority_fee, available_tokens, token_
             logger.info(f"With a {gas_per_transaction} gas per unit. Total cash earned {cash_earned}.")
 
             tokens_sold = tokens_to_sell
-            remaining_cash = cash + cash_earned
             remaining_tokens = available_tokens - tokens_sold
             remaining_tokens_value = remaining_tokens*token_price
 
-            logger.info(f"remaining tokens: {remaining_tokens} with value {remaining_tokens_value}, remaining cash: {remaining_cash}")
+            logger.info(f"Remaining tokens: {remaining_tokens} with value {remaining_tokens_value}. Cash earned: {cash_earned}")
 
-            return remaining_tokens, remaining_cash, remaining_tokens_value
+            return remaining_tokens, cash_earned, remaining_tokens_value
 
-    return available_tokens, cash, available_tokens*token_price
+    return available_tokens, 0, available_tokens*token_price

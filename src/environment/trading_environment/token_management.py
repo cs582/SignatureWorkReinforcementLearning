@@ -26,20 +26,21 @@ def hold_position(day, curr_action, cash, portfolio, token_prices):
 
 def sell_position(day, curr_action, cash, tokens, base_gas, gas_limit, priority_fee, portfolio, token_prices):
     tokens_new_value = 0
-    remaining_cash = 0
+    cash_earned = 0
     for token in tokens:
         token_price = token_prices[token]
         eth_price = token_prices['ETH']
         current_tokens = portfolio[token]
 
-        rem_tokens, cash, rem_tokens_value = sell_token(cash=cash, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, available_tokens=current_tokens, token_price=token_price, eth_price=eth_price, token_name=token)
+        rem_tokens, rem_cash, rem_tokens_value = sell_token(base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, available_tokens=current_tokens, token_price=token_price, eth_price=eth_price, token_name=token)
 
         portfolio[token] = rem_tokens
+        cash_earned += rem_cash
         tokens_new_value += rem_tokens_value
 
-    net_worth = remaining_cash + tokens_new_value
-    show_sell_position_red(day=day,  curr_action=curr_action, tokens_value=tokens_new_value, cash=remaining_cash, net_worth=net_worth)
-    return cash, tokens_new_value, net_worth, portfolio
+    net_worth = cash_earned + tokens_new_value
+    show_sell_position_red(day=day,  curr_action=curr_action, tokens_value=tokens_new_value, cash=cash_earned, net_worth=net_worth)
+    return cash_earned, tokens_new_value, net_worth, portfolio
 
 
 def buy_position(day, curr_action, cash, base_gas, gas_limit, priority_fee, tokens, portfolio, token_prices):
