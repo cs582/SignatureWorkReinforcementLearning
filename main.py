@@ -3,9 +3,6 @@ import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
 from datetime import datetime
-
-
-from src.preprocessing.data_handling.action_set import create
 from models.training import train
 
 import logging
@@ -106,8 +103,6 @@ def training_stage(model_name, portfolio, data_file, portfolios_json, device, lo
         initial_cash=initial_cash,
         n_trading_days=n_trading_days,
         n_tokens=None,
-        buy_limit=buy_limit,
-        sell_limit=sell_limit,
         priority_fee=priority_fee,
         gas_limit=gas_limit,
         loss_function=loss_function,

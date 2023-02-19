@@ -15,7 +15,7 @@ from src.utils.visualization.timeseries_cashflow import TradingCycleCashFlow
 logger = logging.getLogger("models/training.py")
 
 
-def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, buy_limit, sell_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
+def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
     with torch.autograd.set_detect_anomaly(True):
         timeseries_linechart = TradingCycleCashFlow()
 
@@ -30,8 +30,6 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
             portfolio_json=portfolio_json,
             portfolio_to_use=portfolio_to_use,
             initial_cash=initial_cash,
-            buy_limit=buy_limit,
-            sell_limit=sell_limit,
             priority_fee=priority_fee,
             use_change=use_change,
             use_covariance=use_covariance,
@@ -126,7 +124,7 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
                 cur_action = agent.get_action(y_hat, epsilon, episode)
 
                 # Execute the action and get the reward and next state
-                cur_reward, next_image, done = environment.trade(cur_action)
+                cur_reward, next_image, done = environment.trade(trading_day=current_trading_day, action=cur_action)
 
                 # Store the experience in memory
                 cur_experience = (cur_state, cur_action, cur_reward, next_image)

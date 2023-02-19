@@ -8,11 +8,25 @@ from src.environment.trading_environment.portfolio_management import portfolio_m
 from src.utils.logging_tools.dataframe_logs import prices_and_gas_preview, images_preview
 from src.utils.environment_tools import map_actions_to_tokens
 
+
 import torch
 import logging
 
 logger = logging.getLogger("src/trading_environment/environment")
 
+
+def get_trading_action(prev_action, curr_action):
+    if (prev_action==curr_action and prev_action==0) or (prev_action==-1 and curr_action==0):
+        return "Neutral"
+    if prev_action==curr_action and prev_action>=1:
+        return "Hold"
+    if (prev_action!=curr_action and prev_action==0) or (prev_action==-1 and curr_action>=1):
+        return "Buy"
+    if prev_action!=curr_action and prev_action>=1:
+        return "Swap"
+    if prev_action!=curr_action and curr_action==0:
+        return "Sell"
+    return "Unknown"
 
 class Environment:
     def __init__(
@@ -21,8 +35,6 @@ class Environment:
             token_prices_address: str = None,
             gas_address: str = None,
             initial_cash: float = 100000.0,
-            buy_limit: float = 100000.0,
-            sell_limit: float = 1000000.0,
             priority_fee: float = 2.0,
             gas_limit: int = 21000,
             use_change: bool = True,
@@ -31,6 +43,7 @@ class Environment:
             portfolio_to_use: int = 1,
             reward_metric: str = "sharpe",
             device: str = None,
+            prev_action: int = -1
     ):
         """Initialize the trading environment.
         Args:
@@ -38,8 +51,6 @@ class Environment:
             token_prices_address (str, optional): The address of the file containing token prices. Defaults to None.
             gas_address (str, optional): The address of the file containing gas prices. Defaults to None.
             initial_cash (float, optional): The initial cash endowment of the agent. Defaults to 100000.0.
-            buy_limit (float, optional): The maximum amount of cash that can be used to buy tokens. Defaults to 100000.0.
-            sell_limit (float, optional): The maximum number of tokens that can be sold. Defaults to 1000000.0.
             priority_fee (float, optional): The fee applied to priority trades. Defaults to 2.0.
             gas_limit (int, optional): The maximum amount of gas that can be used in trades. Defaults to 21000.
             use_change (bool, optional): Whether to use the change in token prices as a feature. Defaults to True.
@@ -48,14 +59,13 @@ class Environment:
             portfolio_to_use (int, optional): The index of the portfolio to use. Defaults to 1.
             reward_metric (str, optional): The metric used to evaluate the agent's performance. Defaults to "sharpe".
             device (str, optional): The device to use for computations. Defaults to None.
+            curr_action (int, optional): Initial default action, must always be -1 for training or eval.
         """
         logger.info("Initializing the trading environment")
         self.trading_days = trading_days
         self.token_prices_address = token_prices_address
         self.gas_address = gas_address
         self.initial_cash = initial_cash
-        self.buy_limit = buy_limit
-        self.sell_limit = sell_limit
         self.priority_fee = priority_fee
         self.gas_limit = gas_limit
         self.use_change = use_change
@@ -101,6 +111,8 @@ class Environment:
         self.data_index = 0
         self.done = False
 
+        self.prev_action = prev_action
+
     def start_game(self, mode=None):
         """Resets the environment to its initial state.
         :param mode (str) set to train for training or eval to evaluate
@@ -112,6 +124,7 @@ class Environment:
         self.sharpe_history = [0]
         self.curr_prices_image = None
         self.curr_gas = None
+        self.prev_action = -1
         self.data_index = 0
         self.curr_cash = self.initial_cash
         self.curr_units_value = 0
@@ -170,7 +183,7 @@ class Environment:
         self.database_eval = database[training_days:]
         self.gas_prices_eval = gas_prices[training_days:]
 
-    def trade(self, action=None, mode=None):
+    def trade(self, trading_day=0, action=None, mode=None):
         """Executes the corresponding trades on the current day's prices.
         :param mode: (str, optional) trading mode can be either training or evaluating
         :param action: (int, required) the actions to take.
@@ -191,21 +204,24 @@ class Environment:
             return None, self.curr_prices_image, None
 
         # Sort indexes and get tokens to trade
-        tokens_to_trade = map_actions_to_tokens(action, self.action_map)
-        logger.info(f"Tokens to trade: {tokens_to_trade}")
+        tokens_to_buyorhold = map_actions_to_tokens(action, self.action_map)
+        logger.info(f"Tokens to buy/hold: {tokens_to_buyorhold}")
+
+        # Get the current position
+        position = get_trading_action(prev_action=self.prev_action, curr_action=action)
 
         # Performing portfolio management
         self.portfolio, self.curr_net_worth, self.curr_cash, self.curr_units_value = portfolio_management(
+            position=position,
             cash=self.curr_cash,
             token_portfolio=self.portfolio,
             current_token_prices=self.curr_prices,
             current_gas_price=self.curr_gas,
             priority_fee=self.priority_fee,
             gas_limit=self.gas_limit,
-            tokens=tokens_to_trade,
-            buy_limit=self.buy_limit,
-            sell_limit=self.sell_limit
+            tokens_to_buyorhold=tokens_to_buyorhold
         )
+
         logger.info(f"""
         Completed Portfolio Management!!!
         Current net worth: {self.curr_net_worth}
@@ -236,7 +252,6 @@ class Environment:
         # Calculate sharpe ratio
         r_std = np.std(self.daily_roi_history)
         r_mean = (n_days ** 0.5) * np.mean(self.daily_roi_history)
-        #r_mean = np.mean(self.daily_roi_history)
         sharpe = r_mean/r_std if r_std!=0.0 else r_mean
         self.sharpe_history.append(float(sharpe))
         logger.info(f"Sharpe Ratio: {sharpe}")
@@ -254,5 +269,7 @@ class Environment:
         # Check if done
         done = (self.curr_net_worth <= self.initial_cash*0.25) or (self.data_index >= len(self.database)-1)
         logger.info(f"Reinforcement Learning Reward: {self.reward_metric} = {reward}. Done? {done}")
+
+        self.prev_action = action
 
         return reward, self.curr_prices_image, done

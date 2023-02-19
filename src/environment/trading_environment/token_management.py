@@ -1,72 +1,69 @@
+from src.environment.utils import buy_token, sell_token
+from src.utils.visualization.custom_messages import show_hold_position_blue, show_buy_position_green, show_sell_position_red, show_neutral_position_gray, show_swap_position_orange
+
 import logging
 
 logger = logging.getLogger("trading_environment/token_management")
 
 
-def trade_token(cash, base_gas, gas_limit, priority_fee, available_units, token_price, eth_price, action, sell_limit, buy_limit, token_name=None, terminal_state=False):
-    """
-    Performs the corresponding transaction for the given token. It returns the remaining cash and tokens.
-    :param cash:                --float, cash available for transaction
-    :param base_gas:            --float, base gas price in Gwei
-    :param gas_limit:           --int, gas limit in units
-    :param priority_fee:        --floar, priority fee (tip per transaction) in Gwei
-    :param available_units:     --float, units available of the given token
-    :param token_price:         --float, current price of the given token
-    :param eth_price:           --float, current price in USD of ETH
-    :param action:              --int, action to take, it can be one of 1 (buy), 0 (nothing), -1 (sell)
-    :param sell_limit:          --float, limit of units to sell per transaction
-    :param buy_limit:           --float, limit of units to buy per transaction
-    :param token_name:          --string, name of the traded token
-    :param terminal_state:      --boolean, terminal state i.e. last day of trading
-    :return:                    --tuple(float, float), returns the units and cash remaining, respectively
-    """
-    # Just calculate new tokens value if hold
-    if action == 0:
-        return available_units, cash, available_units*token_price
+def neutral_position(day, cash, portfolio, token_prices):
+    tokens_new_value = 0
+    for token in portfolio.keys():
+        tokens_new_value += token_prices[token]
+    net_worth = cash + tokens_new_value
+    show_neutral_position_gray(day=day, tokens_value=tokens_new_value, cash=cash, net_worth=net_worth)
+    return cash, tokens_new_value, net_worth
 
-    # Initialize cash flow variables
-    units_to_buy = 0
-    units_to_sell = 0
-    cash_earned = 0
-    cash_spent = 0
 
-    # Calculate the gas price per unit in ETH
-    gas_per_transaction_eth = 1e-9 * gas_limit * (base_gas + priority_fee)
-    gas_per_transaction = gas_per_transaction_eth * eth_price
+def hold_position(day, cash, portfolio, token_prices):
+    tokens_new_value = 0
+    for token in portfolio.keys():
+        tokens_new_value += token_prices[token]
+    net_worth = cash + tokens_new_value
+    show_hold_position_blue(day=day, tokens_value=tokens_new_value, cash=cash, net_worth=net_worth)
+    return cash, tokens_new_value, net_worth
 
-    # Adjust available cash after expected transaction fee
-    available_cash = cash - gas_per_transaction
 
-    # If price drops to 0, then sell
-    action = action if token_price >= 0.0 else 0
+def sell_position(day, cash, tokens, base_gas, gas_limit, priority_fee, portfolio, token_prices):
+    tokens_new_value = 0
+    remaining_cash = 0
+    for token in tokens:
+        token_price = token_prices[token]
+        eth_price = token_prices['ETH']
+        current_tokens = portfolio[token]
 
-    # If buy and there is available money, then buy
-    if action == 1 and cash > 0.0 and available_cash > 0.0:
-        units_to_buy = available_cash/token_price if available_cash/token_price <= buy_limit else buy_limit
-        cash_spent = units_to_buy * token_price + gas_per_transaction
+        rem_tokens, cash, rem_tokens_value = sell_token(cash=cash, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, available_tokens=current_tokens, token_price=token_price, eth_price=eth_price, token_name=token)
 
-        logger.info(f"Token: {token_name}, close price: {token_price}")
-        logger.info(f"Bought {units_to_buy} units at price {token_price} per unit after gas.")
-        logger.info(f"With a {gas_per_transaction} gas per unit. Total cash spent {cash_spent}.")
+        portfolio[token] = rem_tokens
+        tokens_new_value += rem_tokens_value
 
-    # If sell and there is available tokens, then sell
-    if action == -1 and available_units > 0:
-        if gas_per_transaction > available_units*token_price:
-            logger.info(f"gas price {gas_per_transaction} per transaction is too high compared to unit current value {available_units*token_price}")
+    net_worth = remaining_cash + tokens_new_value
+    show_sell_position_red(day=day, tokens_value=tokens_new_value, cash=remaining_cash, net_worth=net_worth)
+    return cash, tokens_new_value, net_worth, portfolio
 
-        if gas_per_transaction <= available_units*token_price:
-            units_to_sell = available_units if available_units <= sell_limit else sell_limit
-            cash_earned = units_to_sell * token_price - gas_per_transaction
 
-            logger.info(f"Token {token_name}, close price: {token_price}")
-            logger.info(f"Sold {units_to_sell} units at price {token_price} per unit after gas")
-            logger.info(f"With a {gas_per_transaction} gas per unit. Total cash earned {cash_earned}.")
+def buy_position(day, cash, base_gas, gas_limit, priority_fee, tokens, portfolio, token_prices):
+    tokens_new_value = 0
+    remaining_cash = 0
+    cash_per_token = cash / len(tokens)
+    for token in tokens:
+        token_price = token_prices[token]
+        eth_price = token_prices['ETH']
 
-    # Calculate the total remaining tokens and total remaining cash for given token
-    remaining_tokens = available_units + units_to_buy - units_to_sell
-    remaining_cash = cash + cash_earned - cash_spent
-    remaining_units_value = token_price * remaining_tokens
+        tokens_bought, rem_cash, tokens_bought_value = buy_token(cash=cash_per_token, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, token_price=token_price, eth_price=eth_price, token_name=token)
 
-    logger.info(f"remaining tokens: {remaining_tokens} with value {remaining_tokens*token_price}, remaining cash: {remaining_cash}")
+        portfolio[token] = tokens_bought
+        remaining_cash += rem_cash
+        tokens_new_value += tokens_bought_value
 
-    return remaining_tokens, remaining_cash, remaining_units_value
+    net_worth = remaining_cash + tokens_new_value
+    show_buy_position_green(day=day, tokens_value=tokens_new_value, cash=remaining_cash, net_worth=net_worth)
+
+    return remaining_cash, tokens_new_value, net_worth, portfolio
+
+
+def swap_position(day, prev_action, curr_action, cash, base_gas, gas_limit, priority_fee, tokens_to_sell, tokens_to_buy, portfolio, token_prices):
+    cash, tokens_value, net_worth, portfolio = sell_position(day=day, cash=cash, tokens=tokens_to_sell, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=portfolio, token_prices=token_prices)
+    cash, tokens_value, net_worth, portfolio = buy_position(day=day, cash=cash, tokens=tokens_to_buy, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=portfolio, token_prices=token_prices)
+    show_swap_position_orange(day=day, prev_action=prev_action, curr_cation=curr_action, tokens_value=tokens_value, cash=cash, net_worth=net_worth)
+    return cash, tokens_value, net_worth, portfolio
