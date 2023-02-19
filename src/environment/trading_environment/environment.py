@@ -18,13 +18,13 @@ logger = logging.getLogger("src/trading_environment/environment")
 def get_trading_action(prev_action, curr_action):
     if (prev_action==curr_action and prev_action==0) or (prev_action==-1 and curr_action==0):
         return "Neutral"
-    if prev_action==curr_action and prev_action>=1:
+    elif prev_action==curr_action and prev_action>=1:
         return "Hold"
-    if (prev_action!=curr_action and prev_action==0) or (prev_action==-1 and curr_action>=1):
+    elif (prev_action!=curr_action and prev_action==0) or (prev_action==-1 and curr_action>=1):
         return "Buy"
-    if prev_action!=curr_action and prev_action>=1:
+    elif (prev_action!=curr_action and prev_action>=1) and curr_action>=1:
         return "Swap"
-    if prev_action!=curr_action and curr_action==0:
+    elif prev_action!=curr_action and curr_action==0:
         return "Sell"
     return "Unknown"
 
