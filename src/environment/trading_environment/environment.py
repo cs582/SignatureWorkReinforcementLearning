@@ -11,6 +11,17 @@ from src.utils.environment_tools import map_actions_to_tokens
 import torch
 import logging
 
+log_file = "logs/log_environment.txt"
+
+logging.basicConfig(
+    filename=log_file,
+    format='%(levelname)s %(asctime)s: %(name)s - %(message)s ',
+    datefmt='%m/%d/%Y %I:%M:%S %p',
+    level=logging.INFO
+)
+
+logger = logging.getLogger("reinforcement_learning/training.py")
+
 logger = logging.getLogger("src/trading_environment/environment")
 
 
@@ -235,8 +246,8 @@ class Environment:
 
         # Calculate sharpe ratio
         r_std = np.std(self.daily_roi_history)
-        #r_mean = (n_days ** 0.5) * np.mean(self.daily_roi_history)
-        r_mean = np.mean(self.daily_roi_history)
+        r_mean = (n_days ** 0.5) * np.mean(self.daily_roi_history)
+        #r_mean = np.mean(self.daily_roi_history)
         sharpe = r_mean/r_std if r_std!=0.0 else r_mean
         self.sharpe_history.append(float(sharpe))
         logger.info(f"Sharpe Ratio: {sharpe}")

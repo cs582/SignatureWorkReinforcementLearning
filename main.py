@@ -6,13 +6,19 @@ from datetime import datetime
 
 
 from src.preprocessing.data_handling.action_set import create
-from logs.logs_handler import set_log_file
 from models.training import train
 
 import logging
 import argparse
 
-set_log_file('logs/log.txt')
+log_file = "logs/log.txt"
+
+logging.basicConfig(
+    filename=log_file,
+    format='%(levelname)s %(asctime)s: %(name)s - %(message)s ',
+    datefmt='%m/%d/%Y %I:%M:%S %p',
+    level=logging.INFO
+)
 
 parser = argparse.ArgumentParser(
     prog='DQN Trainer',

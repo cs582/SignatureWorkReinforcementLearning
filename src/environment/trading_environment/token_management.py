@@ -1,5 +1,14 @@
 import logging
 
+log_file = "logs/log_transactions.txt"
+
+logging.basicConfig(
+    filename=log_file,
+    format='%(levelname)s %(asctime)s: %(name)s - %(message)s ',
+    datefmt='%m/%d/%Y %I:%M:%S %p',
+    level=logging.INFO
+)
+
 logger = logging.getLogger("trading_environment/token_management")
 
 

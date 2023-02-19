@@ -4,13 +4,21 @@ import time
 import logging
 from datetime import datetime
 
-from logs.logs_handler import set_log_file
 from models.models import DQN, DuelingDQN
 from models.optimization import optimize_dqn
 from models.saving_tools import save_model, load_model
 from src.environment.trading_environment.agent import Agent
 from src.environment.trading_environment.environment import Environment
 from src.utils.visualization.real_time_cash_flow import RealTimeCashFlow
+
+log_file = "logs/log.txt"
+
+logging.basicConfig(
+    filename=log_file,
+    format='%(levelname)s %(asctime)s: %(name)s - %(message)s ',
+    datefmt='%m/%d/%Y %I:%M:%S %p',
+    level=logging.INFO
+)
 
 logger = logging.getLogger("reinforcement_learning/training.py")
 
@@ -99,9 +107,6 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
             # Set models in train mode
             q.train()
             t.train()
-
-            # Create new log file if it does not exist and set config
-            set_log_file(f'logs/log_episode_{episode}.txt')
 
             # Start new training episode
             environment.start_game(mode='train')
@@ -223,7 +228,5 @@ def train(portfolio_to_use, n_trading_days, n_tokens, min_epsilon, decay_rate, i
 
             # Reset the cash flow history for a new episode
             real_time_chart.reset()
-
-        set_log_file(f'logs/log.txt')
 
         return q, train_history
