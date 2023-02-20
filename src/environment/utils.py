@@ -24,7 +24,7 @@ def buy_token(cash, base_gas, gas_limit, priority_fee, token_price, eth_price, t
     available_cash = cash - gas_per_transaction
 
     if available_cash > 0:
-        tokens_to_buy = available_cash/token_price if available_cash/token_price <= gas_limit else gas_limit
+        tokens_to_buy = available_cash/token_price
         cash_spent = tokens_to_buy * token_price + gas_per_transaction
 
         logger.info(f"Token: {token_name}, close price: {token_price}")
@@ -67,7 +67,7 @@ def sell_token(base_gas, gas_limit, priority_fee, available_tokens, token_price,
             return available_tokens, 0, available_tokens*token_price
 
         if gas_per_transaction <= available_tokens*token_price:
-            tokens_to_sell = available_tokens if available_tokens <= gas_limit else gas_limit
+            tokens_to_sell = available_tokens
             cash_earned = tokens_to_sell * token_price - gas_per_transaction
 
             logger.info(f"Token {token_name}, close price: {token_price}")

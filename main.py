@@ -43,8 +43,6 @@ parser.add_argument('-dr', type=float, default=0.995, help="Decay rate for epsil
 parser.add_argument('-d', type=int, default=1000, help="Number of trading days.")
 
 parser.add_argument('-ic', type=int, default=100000, help="Set initial cash.")
-parser.add_argument('-bl', type=int, default=100000, help="Buy units upperbound.")
-parser.add_argument('-sl', type=int, default=100000, help="Sell units upperbound.")
 
 parser.add_argument('-tp', type=int, default=2, help="Priority fee in gwei.")
 parser.add_argument('-gl', type=int, default=21000, help="Gas limit in units.")
@@ -84,8 +82,6 @@ if __name__ == "__main__":
     n_trading_days = args.d
 
     initial_cash = args.ic
-    buy_limit = args.bl
-    sell_limit = args.sl
 
     priority_fee = args.tp
     gas_limit = args.gl
@@ -117,8 +113,6 @@ if __name__ == "__main__":
         n_trading_days = {n_trading_days}
         
         initial_cash = {initial_cash}
-        buy_limit = {buy_limit}
-        sell_limit = {sell_limit}
         
         priority_fee = {priority_fee}
         gas_limit = {gas_limit}
