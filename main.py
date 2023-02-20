@@ -8,6 +8,9 @@ from logs.logger_file import logger_main
 
 import argparse
 
+import logging
+logging.getLogger().setLevel(logging.WARNING)
+
 parser = argparse.ArgumentParser(
     prog='DQN Trainer',
     description='DQN Training algorithm for Portfolio Management',
