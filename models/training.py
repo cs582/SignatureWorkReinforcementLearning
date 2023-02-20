@@ -195,7 +195,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
                 cur_action = agent.get_action(y_hat, min_epsilon, episode)
 
                 # Execute the action and get the reward and next state
-                cur_reward, next_image, done_eval = environment.trade(cur_action)
+                cur_reward, next_image, done_eval = environment.trade(trading_day=current_trading_day_eval, action=cur_action)
 
                 # Update the cash flow information to the real time chart
                 timeseries_linechart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1], mode='eval')
@@ -205,7 +205,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
                 if done:
                     final_reward_eval = environment.gross_roi_history[-1]
 
-                current_trading_day += 1
+                current_trading_day_eval += 1
 
             # Calculate the average loss and reward of the episode
             average_rewd_eval = np.mean(rewards_eval)

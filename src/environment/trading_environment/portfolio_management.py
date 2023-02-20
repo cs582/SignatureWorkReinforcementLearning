@@ -37,7 +37,7 @@ def portfolio_management(day, prev_action, curr_action, position, cash, token_po
         logger.info("Sell Position.")
         total_cash_remaining, total_tokens_value_remaining, curr_total_net_worth, token_portfolio = sell_position(day=day, curr_action=curr_action, cash=cash, tokens=tokens_to_sell, base_gas=current_gas_price, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=token_portfolio, token_prices=current_token_prices)
     if position == "Swap":
-        logger.info("Neutral Position.")
+        logger.info("Swap Position.")
         total_cash_remaining, total_tokens_value_remaining, curr_total_net_worth, token_portfolio = swap_position(day=day, prev_action=prev_action, curr_action=curr_action, cash=cash, base_gas=current_gas_price, gas_limit=gas_limit, priority_fee=priority_fee, tokens_to_sell=tokens_to_sell, tokens_to_buy=tokens_to_buyorhold, portfolio=token_portfolio, token_prices=current_token_prices)
     if position == "Neutral":
         logger.info("Neutral Position.")
