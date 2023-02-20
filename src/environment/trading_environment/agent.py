@@ -1,8 +1,6 @@
 import numpy as np
-import logging
 import random
-
-logger = logging.getLogger("trading_environment/agent")
+from logs.logger_file import logger_main
 
 
 class Agent:
@@ -15,7 +13,7 @@ class Agent:
             decay_rate (float): Rate of decay of the epsilon probability.
             n_classes (int): Number of classes in the environment
         """
-        logger.info("Initializing Agent")
+        logger_main.info("Initializing Agent")
         self.n_tokens = n_tokens
         self.memory_size = memory_size
         self.memory = []
@@ -29,11 +27,11 @@ class Agent:
         Args:
             info (tuple): Tuple of (state, action, reward, next_state).
         """
-        logger.debug("Storing new experience in replay memory")
+        logger_main.debug("Storing new experience in replay memory")
         self.memory.append(info)
         if len(self.memory) > self.memory_size:
             self.memory.pop(0)
-        logger.debug("Experience stored")
+        logger_main.debug("Experience stored")
 
     def draw(self, batch_size):
         """Draw a random sample of experiences from the replay memory.
@@ -42,9 +40,9 @@ class Agent:
         Returns:
             list: List of experiences, where each experience is a tuple of (state, action, reward, next_state).
         """
-        logger.debug("Drawing random sample of experiences from replay memory")
+        logger_main.debug("Drawing random sample of experiences from replay memory")
         sample = random.sample(self.memory, min(batch_size, len(self.memory)))
-        logger.debug(f"Sample of size {len(sample)} drawn from replay memory")
+        logger_main.debug(f"Sample of size {len(sample)} drawn from replay memory")
         return sample
 
     def get_action(self, y_hat, epsilon, episode):
@@ -57,15 +55,15 @@ class Agent:
             numpy.ndarray: Binary array representing the action to take on each token.
         """
         # Change Action Making to a discrete set of actions
-        logger.debug("Choosing action based on estimated Q-values")
+        logger_main.debug("Choosing action based on estimated Q-values")
         epsilon = max(epsilon * (self.decay_rate ** episode), self.min_epsilon)
         if np.random.rand() < epsilon:
             # Choose random actions
-            logger.debug(f"Choosing random action with epsilon {epsilon}")
+            logger_main.debug(f"Choosing random action with epsilon {epsilon}")
             self.action = np.random.randint(0, self.n_classes)
         else:
             # Choose actions with the highest Q-values
-            logger.debug("Choosing action with highest Q-values")
+            logger_main.debug("Choosing action with highest Q-values")
             self.action = y_hat.data.max(1)[1].item()
-        logger.debug(f"Action selected: {self.action}")
+        logger_main.debug(f"Action selected: {self.action}")
         return self.action

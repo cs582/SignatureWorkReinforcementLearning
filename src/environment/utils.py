@@ -1,7 +1,18 @@
-import logging
+from logs.logger_file import logger_detailed
 
-logger = logging.getLogger("trading_environment/utils")
 
+def get_trading_action(prev_action, curr_action):
+    if (prev_action==curr_action and prev_action==0) or (prev_action==-1 and curr_action==0):
+        return "Neutral"
+    elif prev_action==curr_action and prev_action>=1:
+        return "Hold"
+    elif (prev_action!=curr_action and prev_action==0) or (prev_action==-1 and curr_action>=1):
+        return "Buy"
+    elif (prev_action!=curr_action and prev_action>=1) and curr_action>=1:
+        return "Swap"
+    elif prev_action!=curr_action and curr_action==0:
+        return "Sell"
+    return "Unknown"
 
 def buy_token(cash, base_gas, gas_limit, priority_fee, token_price, eth_price, token_name=None):
     """
@@ -27,15 +38,15 @@ def buy_token(cash, base_gas, gas_limit, priority_fee, token_price, eth_price, t
         tokens_to_buy = available_cash/token_price
         cash_spent = tokens_to_buy * token_price + gas_per_transaction
 
-        logger.info(f"Token: {token_name}, close price: {token_price}")
-        logger.info(f"Bought {tokens_to_buy} units at price {token_price} per unit after gas.")
-        logger.info(f"With a {gas_per_transaction} gas per unit. Total cash spent {cash_spent}.")
+        logger_detailed.info(f"Token: {token_name}, close price: {token_price}")
+        logger_detailed.info(f"Bought {tokens_to_buy} units at price {token_price} per unit after gas.")
+        logger_detailed.info(f"With a {gas_per_transaction} gas per unit. Total cash spent {cash_spent}.")
 
         bought_tokens = tokens_to_buy
         remaining_cash = cash - cash_spent
         bought_tokens_value = tokens_to_buy*token_price
 
-        logger.info(f"Remaining tokens: {bought_tokens} with value {bought_tokens_value}, remaining cash: {remaining_cash}")
+        logger_detailed.info(f"Remaining tokens: {bought_tokens} with value {bought_tokens_value}, remaining cash: {remaining_cash}")
 
         return bought_tokens, remaining_cash, bought_tokens_value
 
@@ -63,22 +74,22 @@ def sell_token(base_gas, gas_limit, priority_fee, available_tokens, token_price,
     # If sell and there is available tokens, then sell
     if available_tokens > 0:
         if gas_per_transaction > available_tokens*token_price:
-            logger.info(f"gas price {gas_per_transaction} per transaction is too high compared to unit current value {available_tokens*token_price}")
+            logger_detailed.info(f"gas price {gas_per_transaction} per transaction is too high compared to unit current value {available_tokens*token_price}")
             return available_tokens, 0, available_tokens*token_price
 
         if gas_per_transaction <= available_tokens*token_price:
             tokens_to_sell = available_tokens
             cash_earned = tokens_to_sell * token_price - gas_per_transaction
 
-            logger.info(f"Token {token_name}, close price: {token_price}")
-            logger.info(f"Sold {tokens_to_sell} units at price {token_price} per unit after gas")
-            logger.info(f"With a {gas_per_transaction} gas per unit. Total cash earned {cash_earned}.")
+            logger_detailed.info(f"Token {token_name}, close price: {token_price}")
+            logger_detailed.info(f"Sold {tokens_to_sell} units at price {token_price} per unit after gas")
+            logger_detailed.info(f"With a {gas_per_transaction} gas per unit. Total cash earned {cash_earned}.")
 
             tokens_sold = tokens_to_sell
             remaining_tokens = available_tokens - tokens_sold
             remaining_tokens_value = remaining_tokens*token_price
 
-            logger.info(f"Remaining tokens: {remaining_tokens} with value {remaining_tokens_value}. Cash earned: {cash_earned}")
+            logger_detailed.info(f"Remaining tokens: {remaining_tokens} with value {remaining_tokens_value}. Cash earned: {cash_earned}")
 
             return remaining_tokens, cash_earned, remaining_tokens_value
 

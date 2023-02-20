@@ -4,18 +4,9 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from datetime import datetime
 from models.training import train
+from logs.logger_file import logger_main
 
-import logging
 import argparse
-
-log_file = "logs/log.txt"
-
-logging.basicConfig(
-    filename=log_file,
-    format='%(levelname)s %(asctime)s: %(name)s - %(message)s ',
-    datefmt='%m/%d/%Y %I:%M:%S %p',
-    level=logging.INFO
-)
 
 parser = argparse.ArgumentParser(
     prog='DQN Trainer',
@@ -23,8 +14,6 @@ parser = argparse.ArgumentParser(
     epilog='Source code for Carlos Gustavo Salas Flores Signature Work at Duke University & Duke Kunshan University '
            'for the B.S. in Data Science undergrduate degree. '
 )
-
-logger = logging.getLogger("main")
 
 parser.add_argument('-model', type=str, default="Single_DQN", help='Model to use.')
 parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
@@ -124,7 +113,7 @@ if __name__ == "__main__":
     """
     print(training_info)
 
-    logger.info(training_info)
+    logger_main.info(training_info)
 
     q, history_dqn = train(
         model_name=model_name,
@@ -153,7 +142,7 @@ if __name__ == "__main__":
         load_from_checkpoint=load_from_checkpoint
     )
 
-    logger.info("Training Complete!")
+    logger_main.info("Training Complete!")
     current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 
     plt.title("Total reward history")

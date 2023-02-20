@@ -7,26 +7,14 @@ from src.preprocessing.data_handling.preprocessing import prepare_dataset
 from src.environment.trading_environment.portfolio_management import portfolio_management
 from src.utils.logging_tools.dataframe_logs import prices_and_gas_preview, images_preview
 from src.utils.environment_tools import map_actions_to_tokens
+from src.environment.utils import get_trading_action
 
 
 import torch
 import logging
 
-logger = logging.getLogger("src/trading_environment/environment")
+logger_main = logging.getLogger("src/trading_environment/environment")
 
-
-def get_trading_action(prev_action, curr_action):
-    if (prev_action==curr_action and prev_action==0) or (prev_action==-1 and curr_action==0):
-        return "Neutral"
-    elif prev_action==curr_action and prev_action>=1:
-        return "Hold"
-    elif (prev_action!=curr_action and prev_action==0) or (prev_action==-1 and curr_action>=1):
-        return "Buy"
-    elif (prev_action!=curr_action and prev_action>=1) and curr_action>=1:
-        return "Swap"
-    elif prev_action!=curr_action and curr_action==0:
-        return "Sell"
-    return "Unknown"
 
 class Environment:
     def __init__(
@@ -61,7 +49,7 @@ class Environment:
             device (str, optional): The device to use for computations. Defaults to None.
             curr_action (int, optional): Initial default action, must always be -1 for training or eval.
         """
-        logger.info("Initializing the trading environment")
+        logger_main.info("Initializing the trading environment")
         self.trading_days = trading_days
         self.token_prices_address = token_prices_address
         self.gas_address = gas_address
@@ -117,7 +105,7 @@ class Environment:
         """Resets the environment to its initial state.
         :param mode (str) set to train for training or eval to evaluate
         """
-        logger.info("Starting/Restarting the game")
+        logger_main.info("Starting/Restarting the game")
         self.done = False
         self.daily_roi_history = [0]
         self.gross_roi_history = [0]
@@ -132,10 +120,10 @@ class Environment:
         self.cash_history = [self.curr_cash]
         self.units_value_history = [self.curr_units_value]
         self.net_worth_history = [self.curr_net_worth]
-        logger.info("Resetting token values in portfolio")
+        logger_main.info("Resetting token values in portfolio")
         for token in self.tokens_in_portfolio:
             self.portfolio[token] = 0.0
-        logger.info("Game restarted successfully")
+        logger_main.info("Game restarted successfully")
 
         # Assign the corresponding prices to the variables
         self.token_prices = self.token_prices_train if mode == "train" else self.token_prices_eval
@@ -149,7 +137,7 @@ class Environment:
             fake_gas_std (float, optional): The standard deviation of the gas prices to create.
         """
         # Load Prices
-        logger.info("Preloading the prices")
+        logger_main.info("Preloading the prices")
         with open(self.portfolio_json, "r") as file:
             portfolio_options = json.load(file)[f"Portfolio {self.portfolio_to_use}"]
         self.tokens_in_portfolio = portfolio_options["tokens"]
@@ -162,15 +150,15 @@ class Environment:
         database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=token_prices, use_change=self.use_change, use_covariance=self.use_covariance, lookback=10)
         self.trading_days = min(len(database), self.trading_days)
         token_prices = token_prices.iloc[-len(database):].to_dict("records")
-        logger.info("Token Prices Successfully Loaded!!!")
+        logger_main.info("Token Prices Successfully Loaded!!!")
         gas_prices = retrieve_online_gas_prices(self.gas_address) if self.gas_address is not None else retrieve_offline_gas_prices(avg_price=fake_avg_gas, std_deviation=fake_gas_std, n_trading_days=self.trading_days)
-        logger.info("Gas Prices Successfully Loaded!!!")
+        logger_main.info("Gas Prices Successfully Loaded!!!")
 
         # Checking the token prices and gas prices in the log file
-        prices_and_gas_preview(logger, token_prices, gas_prices)
+        prices_and_gas_preview(logger_main, token_prices, gas_prices)
 
         # Checking the database in the log file
-        images_preview(logger, database)
+        images_preview(logger_main, database)
 
         # Create TRAINING DATA
         training_days = int(self.trading_days * 0.75)
@@ -191,12 +179,12 @@ class Environment:
         """
 
         if self.data_index >= len(self.database)-1:
-            logger.debug("Game Over!!!")
+            logger_main.debug("Game Over!!!")
             self.done = True
             return None, None, self.done
 
         if action is None:
-            logger.debug("Getting Initial State")
+            logger_main.debug("Getting Initial State")
             self.curr_prices = self.token_prices[self.data_index]
             self.curr_prices_image = torch.from_numpy(np.array([self.database[self.data_index]])).to(self.device).double()
             self.curr_gas = self.gas_prices[self.data_index]
@@ -206,8 +194,8 @@ class Environment:
         # Sort indexes and get tokens to trade
         tokens_to_buyorhold = map_actions_to_tokens(action, self.action_map)
         tokens_to_sell = [tkn for tkn in self.tokens_in_portfolio if self.portfolio[tkn] > 0]
-        logger.info(f"Tokens to buy/hold: {tokens_to_buyorhold}")
-        logger.info(f"Tokens to sell: {tokens_to_sell}")
+        logger_main.info(f"Tokens to buy/hold: {tokens_to_buyorhold}")
+        logger_main.info(f"Tokens to sell: {tokens_to_sell}")
 
         # Get the current position
         position = get_trading_action(prev_action=self.prev_action, curr_action=action)
@@ -228,7 +216,7 @@ class Environment:
             tokens_to_sell=tokens_to_sell
         )
 
-        logger.info(f"""
+        logger_main.info(f"""
         Completed Portfolio Management!!!
         Current net worth: {self.curr_net_worth}
         Current cash: {self.curr_cash}
@@ -246,8 +234,8 @@ class Environment:
         today_net_worth = self.net_worth_history[-1]
         daily_roi = (today_net_worth / yesterday_net_worth) - 1
         gross_roi = (today_net_worth / self.initial_cash) - 1
-        logger.info(f"Current daily roi = {daily_roi}")
-        logger.info(f"Current gross roi = {gross_roi}")
+        logger_main.info(f"Current daily roi = {daily_roi}")
+        logger_main.info(f"Current gross roi = {gross_roi}")
 
         self.daily_roi_history.append(daily_roi)
         self.gross_roi_history.append(gross_roi)
@@ -260,7 +248,7 @@ class Environment:
         r_mean = (n_days ** 0.5) * np.mean(self.daily_roi_history)
         sharpe = r_mean/r_std if r_std!=0.0 else r_mean
         self.sharpe_history.append(float(sharpe))
-        logger.info(f"Sharpe Ratio: {sharpe}")
+        logger_main.info(f"Sharpe Ratio: {sharpe}")
 
         # Update environment current state
         reward = self.sharpe_history[-1] if self.reward_metric == "sharpe" else self.daily_roi_history[-1]
@@ -270,11 +258,11 @@ class Environment:
         self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device)
         self.curr_gas = self.gas_prices[self.data_index]
         self.data_index += 1
-        logger.debug(f"Next data index: {self.data_index}. Max index: {len(self.database)-1}")
+        logger_main.debug(f"Next data index: {self.data_index}. Max index: {len(self.database)-1}")
 
         # Check if done
         done = (self.curr_net_worth <= self.initial_cash*0.25) or (self.data_index >= len(self.database)-1)
-        logger.info(f"Reinforcement Learning Reward: {self.reward_metric} = {reward}. Done? {done}")
+        logger_main.info(f"Reinforcement Learning Reward: {self.reward_metric} = {reward}. Done? {done}")
 
         self.prev_action = action
 

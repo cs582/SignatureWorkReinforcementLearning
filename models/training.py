@@ -10,9 +10,7 @@ from models.saving_tools import save_model, load_model
 from src.environment.trading_environment.agent import Agent
 from src.environment.trading_environment.environment import Environment
 from src.utils.visualization.timeseries_cashflow import TradingCycleCashFlow
-
-
-logger = logging.getLogger("models/training.py")
+from logs.logger_file import logger_main
 
 
 def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use_change=True, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
@@ -36,16 +34,16 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
             reward_metric=reward_metric,
             device=device
         )
-        logger.info("Environment Initialized!")
+        logger_main.info("Environment Initialized!")
 
         # If the filenames are given, no parameters are necessary for method preload_prices
         environment.preload_prices()
-        logger.info("Prices are Preloaded!")
+        logger_main.info("Prices are Preloaded!")
 
         # Calculate in-size and n_tokens
         n_tokens = environment.n_defi_tokens if n_tokens is None else n_tokens
         in_size = (n_tokens, n_tokens)
-        logger.info(f"Input size {in_size}. N tokens: {n_tokens}")
+        logger_main.info(f"Input size {in_size}. N tokens: {n_tokens}")
 
         # Calculate out-size
         out_size = environment.n_classes
@@ -57,7 +55,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
             min_epsilon=min_epsilon,
             decay_rate=decay_rate
         )
-        logger.info("Agent Initialized")
+        logger_main.info("Agent Initialized")
 
         # Initialize action-value function Q with random weights
         set_inplace = True
@@ -65,15 +63,15 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
 
         # Set model to use
         if model_name == "Single_DQN" or model_name == "Double_DQN":
-            logger.info("Using Single Stream DQN model")
+            logger_main.info("Using Single Stream DQN model")
             q = DQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
         else:
-            logger.info("Using Dueling model")
+            logger_main.info("Using Dueling model")
             q = DuelingDQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DuelingDQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
 
-        logger.debug(f"""
+        logger_main.debug(f"""
         Chosen Model {model_name}:
         {q}
         """)
@@ -100,10 +98,10 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
 
             # Start new training episode
             environment.start_game(mode='train')
-            logger.info(f"Training episode {episode}")
+            logger_main.info(f"Training episode {episode}")
 
             # Initialize the current state
-            logger.info("Initial Trade call")
+            logger_main.info("Initial Trade call")
             _, cur_state, _ = environment.trade()
             rewards = []
             episode_loss = []
@@ -114,7 +112,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
 
             # Start the trading loop
             while not done:
-                logger.info(f"Trading Day {current_trading_day+1}")
+                logger_main.info(f"Trading Day {current_trading_day+1}")
 
                 # Initialize gradient
                 optimizer.zero_grad()
@@ -163,7 +161,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
 
             # Save the model every 10 episodes
             if (episode+1) % 10 == 0:
-                logger.info(f"Saving model at episode {episode}")
+                logger_main.info(f"Saving model at episode {episode}")
                 current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
                 filename = f"{model_name}_{episode}_{current_time}.pt"
                 save_model(model=q, episode=episode, optimizer=optimizer, train_history=train_history, PATH=save_path, filename=filename)
@@ -178,7 +176,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
             t.eval()
 
             # Initialize the current state
-            logger.info("Initial Trade EVAL call")
+            logger_main.info("Initial Trade EVAL call")
             _, cur_state, _ = environment.trade()
             rewards_eval = []
 
@@ -188,7 +186,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
 
             # Start the trading loop
             while not done_eval:
-                logger.info(f"EVAL Trading Day {current_trading_day_eval+1}")
+                logger_main.info(f"EVAL Trading Day {current_trading_day_eval+1}")
 
                 # Predict select random action
                 y_hat = q(cur_state)
