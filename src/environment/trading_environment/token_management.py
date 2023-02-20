@@ -15,9 +15,9 @@ def neutral_position(day, curr_action, cash, portfolio, token_prices):
     return cash, tokens_new_value, net_worth
 
 
-def hold_position(day, curr_action, cash, portfolio, token_prices):
+def hold_position(day, curr_action, cash, tokens_to_hold, token_prices):
     tokens_new_value = 0
-    for token in portfolio.keys():
+    for token in tokens_to_hold:
         tokens_new_value += token_prices[token]
     net_worth = cash + tokens_new_value
     show_hold_position_blue(day=day, curr_action=curr_action, tokens_value=tokens_new_value, cash=cash, net_worth=net_worth)
