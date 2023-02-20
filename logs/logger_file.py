@@ -25,6 +25,14 @@ fh_att = logging.FileHandler('logs/log_att.txt')
 fh_detailed = logging.FileHandler('logs/log_detailed.txt')
 fh_trading_info = logging.FileHandler('logs/log_trading_info.txt')
 
+# set formatter when saving logs
+formatter = logging.Formatter('%(levelname)s %(asctime)s: %(name)s - %(message)s ')
+fh_main.setFormatter(formatter)
+fh_cnn.setFormatter(formatter)
+fh_att.setFormatter(formatter)
+fh_detailed.setFormatter(formatter)
+fh_trading_info.setFormatter(formatter)
+
 # add the handlers to the loggers
 logger_main.addHandler(fh_main)
 logger_cnn.addHandler(fh_cnn)
