@@ -13,7 +13,7 @@ from src.utils.visualization.timeseries_cashflow import TradingCycleCashFlow
 from logs.logger_file import logger_main
 
 
-def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use=3, use_covariance=True, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
+def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use=3, lookback=10, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
     with torch.autograd.set_detect_anomaly(True):
         timeseries_linechart = TradingCycleCashFlow(saving_path=images_saving_path)
 
@@ -30,7 +30,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
             initial_cash=initial_cash,
             priority_fee=priority_fee,
             use=use,
-            use_covariance=use_covariance,
+            lookback=lookback,
             reward_metric=reward_metric,
             device=device
         )
@@ -42,7 +42,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
 
         # Calculate in-size and n_tokens
         n_tokens = environment.n_defi_tokens if n_tokens is None else n_tokens
-        in_size = (n_tokens, n_tokens)
+        in_size = (lookback, n_tokens)
         logger_main.info(f"Input size {in_size}. N tokens: {n_tokens}")
 
         # Calculate out-size

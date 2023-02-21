@@ -30,6 +30,7 @@ parser.add_argument('-me', type=float, default=1e-4, help="Minimum value epsilon
 parser.add_argument('-dr', type=float, default=0.995, help="Decay rate for epsilon each episode.")
 
 parser.add_argument('-d', type=int, default=1000, help="Number of trading days.")
+parser.add_argument('-lb', type=int, default=1000, help="Lookback window.")
 
 parser.add_argument('-ic', type=int, default=100000, help="Set initial cash.")
 
@@ -69,6 +70,7 @@ if __name__ == "__main__":
     decay_rate = args.dr
 
     n_trading_days = args.d
+    lookback = args.lb
 
     initial_cash = args.ic
 
@@ -100,6 +102,7 @@ if __name__ == "__main__":
         decay_rate = {decay_rate}
         
         n_trading_days = {n_trading_days}
+        lookback = {lookback}
         
         initial_cash = {initial_cash}
         
@@ -131,6 +134,7 @@ if __name__ == "__main__":
         episodes=episodes,
         batch_size=batch_size,
         lr=lr,
+        lookback=lookback,
         momentum=momentum,
         decay_rate=decay_rate,
         min_epsilon=min_epsilon,

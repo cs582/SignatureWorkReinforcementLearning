@@ -27,6 +27,7 @@ class Environment:
             priority_fee: float = 2.0,
             gas_limit: int = 21000,
             use: int = 3,
+            lookback: int = 10,
             portfolio_json: dict = None,
             portfolio_to_use: int = 1,
             reward_metric: str = "sharpe",
@@ -97,6 +98,7 @@ class Environment:
         self.data_index = 0
         self.done = False
 
+        self.lookback = lookback
         self.prev_action = prev_action
 
     def start_game(self, mode=None):
@@ -145,7 +147,7 @@ class Environment:
 
         # RETRIEVING WHOLE DATA
         token_prices = retrieve_token_prices(self.token_prices_address)
-        database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=token_prices, use=self.use, lookback=10)
+        database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=token_prices, use=self.use, lookback=self.lookback)
         self.trading_days = min(len(database), self.trading_days)
         token_prices = token_prices.iloc[-len(database):].to_dict("records")
         logger_main.info("Token Prices Successfully Loaded!!!")
