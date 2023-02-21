@@ -1,5 +1,5 @@
 from src.environment.trading_environment.token_management import hold_position, sell_position, buy_position, neutral_position, swap_position
-from logs.logger_file import logger_trading_info
+from logs.logger_file import logger_trading_info, logger_detailed
 
 
 def portfolio_management(mode, day, prev_action, curr_action, position, cash, token_portfolio, current_token_prices, current_gas_price, priority_fee, gas_limit, tokens_to_buyorhold, tokens_to_sell):
@@ -19,7 +19,7 @@ def portfolio_management(mode, day, prev_action, curr_action, position, cash, to
     :param tokens_to_buyorhold:     --list, list of tokens to trade
     """
     logger_trading_info.info(f"Calling Portfolio Management Function with {cash} USD available cash.")
-    logger_trading_info.info(f"Current Prices at day [{day}]: {current_token_prices}.")
+    logger_detailed.info(f"Current Prices at day [{day}]: {current_token_prices}.")
 
     curr_total_net_worth = 0
     total_cash_remaining = 0
