@@ -2,8 +2,8 @@ import numpy as np
 from logs.logger_file import logger_trading_info
 
 
-def show_rewards(mode, day, roi, sharpe, reward, hist_max):
-    message = f"{mode.upper()} >> TD[{day}]: ROI: {np.round(roi, 2)}, SHARPE RATIO: {np.round(sharpe, 2)}, and REWARD: {np.round(reward, 2)}. HIST MAX: {np.round(hist_max, 2)}"
+def show_rewards(mode, day, roi, sharpe, reward, metric_mean):
+    message = f"{mode.upper()} >> TD[{day}]: ROI: {np.round(roi, 2)}, SHARPE RATIO: {np.round(sharpe, 2)}, and REWARD: {np.round(reward, 2)}. HIST MAX: {np.round(metric_mean, 2)}"
     print(message)
 
 
