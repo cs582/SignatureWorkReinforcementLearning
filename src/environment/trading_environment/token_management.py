@@ -71,11 +71,11 @@ def swap_position(mode, day, prev_action, curr_action, cash, base_gas, gas_limit
     logger_detailed.info(f"{mode.upper()} >> DAY[{day}] POSITION[SWAP] {prev_action} -> {curr_action}:")
 
     # Selling current tokens to collect money
-    cash_earned, tokens_value, net_worth, portfolio = sell_position(day=day, curr_action=curr_action, tokens=tokens_to_sell, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=portfolio, token_prices=token_prices)
+    cash_earned, tokens_value, net_worth, portfolio = sell_position(mode=mode, day=day, curr_action=curr_action, tokens=tokens_to_sell, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=portfolio, token_prices=token_prices)
     total_cash_to_buy = cash_earned + cash
 
     # Buying tokens
-    total_cash, tokens_value, net_worth, portfolio = buy_position(day=day, curr_action=curr_action, cash=total_cash_to_buy, tokens=tokens_to_buy, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=portfolio, token_prices=token_prices)
+    total_cash, tokens_value, net_worth, portfolio = buy_position(mode=mode, day=day, curr_action=curr_action, cash=total_cash_to_buy, tokens=tokens_to_buy, base_gas=base_gas, gas_limit=gas_limit, priority_fee=priority_fee, portfolio=portfolio, token_prices=token_prices)
 
     # Show swap changes
     show_swap_position_orange(mode=mode, day=day, prev_action=prev_action, curr_action=curr_action, tokens_value=tokens_value, cash=cash, net_worth=net_worth)
