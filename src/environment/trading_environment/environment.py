@@ -254,11 +254,11 @@ class Environment:
 
         # Calculate REWARD
         metric_today = self.sharpe_history[-1] if self.reward_metric == "sharpe" else self.daily_roi_history[-1]
-        metric_max = max(self.sharpe_history) if self.reward_metric == "sharpe" else max(self.daily_roi_history)
-        reward = metric_today - metric_max
+        metric_mean = np.mean(self.sharpe_history) if self.reward_metric == "sharpe" else np.mean(self.daily_roi_history)
+        reward = metric_today - metric_mean
 
         # Show the reward on screen in CYAN
-        show_rewards(mode=mode, day=trading_day, roi=gross_roi, sharpe=sharpe, reward=reward, hist_max=metric_max)
+        show_rewards(mode=mode, day=trading_day, roi=gross_roi, sharpe=sharpe, reward=reward, hist_max=metric_mean)
 
         # Move to next prices
         self.curr_prices = self.token_prices[self.data_index]
