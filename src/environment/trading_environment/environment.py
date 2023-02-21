@@ -148,6 +148,7 @@ class Environment:
         # RETRIEVING WHOLE DATA
         token_prices = retrieve_token_prices(self.token_prices_address)
         database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=token_prices, use=self.use, lookback=self.lookback)
+        print(database)
         self.trading_days = min(len(database), self.trading_days)
         token_prices = token_prices.iloc[-len(database):].to_dict("records")
         logger_main.info("Token Prices Successfully Loaded!!!")
