@@ -252,14 +252,10 @@ class Environment:
         self.sharpe_history.append(float(sharpe))
         logger_main.info(f"Sharpe Ratio: {sharpe}")
 
-        # Calculate REWARD, this is a short window of rewards
-        if len(self.daily_roi_history) >= 25:
-            short_window = self.daily_roi_history[:-25:-1]
-            rew_std = np.std(short_window)
-            rew_mean = (25 ** 0.5) * np.mean(short_window)
-            reward = float(rew_mean/rew_std if rew_std!=0.0 else rew_mean)
-        else:
-            reward = self.sharpe_history[-1] if self.reward_metric == "sharpe" else self.daily_roi_history[-1]
+        # Calculate REWARD
+        metric_today = self.sharpe_history[-1] if self.reward_metric == "sharpe" else self.daily_roi_history[-1]
+        metric_max = max(self.sharpe_history) if self.reward_metric == "sharpe" else max(self.daily_roi_history)
+        reward = metric_today - metric_max
 
         # Show the reward on screen in CYAN
         show_rewards(mode=mode, day=trading_day, roi=gross_roi, sharpe=sharpe, reward=reward)
