@@ -15,12 +15,14 @@ parser = argparse.ArgumentParser(
            'for the B.S. in Data Science undergrduate degree. '
 )
 
-parser.add_argument('-model', type=str, default="Single_DQN", help='Model to use.')
-parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
+parser.add_argument('--model', type=str, default="Single_DQN", help='Model to use.')
+parser.add_argument('--reward', type=str, default='roi', help="Reward metric to use in training.")
 
-parser.add_argument('-portfolio', type=int, default=1, help="Choose portfolio to use")
+parser.add_argument('--portfolio', type=int, default=1, help="Choose portfolio to use")
 
-parser.add_argument('-episodes', type=int, default=1000, help="Number of episodes to train.")
+parser.add_argument('--episodes', type=int, default=1000, help="Number of episodes to train.")
+parser.add_argument('--use', type=int, default=3, help="2 to use covariance matrix. 3 to use snapshot of lookback days.")
+
 parser.add_argument('-e', type=float, default=0.01, help="Epsilon to train.")
 parser.add_argument('-g', type=float, default=0.8, help="Gamma value for training.")
 parser.add_argument('-lr', type=float, default=1e-4, help="Learning rate.")
@@ -60,6 +62,8 @@ if __name__ == "__main__":
     model_name = args.model
     reward_metric = args.reward
 
+    use = args.use
+
     episodes = args.episodes
     epsilon = args.e
     gamma = args.g
@@ -91,6 +95,8 @@ if __name__ == "__main__":
         device = {"CPU" if not torch.cuda.is_available() else torch.cuda.get_device_name(device=device)}
         loss_function = {loss_function}
         reward_metric = {reward_metric}
+        
+        use = {use}
         
         episodes = {episodes}
         epsilon = {epsilon}
@@ -135,6 +141,7 @@ if __name__ == "__main__":
         batch_size=batch_size,
         lr=lr,
         lookback=lookback,
+        use=use,
         momentum=momentum,
         decay_rate=decay_rate,
         min_epsilon=min_epsilon,

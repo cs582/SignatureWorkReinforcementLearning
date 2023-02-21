@@ -63,6 +63,12 @@ class DQN(nn.Module):
         return x
 
 
+class ViT(nn.Module):
+    def __init__(self, in_size, n_classes):
+        super(ViT, self).__init__()
+
+
+
 class DuelingDQN(nn.Module):
     def __init__(self, in_size, n_classes, kernel=3, inplace=True, bias=False):
         super(DuelingDQN, self).__init__()
