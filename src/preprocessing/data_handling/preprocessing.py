@@ -36,8 +36,6 @@ def preprocessing_snapshots(prices, size):
         x = []
         for k in range(0, len(prices)):
             price_snapshot = np.nan_to_num(prices[k].iloc[i:i + size], nan=0)
-            if i == 0:
-                print(price_snapshot)
             x.append(price_snapshot)
         X.append(x)
 
@@ -56,8 +54,6 @@ def prepare_dataset(tokens_to_use, token_prices, use, lookback):
     token_prices = token_prices[tokens_to_use].astype(np.float64)
     token_prices = token_prices.pct_change().drop([token_prices.index[0]], axis=0)
 
-    print(token_prices.head())
-
     if use==2:
         size = lookback
         X_matrices = preprocessing_correlation([token_prices], size)
@@ -67,5 +63,6 @@ def prepare_dataset(tokens_to_use, token_prices, use, lookback):
         size = lookback
         X_matrices = preprocessing_snapshots([token_prices], size)
         X_matrices = np.asanyarray(X_matrices)
+        print(X_matrices)
 
     return X_matrices
