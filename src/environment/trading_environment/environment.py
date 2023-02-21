@@ -258,7 +258,7 @@ class Environment:
         reward = metric_today - metric_max
 
         # Show the reward on screen in CYAN
-        show_rewards(mode=mode, day=trading_day, roi=gross_roi, sharpe=sharpe, reward=reward)
+        show_rewards(mode=mode, day=trading_day, roi=gross_roi, sharpe=sharpe, reward=reward, hist_max=metric_max)
 
         # Move to next prices
         self.curr_prices = self.token_prices[self.data_index]
