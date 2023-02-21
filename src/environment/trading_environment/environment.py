@@ -8,6 +8,7 @@ from src.environment.trading_environment.portfolio_management import portfolio_m
 from src.utils.logging_tools.dataframe_logs import prices_and_gas_preview, images_preview
 from src.utils.environment_tools import map_actions_to_tokens
 from src.environment.utils import get_trading_action
+from src.utils.visualization.custom_messages import show_rewards
 
 
 import torch
@@ -253,6 +254,9 @@ class Environment:
 
         # Update environment current state
         reward = self.sharpe_history[-1] if self.reward_metric == "sharpe" else self.daily_roi_history[-1]
+
+        # Show the reward on screen in CYAN
+        show_rewards(mode=mode, day=trading_day, roi=gross_roi, sharpe=sharpe, reward=reward)
 
         # Move to next prices
         self.curr_prices = self.token_prices[self.data_index]
