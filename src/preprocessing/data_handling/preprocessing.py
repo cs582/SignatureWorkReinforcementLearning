@@ -32,9 +32,8 @@ def preprocessing_snapshots(prices, size):
     print("PROCESSING SNAPSHOTS")
     X = []
 
-    print(prices[0].shape)
-    n = len(prices[0].shape[0]) - size
-    print(n)
+    n = prices[0].shape[0] - size
+    print(prices[0].shape[0], size)
     for i in range(0, n):
         x = []
         for k in range(0, len(prices)):
