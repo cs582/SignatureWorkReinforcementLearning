@@ -22,13 +22,30 @@ def preprocessing_correlation(prices, size):
     return X
 
 
-def prepare_dataset(tokens_to_use, token_prices, use_change, use_covariance, lookback):
+def preprocessing_snapshots(prices, size):
     """
+    Returns a dataset snapshot of prices of in batches of size timesteps
+    :param prices:      --list(pd.Dataframe), list of prices historical data for all tokens. The list is a list of pandas dataframes inclusing at least one of closing prices, open prices, high prices, low prices, etc...
+    :param size:        --int, size of the covariance matrices, it will take size number of days historical data to calculate the covariance matrix
+    :return: X          --list, returns a list of 2D covariance matrices
+    """
+    X = []
 
-    :param tokens_to_use     --list, it gives you the tokens to take into consideration i.e. asset space or portfolio
-    :param token_prices:       --pd.Dataframe, it gets a dataframe with the token open prices
-    :param use_change:          --boolean, if true, then use price change else use raw prices
-    :param use_covariance:      --boolean, if true, then use covariance else use open product
+    n = prices[0].shape[0] - size
+    for i in range(0, n):
+        x = []
+        for k in range(0, len(prices)):
+            price_snapshot = prices[k].iloc[i:i + size]
+            x.append(price_snapshot)
+        X.append(x)
+
+    return X
+
+def prepare_dataset(tokens_to_use, token_prices, use, lookback):
+    """
+    :param tokens_to_use        --list, it gives you the tokens to take into consideration i.e. asset space or portfolio
+    :param token_prices:        --pd.Dataframe, it gets a dataframe with the token open prices
+    :param use:                 --int, 1->use change 2->use covariance 3->use snapshot
     :param lookback:            --int, when using covariance, it tells how many days back to look at. To trade for n days, it would be necessary to have n+lookback days as input.
     :return: X                  --np.array, returns the list of 2D input matrices
     """
@@ -36,12 +53,17 @@ def prepare_dataset(tokens_to_use, token_prices, use_change, use_covariance, loo
 
     token_prices = token_prices[tokens_to_use].astype(np.float64)
 
-    if use_change:
+    if use==1:
         token_prices = token_prices.pct_change().drop([token_prices.index[0]], axis=0)
 
-    if use_covariance:
+    if use==2:
         size = lookback
         X_matrices = preprocessing_correlation([token_prices], size)
+        X_matrices = np.asanyarray(X_matrices)
+
+    if use==3:
+        size = lookback
+        X_matrices = preprocessing_snapshots([token_prices], size)
         X_matrices = np.asanyarray(X_matrices)
 
     return X_matrices

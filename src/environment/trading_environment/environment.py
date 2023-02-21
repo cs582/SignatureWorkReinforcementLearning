@@ -26,8 +26,7 @@ class Environment:
             initial_cash: float = 100000.0,
             priority_fee: float = 2.0,
             gas_limit: int = 21000,
-            use_change: bool = True,
-            use_covariance: bool = True,
+            use: int = 3,
             portfolio_json: dict = None,
             portfolio_to_use: int = 1,
             reward_metric: str = "sharpe",
@@ -42,8 +41,7 @@ class Environment:
             initial_cash (float, optional): The initial cash endowment of the agent. Defaults to 100000.0.
             priority_fee (float, optional): The fee applied to priority trades. Defaults to 2.0.
             gas_limit (int, optional): The maximum amount of gas that can be used in trades. Defaults to 21000.
-            use_change (bool, optional): Whether to use the change in token prices as a feature. Defaults to True.
-            use_covariance (bool, optional): Whether to use the covariance between tokens as a feature. Defaults to True.
+            use (bool, optional): Whether to use the change in token prices as a feature. Defaults to True.
             portfolio_json (dict, optional): The initial portfolio of tokens. Defaults to None.
             portfolio_to_use (int, optional): The index of the portfolio to use. Defaults to 1.
             reward_metric (str, optional): The metric used to evaluate the agent's performance. Defaults to "sharpe".
@@ -57,8 +55,7 @@ class Environment:
         self.initial_cash = initial_cash
         self.priority_fee = priority_fee
         self.gas_limit = gas_limit
-        self.use_change = use_change
-        self.use_covariance = use_covariance
+        self.use = use
         self.portfolio_json = portfolio_json
         self.portfolio_to_use = portfolio_to_use
         self.reward_metric = reward_metric
@@ -148,7 +145,7 @@ class Environment:
 
         # RETRIEVING WHOLE DATA
         token_prices = retrieve_token_prices(self.token_prices_address)
-        database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=token_prices, use_change=self.use_change, use_covariance=self.use_covariance, lookback=10)
+        database = prepare_dataset(tokens_to_use=self.tokens_in_portfolio, token_prices=token_prices, use=self.use, lookback=10)
         self.trading_days = min(len(database), self.trading_days)
         token_prices = token_prices.iloc[-len(database):].to_dict("records")
         logger_main.info("Token Prices Successfully Loaded!!!")
