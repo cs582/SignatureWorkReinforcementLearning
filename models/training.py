@@ -92,6 +92,8 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
         # Initiate training
         starting_time = time.time()
         for episode in range(starting_episode, episodes):
+            mode = "TRAINING"
+
             # Set models in train mode
             q.train()
             t.train()
@@ -122,7 +124,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
                 cur_action = agent.get_action(y_hat, epsilon, episode)
 
                 # Execute the action and get the reward and next state
-                cur_reward, next_image, done = environment.trade(trading_day=current_trading_day, action=cur_action)
+                cur_reward, next_image, done = environment.trade(mode=mode, trading_day=current_trading_day, action=cur_action)
 
                 # Store the experience in memory
                 cur_experience = (cur_state, cur_action, cur_reward, next_image)
@@ -169,6 +171,8 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
             #####################
             #  EVALUATING LOOP  #
             #####################
+            mode = "EVAL"
+
             environment.start_game(mode='eval')
 
             # Set models in evaluation mode
@@ -193,7 +197,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
                 cur_action = agent.get_action(y_hat, min_epsilon, episode)
 
                 # Execute the action and get the reward and next state
-                cur_reward, next_image, done_eval = environment.trade(trading_day=current_trading_day_eval, action=cur_action)
+                cur_reward, next_image, done_eval = environment.trade(mode=mode, trading_day=current_trading_day_eval, action=cur_action)
 
                 # Update the cash flow information to the real time chart
                 timeseries_linechart.update(environment.cash_history[-1], environment.units_value_history[-1], environment.net_worth_history[-1], mode='eval')
@@ -209,7 +213,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
             average_rewd_eval = np.mean(rewards_eval)
 
             # Print
-            print(f"EPISODE {episode}. Last Trading day: {current_trading_day-1}.\nFINAL REWARD: {final_reward_eval}. ELAPSED TIME: {time.time() - starting_time} seconds.")
+            print(f"EPISODE {episode+1}. Last Trading day: {current_trading_day-1}.\nFINAL REWARD: {final_reward_eval}. ELAPSED TIME: {time.time() - starting_time} seconds.")
 
             # Append the final reward and average loss for this episode to the training history
             train_history["metric_history_eval"].append(average_rewd_eval)

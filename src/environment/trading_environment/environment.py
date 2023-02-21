@@ -171,7 +171,7 @@ class Environment:
         self.database_eval = database[training_days:]
         self.gas_prices_eval = gas_prices[training_days:]
 
-    def trade(self, trading_day=0, action=None, mode=None):
+    def trade(self, mode="UNK", trading_day=0, action=None):
         """Executes the corresponding trades on the current day's prices.
         :param mode: (str, optional) trading mode can be either training or evaluating
         :param action: (int, required) the actions to take.
@@ -202,6 +202,7 @@ class Environment:
 
         # Performing portfolio management
         self.portfolio, self.curr_net_worth, self.curr_cash, self.curr_units_value = portfolio_management(
+            mode=mode,
             day=trading_day,
             position=position,
             prev_action=self.prev_action,
