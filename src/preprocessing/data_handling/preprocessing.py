@@ -35,7 +35,7 @@ def preprocessing_snapshots(prices, size):
     for i in range(0, n):
         x = []
         for k in range(0, len(prices)):
-            price_snapshot = prices[k].iloc[i:i + size]
+            price_snapshot = np.nan_to_num(prices[k].iloc[i:i + size], nan=0)
             x.append(price_snapshot)
         X.append(x)
 
