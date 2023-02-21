@@ -4,7 +4,7 @@ import time
 import logging
 from datetime import datetime
 
-from models.models import DQN, DuelingDQN
+from models.models import DQN, DuelingDQN, ViT
 from models.optimization import optimize_dqn
 from models.saving_tools import save_model, load_model
 from src.environment.trading_environment.agent import Agent
@@ -13,7 +13,7 @@ from src.utils.visualization.timeseries_cashflow import TradingCycleCashFlow
 from logs.logger_file import logger_main
 
 
-def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use=3, lookback=10, device=None, token_prices_address=None, save_path=None, model_name=None, portfolio_json=None, load_from_checkpoint=True):
+def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit, loss_function, episodes, batch_size, memory_size, lr, epsilon, gamma, momentum, reward_metric, use=3, lookback=10, device=None, token_prices_address=None, save_path=None, model_name=None, algorithm=None, portfolio_json=None, load_from_checkpoint=True):
     with torch.autograd.set_detect_anomaly(True):
         timeseries_linechart = TradingCycleCashFlow(saving_path=images_saving_path)
 
@@ -62,17 +62,20 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
         set_bias = False
 
         # Set model to use
-        if model_name == "Single_DQN" or model_name == "Double_DQN":
+        if algorithm == "Single_DQN" and model_name == "CNN":
             logger_main.info("Using Single Stream DQN model")
             q = DQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
-        else:
+        elif algorithm == "Dueling_DQN" and model_name == "CNN":
             logger_main.info("Using Dueling model")
             q = DuelingDQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
             t = DuelingDQN(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
+        elif algorithm == "Single_DQN" and model_name == "ViT":
+            q = ViT(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
+            t = ViT(in_size=in_size, n_classes=out_size, inplace=set_inplace, bias=set_bias).double().to(device=device)
 
         logger_main.debug(f"""
-        Chosen Model {model_name}:
+        Chosen Model {model_name} with {algorithm} Algorithm :
         {q}
         """)
 
@@ -84,7 +87,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
 
         # If using a checkpoint, load from checkpoint
         if load_from_checkpoint:
-            q, optimizer, train_history, starting_episode = load_model(save_path, model_name, q, optimizer)
+            q, optimizer, train_history, starting_episode = load_model(save_path, algorithm, model_name, q, optimizer)
 
         # Load weights from the q to the t model
         t.load_state_dict(q.state_dict())
@@ -165,7 +168,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
             if (episode+1) % 10 == 0:
                 logger_main.info(f"Saving model at episode {episode}")
                 current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-                filename = f"{model_name}_{episode}_{current_time}.pt"
+                filename = f"{algorithm}_{model_name}_{episode}_{current_time}.pt"
                 save_model(model=q, episode=episode, optimizer=optimizer, train_history=train_history, PATH=save_path, filename=filename)
 
             #####################

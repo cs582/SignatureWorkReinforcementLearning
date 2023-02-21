@@ -14,9 +14,9 @@ def save_model(model, episode, optimizer, train_history, PATH, filename):
     }, f"{PATH}/{filename}")
 
 
-def load_model(save_path, model_name, q, optimizer):
+def load_model(save_path, algorithm, model_name, q, optimizer):
     # Get a list of all the saved models in the directory
-    model_files = [f for f in os.listdir(save_path) if (f.endswith(".pt") and model_name in f)]
+    model_files = [f for f in os.listdir(save_path) if (f.endswith(".pt") and (model_name in f and algorithm in f))]
 
     if len(model_files) > 0:
         # Get the latest saved model (based on modification time)

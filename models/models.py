@@ -66,6 +66,7 @@ class DQN(nn.Module):
 class ViT(nn.Module):
     def __init__(self, in_size, n_classes):
         super(ViT, self).__init__()
+        
 
 
 

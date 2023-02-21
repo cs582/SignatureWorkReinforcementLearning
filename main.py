@@ -15,7 +15,9 @@ parser = argparse.ArgumentParser(
            'for the B.S. in Data Science undergrduate degree. '
 )
 
-parser.add_argument('-model', type=str, default="Single_DQN", help='Model to use.')
+parser.add_argument('-algorithm', type=str, default="Single_DQN", help='Training Algorithm to Use.')
+parser.add_argument('-model', type=str, default="CNN", help='Q-approx model to use.')
+
 parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
 
 parser.add_argument('-portfolio', type=int, default=1, help="Choose portfolio to use")
@@ -59,6 +61,7 @@ if __name__ == "__main__":
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
     loss_function = nn.MSELoss()
 
+    algorithm = args.algorithm
     model_name = args.model
     reward_metric = args.reward
 
@@ -87,7 +90,7 @@ if __name__ == "__main__":
     load_from_checkpoint = args.us
 
     training_info = f"""
-    Training {model_name} in portfolio {portfolio} with
+    Training {model_name} with a {algorithm} in portfolio {portfolio} with
         data_file = {data_file}
         portfolios_json = {portfolios_json}
         images_saving_path = {images_saving_path}
@@ -125,6 +128,7 @@ if __name__ == "__main__":
     logger_main.info(training_info)
 
     q, history_dqn = train(
+        algorithm=algorithm,
         model_name=model_name,
         images_saving_path=images_saving_path,
         token_prices_address=data_file,
