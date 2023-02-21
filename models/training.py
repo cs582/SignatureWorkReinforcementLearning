@@ -42,7 +42,7 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
 
         # Calculate in-size and n_tokens
         n_tokens = environment.n_defi_tokens if n_tokens is None else n_tokens
-        in_size = (lookback, n_tokens)
+        in_size = (lookback, n_tokens) if use==3 else (n_tokens, n_tokens)
         logger_main.info(f"Input size {in_size}. N tokens: {n_tokens}")
 
         # Calculate out-size
