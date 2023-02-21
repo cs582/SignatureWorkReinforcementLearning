@@ -56,6 +56,7 @@ def prepare_dataset(tokens_to_use, token_prices, use, lookback):
     :return: X                  --np.array, returns the list of 2D input matrices
     """
     print("PREPARE DATASET")
+    print(f"use = {use}")
     X_matrices = None
 
     token_prices = token_prices[tokens_to_use].astype(np.float64)
