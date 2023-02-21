@@ -35,7 +35,8 @@ def preprocessing_snapshots(prices, size):
     for i in range(0, n):
         x = []
         for k in range(0, len(prices)):
-            price_snapshot = np.nan_to_num(prices[k].iloc[i:i + size], nan=0)
+            prices_view = prices[k].iloc[i:i + size].values
+            price_snapshot = np.nan_to_num(prices_view, nan=0)
             x.append(price_snapshot)
         X.append(x)
 
@@ -62,7 +63,8 @@ def prepare_dataset(tokens_to_use, token_prices, use, lookback):
     if use==3:
         size = lookback
         X_matrices = preprocessing_snapshots([token_prices], size)
+        print(X_matrices[:5])
         X_matrices = np.asanyarray(X_matrices)
-        print(X_matrices)
+        print(X_matrices[:5])
 
     return X_matrices
