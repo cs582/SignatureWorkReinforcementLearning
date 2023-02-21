@@ -30,7 +30,7 @@ parser.add_argument('-me', type=float, default=1e-4, help="Minimum value epsilon
 parser.add_argument('-dr', type=float, default=0.995, help="Decay rate for epsilon each episode.")
 
 parser.add_argument('-d', type=int, default=1000, help="Number of trading days.")
-parser.add_argument('-lb', type=int, default=1000, help="Lookback window.")
+parser.add_argument('-lb', type=int, default=10, help="Lookback window.")
 
 parser.add_argument('-ic', type=int, default=100000, help="Set initial cash.")
 
