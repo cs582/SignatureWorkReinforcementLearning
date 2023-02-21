@@ -15,13 +15,13 @@ parser = argparse.ArgumentParser(
            'for the B.S. in Data Science undergrduate degree. '
 )
 
-parser.add_argument('--model', type=str, default="Single_DQN", help='Model to use.')
-parser.add_argument('--reward', type=str, default='roi', help="Reward metric to use in training.")
+parser.add_argument('-model', type=str, default="Single_DQN", help='Model to use.')
+parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
 
-parser.add_argument('--portfolio', type=int, default=1, help="Choose portfolio to use")
+parser.add_argument('-portfolio', type=int, default=1, help="Choose portfolio to use")
 
-parser.add_argument('--episodes', type=int, default=1000, help="Number of episodes to train.")
-parser.add_argument('--use', type=int, default=3, help="2 to use covariance matrix. 3 to use snapshot of lookback days.")
+parser.add_argument('-episodes', type=int, default=1000, help="Number of episodes to train.")
+parser.add_argument('-use', type=int, default=3, help="2 to use covariance matrix. 3 to use snapshot of lookback days.")
 
 parser.add_argument('-e', type=float, default=0.01, help="Epsilon to train.")
 parser.add_argument('-g', type=float, default=0.8, help="Gamma value for training.")
