@@ -257,6 +257,7 @@ class Environment:
             short_window = self.daily_roi_history[:-25]
             rew_std = np.std(short_window)
             rew_mean = (25 ** 0.5) * np.mean(short_window)
+            print(rew_mean, rew_std)
             reward = float(rew_mean/rew_std if rew_std!=0.0 else rew_mean)
         else:
             reward = self.sharpe_history[-1] if self.reward_metric == "sharpe" else self.daily_roi_history[-1]
