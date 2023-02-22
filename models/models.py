@@ -87,36 +87,56 @@ class DuelingDQN(nn.Module):
 
 
 class ViT(nn.Module):
-    def __init__(self, in_size, n_classes, dropout):
+    def __init__(self, in_size, n_classes, dropout, vector_size, nhead=1):
         super(ViT, self).__init__()
-        n_embeddings, embedding_dim = in_size
-        self.pos_embedding = nn.Parameter(torch.randn(1, n_embeddings + 1, embedding_dim))
-        self.cls_token = nn.Parameter(torch.randn(1, 1, embedding_dim))
+        n_embeddings, row_dim = in_size
+
+        # Patch Embedding Eq. 1 "An Image is Worth 16x16 Words"
+        self.patch_embedding_encoder = nn.Parameter(torch.randn(1, row_dim, vector_size))
+        self.class_token = nn.Parameter(torch.randn(1, 1, vector_size))
+        self.pos_embedding = nn.Parameter(torch.randn(1, n_embeddings + 1, vector_size))
         self.dropout = nn.Dropout(dropout)
 
         self.transformer = nn.Sequential(
-            nn.TransformerEncoderLayer(d_model=embedding_dim, activation='gelu', nhead=1, dim_feedforward=256),
-            nn.TransformerEncoderLayer(d_model=embedding_dim, activation='gelu', nhead=1, dim_feedforward=256),
-            nn.TransformerEncoderLayer(d_model=embedding_dim, activation='gelu', nhead=1, dim_feedforward=256),
-            nn.TransformerEncoderLayer(d_model=embedding_dim, activation='gelu', nhead=1, dim_feedforward=256)
+            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
+            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
+            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
+            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size)
         )
 
         self.to_latent = nn.Identity()
 
         self.mlp_head = nn.Sequential(
-            nn.LayerNorm(embedding_dim),
-            nn.Linear(embedding_dim, n_classes)
+            nn.LayerNorm(vector_size),
+            nn.Linear(vector_size, n_classes)
         )
 
     def forward(self, x):
-        _, n_vectors, vector_dim = x.shape
+        N, n_channels, n_vectors, vector_dim = x.shape
 
+        # Patch Embedding
+        print(f"Shape 1: {x.shape}")
+        x = torch.matmul(x, self.patch_embedding_encoder)
+        print(f"Shape 2: {x.shape}")
+        class_token = self.class_token.expand(N, -1, -1)
+        x = torch.cat((class_token, x), dim=1)
+        print(f"Shape 3: {x.shape}")
         x += self.pos_embedding[:, :(n_vectors + 1)]
+        print(f"Shape 4: {x.shape}")
         x = self.dropout(x)
+        print(f"Shape 5: {x.shape}")
 
+        # Transformer Encoder Layers
         x = self.transformer(x)
+        print(f"Shape 6: {x.shape}")
 
+        # Getting class token
         x = x[:, 0]
-
+        print(f"Shape 7: {x.shape}")
         x = self.to_latent(x)
-        return self.mlp_head(x)
+        print(f"Shape 8: {x.shape}")
+
+        x = self.mlp_head(x)
+        print(f"Shape 9: {x.shape}")
+
+        return x
