@@ -18,6 +18,11 @@ parser = argparse.ArgumentParser(
 parser.add_argument('-algorithm', type=str, default="Single_DQN", help='Training Algorithm to Use.')
 parser.add_argument('-model', type=str, default="CNN", help='Q-approx model to use.')
 
+# ViT arguments
+parser.add_argument('-dropout', type=float, default=0.2, help="Dropout rate for the model.")
+parser.add_argument('-vsize', type=int, default=128, help="Embedding projection size.")
+parser.add_argument('-nhead', type=int, default=8, help="Number of heads in Multi-Head Attention.")
+
 parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
 
 parser.add_argument('-portfolio', type=int, default=1, help="Choose portfolio to use")
@@ -58,6 +63,11 @@ if __name__ == "__main__":
 
     save_path = "models/saved_models"
 
+    # ViT Arguments
+    dropout = args.dropout
+    vector_size = args.vsize
+    nhead = args.nhead
+
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
     loss_function = nn.MSELoss()
 
@@ -94,6 +104,12 @@ if __name__ == "__main__":
         data_file = {data_file}
         portfolios_json = {portfolios_json}
         images_saving_path = {images_saving_path}
+        
+        ViT arguments:
+        
+        dropout = {dropout}
+        vector_size = {vector_size}
+        nhead = {nhead}
         
         device = {"CPU" if not torch.cuda.is_available() else torch.cuda.get_device_name(device=device)}
         loss_function = {loss_function}
@@ -145,6 +161,9 @@ if __name__ == "__main__":
         batch_size=batch_size,
         lr=lr,
         lookback=lookback,
+        dropout=dropout,
+        vector_size=vector_size,
+        nhead=nhead,
         use=use,
         momentum=momentum,
         decay_rate=decay_rate,
