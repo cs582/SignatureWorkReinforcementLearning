@@ -5,11 +5,11 @@ from src.preprocessing.data_handling.retrieve_prices import retrieve_token_price
 from src.environment.trading_environment import portfolio_management
 from src.preprocessing.data_handling.preprocessing import prepare_dataset
 from src.environment.trading_environment.portfolio_management import portfolio_management
-from src.utils.logging_tools.dataframe_logs import prices_and_gas_preview, images_preview
 from src.utils.environment_tools import map_actions_to_tokens
 from src.environment.utils import get_trading_action
 from src.utils.visualization.custom_messages import show_rewards
 
+from logs.log_tools import prices_and_gas_preview, images_preview
 
 import torch
 import logging
