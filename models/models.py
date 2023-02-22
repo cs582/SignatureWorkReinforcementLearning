@@ -2,7 +2,7 @@ from models.modules import *
 
 import torch
 import torch.nn as nn
-from logs.logger_file import logger_cnn
+from logs.logger_file import logger_cnn, logger_att
 
 
 
@@ -89,6 +89,7 @@ class DuelingDQN(nn.Module):
 class ViT(nn.Module):
     def __init__(self, in_size, n_classes, dropout, vector_size, nhead=1):
         super(ViT, self).__init__()
+        logger_att.info("Constructing Vision Transformer")
         n_embeddings, row_dim = in_size
 
         # Patch Embedding Eq. 1 "An Image is Worth 16x16 Words"
@@ -114,29 +115,22 @@ class ViT(nn.Module):
     def forward(self, x):
         N, n_channels, n_vectors, vector_dim = x.shape
 
+        # Since this considers the case when n_channels = 1, simply reshape
+        x = x.view(N, n_vectors, vector_dim)
+
         # Patch Embedding
-        print(f"Shape 1: {x.shape}")
         x = torch.matmul(x, self.patch_embedding_encoder)
-        print(f"Shape 2: {x.shape}")
         class_token = self.class_token.expand(N, -1, -1)
         x = torch.cat((class_token, x), dim=1)
-        print(f"Shape 3: {x.shape}")
-        x += self.pos_embedding[:, :(n_vectors + 1)]
-        print(f"Shape 4: {x.shape}")
+        x += self.pos_embedding
         x = self.dropout(x)
-        print(f"Shape 5: {x.shape}")
 
         # Transformer Encoder Layers
         x = self.transformer(x)
-        print(f"Shape 6: {x.shape}")
 
         # Getting class token
         x = x[:, 0]
-        print(f"Shape 7: {x.shape}")
         x = self.to_latent(x)
-        print(f"Shape 8: {x.shape}")
 
         x = self.mlp_head(x)
-        print(f"Shape 9: {x.shape}")
-
         return x
