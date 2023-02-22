@@ -1,30 +1,9 @@
+from models.modules import *
+
 import torch
 import torch.nn as nn
 from logs.logger_file import logger_cnn
 
-
-class Block(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, padding=1, stride=1, inplace=False, bias=False):
-        super(Block, self).__init__()
-        logger_cnn.debug("Constructing Block")
-        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding, stride=stride, bias=bias)
-        nn.init.xavier_uniform(self.conv1.weight)
-        self.bn1 = nn.BatchNorm2d(out_channels)
-
-        self.relu = nn.ReLU(inplace=inplace)
-
-        self.conv2 = nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding, stride=stride, bias=bias)
-        nn.init.xavier_uniform(self.conv2.weight)
-        self.bn2 = nn.BatchNorm2d(out_channels)
-
-    def forward(self, x):
-        out = self.conv1(x)
-        out = self.bn1(out)
-        out = self.relu(out)
-        out = self.conv2(out)
-        out = self.bn2(out)
-        out = self.relu(out)
-        return out
 
 
 class DQN(nn.Module):
@@ -61,13 +40,6 @@ class DQN(nn.Module):
         x = self.out(x)
 
         return x
-
-
-class ViT(nn.Module):
-    def __init__(self, in_size, n_classes):
-        super(ViT, self).__init__()
-        
-
 
 
 class DuelingDQN(nn.Module):
@@ -112,3 +84,39 @@ class DuelingDQN(nn.Module):
         x_adv = self.adv4(x_adv)
 
         return x_val.add(x_adv - x_adv.sum()/x_adv.shape[0])
+
+
+class ViT(nn.Module):
+    def __init__(self, in_size, n_classes, dropout):
+        super(ViT, self).__init__()
+        n_embeddings, embedding_dim = in_size
+        self.pos_embedding = nn.Parameter(torch.randn(1, n_embeddings + 1, embedding_dim))
+        self.cls_token = nn.Parameter(torch.randn(1, 1, embedding_dim))
+        self.dropout = nn.Dropout(dropout)
+
+        self.transformer = nn.Sequential(
+            nn.TransformerEncoderLayer(d_model=embedding_dim, activation='gelu', nhead=1, dim_feedforward=256),
+            nn.TransformerEncoderLayer(d_model=embedding_dim, activation='gelu', nhead=1, dim_feedforward=256),
+            nn.TransformerEncoderLayer(d_model=embedding_dim, activation='gelu', nhead=1, dim_feedforward=256),
+            nn.TransformerEncoderLayer(d_model=embedding_dim, activation='gelu', nhead=1, dim_feedforward=256)
+        )
+
+        self.to_latent = nn.Identity()
+
+        self.mlp_head = nn.Sequential(
+            nn.LayerNorm(embedding_dim),
+            nn.Linear(embedding_dim, n_classes)
+        )
+
+    def forward(self, x):
+        _, n_vectors, vector_dim = x.shape
+
+        x += self.pos_embedding[:, :(n_vectors + 1)]
+        x = self.dropout(x)
+
+        x = self.transformer(x)
+
+        x = x[:, 0]
+
+        x = self.to_latent(x)
+        return self.mlp_head(x)
