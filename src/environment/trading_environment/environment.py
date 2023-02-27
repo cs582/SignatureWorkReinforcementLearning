@@ -289,7 +289,7 @@ class Environment:
         # Selecting tokens currently held
         tokens_curr_held = [i for i, tkn in enumerate(self.tokens_in_portfolio) if self.portfolio[tkn] > 0]
         # Adding reward
-        self.curr_image[:, :, :, tokens_curr_held] += reward*0.1
+        self.curr_image[:, :, :, tokens_curr_held] += 0.12
         # Calculate current state
         self.curr_state = self.curr_image - self.prev_image
 
