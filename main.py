@@ -17,6 +17,23 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('-algorithm', type=str, default="Single_DQN", help='Training Algorithm to Use.')
 parser.add_argument('-model', type=str, default="CNN", help='Q-approx model to use.')
+parser.add_argument('-portfolio', type=int, default=1, help="Choose portfolio to use")
+
+parser.add_argument('-ic', type=int, default=100000, help="Set initial cash.")
+parser.add_argument('-tp', type=int, default=2, help="Priority fee in gwei.")
+parser.add_argument('-gl', type=int, default=21000, help="Gas limit in units.")
+
+parser.add_argument('-e', type=float, default=0.01, help="Epsilon to train.")
+parser.add_argument('-dr', type=float, default=0.995, help="Decay rate for epsilon each episode.")
+parser.add_argument('-me', type=float, default=1e-4, help="Minimum value epsilon can take.")
+
+parser.add_argument('-g', type=float, default=0.8, help="Gamma value for training.")
+parser.add_argument('-memory', type=int, default=10000, help="Replay memory size.")
+
+parser.add_argument('-batch', type=int, default=128, help="Batch size.")
+
+parser.add_argument('-d', type=int, default=1000, help="Number of trading days.")
+parser.add_argument('-lb', type=int, default=10, help="Lookback window.")
 
 # ViT arguments
 parser.add_argument('-dropout', type=float, default=0.2, help="Dropout rate for the model.")
@@ -25,29 +42,11 @@ parser.add_argument('-nhead', type=int, default=8, help="Number of heads in Mult
 
 parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
 
-parser.add_argument('-portfolio', type=int, default=1, help="Choose portfolio to use")
-
 parser.add_argument('-episodes', type=int, default=1000, help="Number of episodes to train.")
 parser.add_argument('-use', type=int, default=3, help="2 to use covariance matrix. 3 to use snapshot of lookback days.")
 
-parser.add_argument('-e', type=float, default=0.01, help="Epsilon to train.")
-parser.add_argument('-g', type=float, default=0.8, help="Gamma value for training.")
 parser.add_argument('-lr', type=float, default=1e-4, help="Learning rate.")
 parser.add_argument('-m', type=float, default=0.001, help="Momentum for training.")
-
-parser.add_argument('-me', type=float, default=1e-4, help="Minimum value epsilon can take.")
-parser.add_argument('-dr', type=float, default=0.995, help="Decay rate for epsilon each episode.")
-
-parser.add_argument('-d', type=int, default=1000, help="Number of trading days.")
-parser.add_argument('-lb', type=int, default=10, help="Lookback window.")
-
-parser.add_argument('-ic', type=int, default=100000, help="Set initial cash.")
-
-parser.add_argument('-tp', type=int, default=2, help="Priority fee in gwei.")
-parser.add_argument('-gl', type=int, default=21000, help="Gas limit in units.")
-
-parser.add_argument('-batch', type=int, default=128, help="Batch size.")
-parser.add_argument('-memory', type=int, default=10000, help="Replay memory size.")
 
 parser.add_argument('-us', type=bool, default=False, help="Load or not a saved model")
 
