@@ -42,6 +42,7 @@ def preprocessing_snapshots(prices, size):
 
     return X
 
+
 def prepare_dataset(tokens_to_use, token_prices, use, lookback):
     """
     :param tokens_to_use        --list, it gives you the tokens to take into consideration i.e. asset space or portfolio

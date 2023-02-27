@@ -20,7 +20,7 @@ logger_main = logging.getLogger("src/trading_environment/environment")
 class Environment:
     def __init__(
             self,
-            trading_days: int = 365,
+            trading_days: int = 1000,
             token_prices_address: str = None,
             gas_address: str = None,
             initial_cash: float = 100000.0,
@@ -79,7 +79,14 @@ class Environment:
 
         self.curr_prices = None
         self.curr_gas = None
+
         self.curr_prices_image = None
+        self.prev_prices_image = None
+
+        self.curr_image = None
+        self.prev_image = None
+
+        self.curr_state = None
 
         self.curr_cash = self.initial_cash
         self.curr_units_value = 0
@@ -100,35 +107,6 @@ class Environment:
 
         self.lookback = lookback
         self.prev_action = prev_action
-
-    def start_game(self, mode=None):
-        """Resets the environment to its initial state.
-        :param mode (str) set to train for training or eval to evaluate
-        """
-        logger_main.info("Starting/Restarting the game")
-        self.done = False
-        self.daily_roi_history = [0]
-        self.gross_roi_history = [0]
-        self.sharpe_history = [0]
-        self.curr_prices_image = None
-        self.curr_gas = None
-        self.prev_action = -1
-        self.data_index = 0
-        self.curr_cash = self.initial_cash
-        self.curr_units_value = 0
-        self.curr_net_worth = self.curr_cash
-        self.cash_history = [self.curr_cash]
-        self.units_value_history = [self.curr_units_value]
-        self.net_worth_history = [self.curr_net_worth]
-        logger_main.info("Resetting token values in portfolio")
-        for token in self.tokens_in_portfolio:
-            self.portfolio[token] = 0.0
-        logger_main.info("Game restarted successfully")
-
-        # Assign the corresponding prices to the variables
-        self.token_prices = self.token_prices_train if mode == "train" else self.token_prices_eval
-        self.database = self.database_train if mode == "train" else self.database_eval
-        self.gas_prices = self.gas_prices_train if mode == "train" else self.gas_prices_eval
 
     def preload_prices(self, fake_avg_gas: float = 25.0, fake_gas_std: float = 5.0):
         """Initializes the portfolio with the given parameters.
@@ -171,6 +149,42 @@ class Environment:
         self.database_eval = database[training_days:]
         self.gas_prices_eval = gas_prices[training_days:]
 
+    def start_game(self, mode=None):
+        """Resets the environment to its initial state.
+        :param mode (str) set to train for training or eval to evaluate
+        """
+        logger_main.info("Starting/Restarting the game")
+        self.done = False
+        self.daily_roi_history = [0]
+        self.gross_roi_history = [0]
+        self.sharpe_history = [0]
+
+        self.prev_prices_image = None
+        self.curr_prices_image = None
+
+        self.curr_image = None
+        self.prev_image = None
+
+        self.curr_gas = None
+        self.prev_action = -1
+        self.data_index = 0
+        self.curr_cash = self.initial_cash
+        self.curr_units_value = 0
+        self.curr_net_worth = self.curr_cash
+        self.cash_history = [self.curr_cash]
+        self.units_value_history = [self.curr_units_value]
+        self.net_worth_history = [self.curr_net_worth]
+        logger_main.info("Resetting token values in portfolio")
+
+        for token in self.tokens_in_portfolio:
+            self.portfolio[token] = 0.0
+        logger_main.info("Game restarted successfully")
+
+        # Assign the corresponding prices to the variables
+        self.token_prices = self.token_prices_train if mode == "train" else self.token_prices_eval
+        self.database = self.database_train if mode == "train" else self.database_eval
+        self.gas_prices = self.gas_prices_train if mode == "train" else self.gas_prices_eval
+
     def trade(self, mode="UNK", trading_day=0, action=None):
         """Executes the corresponding trades on the current day's prices.
         :param mode: (str, optional) trading mode can be either training or evaluating
@@ -187,9 +201,13 @@ class Environment:
             logger_main.debug("Getting Initial State")
             self.curr_prices = self.token_prices[self.data_index]
             self.curr_prices_image = torch.from_numpy(np.array([self.database[self.data_index]])).to(self.device).double()
+            self.curr_image = self.curr_prices_image.clone()
             self.curr_gas = self.gas_prices[self.data_index]
             self.data_index += 1
             return None, self.curr_prices_image, None
+
+        # Getting previous image
+        self.prev_image = self.curr_image
 
         # Sort indexes and get tokens to trade
         tokens_to_buyorhold = map_actions_to_tokens(action, self.action_map)
@@ -266,10 +284,19 @@ class Environment:
         self.data_index += 1
         logger_main.debug(f"Next data index: {self.data_index}. Max index: {len(self.database)-1}")
 
+        # Compute image for the agent to see
+        self.curr_image = self.curr_prices_image.clone()
+        # Selecting tokens currently held
+        tokens_curr_held = [i for i, tkn in enumerate(self.tokens_in_portfolio) if self.portfolio[tkn] > 0]
+        # Adding reward
+        self.curr_image[:, :, :, tokens_curr_held] += reward*0.1
+        # Calculate current state
+        self.curr_state = self.curr_image - self.prev_image
+
         # Check if done
         done = (self.curr_net_worth <= self.initial_cash*0.25) or (self.data_index >= len(self.database)-1)
         logger_main.info(f"Reinforcement Learning Reward: {self.reward_metric} = {reward}. Done? {done}")
 
         self.prev_action = action
 
-        return reward, self.curr_prices_image, done
+        return reward, self.curr_state, done

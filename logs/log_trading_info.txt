@@ -1,0 +1,134 @@
+INFO 2023-02-27 20:49:26,019: trading_info - Calling Portfolio Management Function with 100000.0 USD available cash. 
+INFO 2023-02-27 20:49:26,021: trading_info - Buy Position. 
+INFO 2023-02-27 20:49:26,027: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[2]: Bought units with value 99998.2. Remaining Cash -0.0. Net Worth 99998.2.[0m 
+INFO 2023-02-27 20:49:26,031: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.41, and REWARD: -1.41. AVG REWARD: -0.71 
+INFO 2023-02-27 20:58:24,572: trading_info - Calling Portfolio Management Function with 100000.0 USD available cash. 
+INFO 2023-02-27 20:58:24,575: trading_info - Buy Position. 
+INFO 2023-02-27 20:58:24,586: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[1]: Bought units with value 99996.52. Remaining Cash 0.0. Net Worth 99996.52.[0m 
+INFO 2023-02-27 20:58:24,587: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.41, and REWARD: -1.41. AVG REWARD: -0.71 
+INFO 2023-02-27 20:59:47,636: trading_info - Calling Portfolio Management Function with 100000.0 USD available cash. 
+INFO 2023-02-27 20:59:47,638: trading_info - Buy Position. 
+INFO 2023-02-27 20:59:47,650: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[1]: Bought units with value 99996.15. Remaining Cash 0.0. Net Worth 99996.15.[0m 
+INFO 2023-02-27 20:59:47,651: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.41, and REWARD: -1.41. AVG REWARD: -0.71 
+INFO 2023-02-27 21:01:13,434: trading_info - Calling Portfolio Management Function with 100000.0 USD available cash. 
+INFO 2023-02-27 21:01:13,437: trading_info - Buy Position. 
+INFO 2023-02-27 21:01:13,449: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[1]: Bought units with value 99996.01. Remaining Cash 0.0. Net Worth 99996.01.[0m 
+INFO 2023-02-27 21:01:13,450: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.41, and REWARD: -1.41. AVG REWARD: -0.71 
+INFO 2023-02-27 21:05:08,293: trading_info - Calling Portfolio Management Function with 100000.0 USD available cash. 
+INFO 2023-02-27 21:05:08,296: trading_info - Buy Position. 
+INFO 2023-02-27 21:05:08,307: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[1]: Bought units with value 99994.92. Remaining Cash 0.0. Net Worth 99994.92.[0m 
+INFO 2023-02-27 21:05:08,308: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.41, and REWARD: -1.41. AVG REWARD: -0.71 
+INFO 2023-02-27 21:06:19,868: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 21:06:19,870: trading_info - Hold Position. 
+INFO 2023-02-27 21:06:19,874: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[1]: Held Units for value 99981.7. Remaining Cash 0.0. Net Worth 99981.7.[0m 
+INFO 2023-02-27 21:06:19,879: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.94, and REWARD: -1.94. AVG REWARD: -1.12 
+INFO 2023-02-27 21:07:45,239: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 21:07:45,241: trading_info - Swap Position. 
+INFO 2023-02-27 21:07:45,251: trading_info - EP:None. TRAIN >> [1;33mTD[0], ACTION[3]: Sold units for 0.0. Cash Earned 99189.49. Net Worth 99189.49.[0m 
+INFO 2023-02-27 21:07:45,252: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[3]: Bought units with value 99188.03. Remaining Cash 0.0. Net Worth 99188.03.[0m 
+INFO 2023-02-27 21:07:45,252: trading_info - EP:None. TRAIN >> [1;34mTD[0], ACTION[3]: Swapped from group 1. Current Cash 0.0; Current Units Value 99188.03. Net Worth 99188.03.[0m 
+INFO 2023-02-27 21:07:45,253: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.01, SHARPE RATIO: -1.19, and REWARD: -1.19. AVG REWARD: -1.14 
+INFO 2023-02-27 21:09:33,978: trading_info - Calling Portfolio Management Function with 100000.0 USD available cash. 
+INFO 2023-02-27 21:09:33,981: trading_info - Buy Position. 
+INFO 2023-02-27 21:09:33,992: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[1]: Bought units with value 99996.38. Remaining Cash 0.0. Net Worth 99996.38.[0m 
+INFO 2023-02-27 21:09:33,993: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.41, and REWARD: -1.41. AVG REWARD: -0.71 
+INFO 2023-02-27 21:10:57,291: trading_info - Calling Portfolio Management Function with 100000.0 USD available cash. 
+INFO 2023-02-27 21:10:57,293: trading_info - Buy Position. 
+INFO 2023-02-27 21:10:57,303: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[1]: Bought units with value 99996.33. Remaining Cash -0.0. Net Worth 99996.33.[0m 
+INFO 2023-02-27 21:10:57,304: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.41, and REWARD: -1.41. AVG REWARD: -0.71 
+INFO 2023-02-27 21:11:48,252: trading_info - Calling Portfolio Management Function with -3.637978807091713e-12 USD available cash. 
+INFO 2023-02-27 21:11:48,253: trading_info - Hold Position. 
+INFO 2023-02-27 21:11:48,257: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[1]: Held Units for value 99983.12. Remaining Cash -0.0. Net Worth 99983.12.[0m 
+INFO 2023-02-27 21:11:48,262: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.75, and REWARD: -1.75. AVG REWARD: -1.05 
+INFO 2023-02-27 21:12:30,019: trading_info - Calling Portfolio Management Function with -3.637978807091713e-12 USD available cash. 
+INFO 2023-02-27 21:12:30,022: trading_info - Hold Position. 
+INFO 2023-02-27 21:12:30,025: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[1]: Held Units for value 99194.56. Remaining Cash -0.0. Net Worth 99194.56.[0m 
+INFO 2023-02-27 21:12:30,032: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.01, SHARPE RATIO: -1.19, and REWARD: -1.19. AVG REWARD: -1.09 
+INFO 2023-02-27 21:12:53,009: trading_info - Calling Portfolio Management Function with -3.637978807091713e-12 USD available cash. 
+INFO 2023-02-27 21:12:53,010: trading_info - Hold Position. 
+INFO 2023-02-27 21:12:53,014: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[1]: Held Units for value 98727.51. Remaining Cash -0.0. Net Worth 98727.51.[0m 
+INFO 2023-02-27 21:12:53,019: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.01, SHARPE RATIO: -1.77, and REWARD: -1.77. AVG REWARD: -1.22 
+INFO 2023-02-27 21:13:11,238: trading_info - Calling Portfolio Management Function with -3.637978807091713e-12 USD available cash. 
+INFO 2023-02-27 21:13:11,240: trading_info - Swap Position. 
+INFO 2023-02-27 21:13:11,252: trading_info - EP:None. TRAIN >> [1;33mTD[0], ACTION[4]: Sold units for 0.0. Cash Earned 98936.1. Net Worth 98936.1.[0m 
+INFO 2023-02-27 21:13:11,253: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[4]: Bought units with value 98934.61. Remaining Cash 0.0. Net Worth 98934.61.[0m 
+INFO 2023-02-27 21:13:11,253: trading_info - EP:None. TRAIN >> [1;34mTD[0], ACTION[4]: Swapped from group 1. Current Cash -0.0; Current Units Value 98934.61. Net Worth 98934.61.[0m 
+INFO 2023-02-27 21:13:11,255: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.01, SHARPE RATIO: -1.28, and REWARD: -1.28. AVG REWARD: -1.23 
+INFO 2023-02-27 21:13:22,347: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 21:13:22,349: trading_info - Hold Position. 
+INFO 2023-02-27 21:13:22,353: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[4]: Held Units for value 100846.81. Remaining Cash 0.0. Net Worth 100846.81.[0m 
+INFO 2023-02-27 21:13:22,358: trading_info - EP:None. TRAIN >> TD[0]: ROI: 0.01, SHARPE RATIO: 0.41, and REWARD: 0.41. AVG REWARD: -1.0 
+INFO 2023-02-27 21:24:34,771: trading_info - Calling Portfolio Management Function with 100000.0 USD available cash. 
+INFO 2023-02-27 21:24:34,774: trading_info - Buy Position. 
+INFO 2023-02-27 21:24:34,778: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[5]: Bought units with value 99998.75. Remaining Cash 0.0. Net Worth 99998.75.[0m 
+INFO 2023-02-27 21:24:34,783: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.41, and REWARD: -1.41. AVG REWARD: -0.71 
+INFO 2023-02-27 21:25:26,407: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 21:25:26,410: trading_info - Hold Position. 
+INFO 2023-02-27 21:25:26,414: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[5]: Held Units for value 99705.34. Remaining Cash 0.0. Net Worth 99705.34.[0m 
+INFO 2023-02-27 21:25:26,419: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.23, and REWARD: -1.23. AVG REWARD: -0.88 
+INFO 2023-02-27 21:26:36,579: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 21:26:36,582: trading_info - Hold Position. 
+INFO 2023-02-27 21:26:36,586: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[5]: Held Units for value 98441.07. Remaining Cash 0.0. Net Worth 98441.07.[0m 
+INFO 2023-02-27 21:26:36,593: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.02, SHARPE RATIO: -1.5, and REWARD: -1.5. AVG REWARD: -1.04 
+INFO 2023-02-27 21:26:57,569: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 21:26:57,571: trading_info - Swap Position. 
+INFO 2023-02-27 21:26:57,576: trading_info - EP:None. TRAIN >> [1;33mTD[0], ACTION[3]: Sold units for 0.0. Cash Earned 97655.04. Net Worth 97655.04.[0m 
+INFO 2023-02-27 21:26:57,582: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[3]: Bought units with value 97653.38. Remaining Cash 0.0. Net Worth 97653.38.[0m 
+INFO 2023-02-27 21:26:57,582: trading_info - EP:None. TRAIN >> [1;34mTD[0], ACTION[3]: Swapped from group 5. Current Cash 0.0; Current Units Value 97653.38. Net Worth 97653.38.[0m 
+INFO 2023-02-27 21:26:57,584: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.02, SHARPE RATIO: -2.14, and REWARD: -2.14. AVG REWARD: -1.26 
+INFO 2023-02-27 21:28:47,120: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 21:28:47,123: trading_info - Sell Position. 
+INFO 2023-02-27 21:28:47,127: trading_info - EP:None. TRAIN >> [1;33mTD[0], ACTION[0]: Sold units for 0.0. Cash Earned 97796.35. Net Worth 97796.35.[0m 
+INFO 2023-02-27 21:28:47,132: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.02, SHARPE RATIO: -1.79, and REWARD: -1.79. AVG REWARD: -1.35 
+INFO 2023-02-27 21:28:58,734: trading_info - Calling Portfolio Management Function with 97796.35164139817 USD available cash. 
+INFO 2023-02-27 21:28:58,737: trading_info - Buy Position. 
+INFO 2023-02-27 21:28:58,741: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[7]: Bought units with value 97794.66. Remaining Cash 0.0. Net Worth 97794.66.[0m 
+INFO 2023-02-27 21:28:58,749: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.02, SHARPE RATIO: -1.73, and REWARD: -1.73. AVG REWARD: -1.4 
+INFO 2023-02-27 21:29:28,661: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 21:29:28,663: trading_info - Swap Position. 
+INFO 2023-02-27 21:29:28,667: trading_info - EP:None. TRAIN >> [1;33mTD[0], ACTION[6]: Sold units for 0.0. Cash Earned 98567.79. Net Worth 98567.79.[0m 
+INFO 2023-02-27 21:29:28,673: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[6]: Bought units with value 98566.29. Remaining Cash 0.0. Net Worth 98566.29.[0m 
+INFO 2023-02-27 21:29:28,673: trading_info - EP:None. TRAIN >> [1;34mTD[0], ACTION[6]: Swapped from group 7. Current Cash 0.0; Current Units Value 98566.29. Net Worth 98566.29.[0m 
+INFO 2023-02-27 21:29:28,675: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.01, SHARPE RATIO: -0.87, and REWARD: -0.87. AVG REWARD: -1.33 
+INFO 2023-02-27 22:01:42,879: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 22:01:42,880: trading_info - Hold Position. 
+INFO 2023-02-27 22:01:42,889: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[6]: Held Units for value 95584.34. Remaining Cash 0.0. Net Worth 95584.34.[0m 
+INFO 2023-02-27 22:01:42,894: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.04, SHARPE RATIO: -1.41, and REWARD: -1.41. AVG REWARD: -1.34 
+INFO 2023-02-27 22:03:29,521: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 22:03:29,523: trading_info - Hold Position. 
+INFO 2023-02-27 22:03:29,527: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[6]: Held Units for value 95172.11. Remaining Cash 0.0. Net Worth 95172.11.[0m 
+INFO 2023-02-27 22:03:29,532: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.05, SHARPE RATIO: -1.55, and REWARD: -1.55. AVG REWARD: -1.36 
+INFO 2023-02-27 22:03:32,516: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 22:03:32,516: trading_info - Hold Position. 
+INFO 2023-02-27 22:03:32,520: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[6]: Held Units for value 92712.52. Remaining Cash 0.0. Net Worth 92712.52.[0m 
+INFO 2023-02-27 22:03:32,526: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.07, SHARPE RATIO: -2.0, and REWARD: -2.0. AVG REWARD: -1.42 
+INFO 2023-02-27 22:04:36,386: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 22:04:36,387: trading_info - Hold Position. 
+INFO 2023-02-27 22:04:36,392: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[6]: Held Units for value 92624.98. Remaining Cash 0.0. Net Worth 92624.98.[0m 
+INFO 2023-02-27 22:04:36,398: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.07, SHARPE RATIO: -2.0, and REWARD: -2.0. AVG REWARD: -1.47 
+INFO 2023-02-27 22:20:16,420: trading_info - Calling Portfolio Management Function with 100000.0 USD available cash. 
+INFO 2023-02-27 22:20:16,422: trading_info - Buy Position. 
+INFO 2023-02-27 22:20:16,426: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[3]: Bought units with value 99998.54. Remaining Cash 0.0. Net Worth 99998.54.[0m 
+INFO 2023-02-27 22:20:16,432: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.41, and REWARD: -1.41. AVG REWARD: -0.71 
+INFO 2023-02-27 22:20:40,165: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 22:20:40,166: trading_info - Hold Position. 
+INFO 2023-02-27 22:20:40,170: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[3]: Held Units for value 99892.6. Remaining Cash 0.0. Net Worth 99892.6.[0m 
+INFO 2023-02-27 22:20:40,175: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.25, and REWARD: -1.25. AVG REWARD: -0.89 
+INFO 2023-02-27 22:23:06,371: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 22:23:06,372: trading_info - Hold Position. 
+INFO 2023-02-27 22:23:06,376: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[3]: Held Units for value 99500.05. Remaining Cash 0.0. Net Worth 99500.05.[0m 
+INFO 2023-02-27 22:23:06,381: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.0, SHARPE RATIO: -1.56, and REWARD: -1.56. AVG REWARD: -1.06 
+INFO 2023-02-27 22:23:17,481: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 22:23:17,483: trading_info - Hold Position. 
+INFO 2023-02-27 22:23:17,488: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[3]: Held Units for value 98949.41. Remaining Cash 0.0. Net Worth 98949.41.[0m 
+INFO 2023-02-27 22:23:17,493: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.01, SHARPE RATIO: -2.11, and REWARD: -2.11. AVG REWARD: -1.27 
+INFO 2023-02-27 22:24:06,775: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 22:24:06,776: trading_info - Swap Position. 
+INFO 2023-02-27 22:24:06,780: trading_info - EP:None. TRAIN >> [1;33mTD[0], ACTION[5]: Sold units for 0.0. Cash Earned 99093.77. Net Worth 99093.77.[0m 
+INFO 2023-02-27 22:24:06,785: trading_info - EP:None. TRAIN >> [1;32mTD[0], ACTION[5]: Bought units with value 99091.86. Remaining Cash 0.0. Net Worth 99091.86.[0m 
+INFO 2023-02-27 22:24:06,786: trading_info - EP:None. TRAIN >> [1;34mTD[0], ACTION[5]: Swapped from group 3. Current Cash 0.0; Current Units Value 99091.86. Net Worth 99091.86.[0m 
+INFO 2023-02-27 22:24:06,787: trading_info - EP:None. TRAIN >> TD[0]: ROI: -0.01, SHARPE RATIO: -1.53, and REWARD: -1.53. AVG REWARD: -1.31 
+INFO 2023-02-27 22:24:15,894: trading_info - Calling Portfolio Management Function with 0.0 USD available cash. 
+INFO 2023-02-27 22:24:15,895: trading_info - Hold Position. 
+INFO 2023-02-27 22:24:15,900: trading_info - EP:None. TRAIN >> [1;31mTD[0], ACTION[5]: Held Units for value 100318.92. Remaining Cash 0.0. Net Worth 100318.92.[0m 
+INFO 2023-02-27 22:24:15,906: trading_info - EP:None. TRAIN >> TD[0]: ROI: 0.0, SHARPE RATIO: 0.23, and REWARD: 0.23. AVG REWARD: -1.09 
