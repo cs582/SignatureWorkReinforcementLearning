@@ -94,16 +94,17 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
         # Load weights from the q to the t model
         t.load_state_dict(q.state_dict())
 
+        # Set Q-function to train mode
+        q.train()
+        # Set Target function to eval mode
+        t.eval()
+
         # Initiate training
         starting_time = time.time()
         for episode in range(starting_episode, episodes):
             os.environ['EPISODE'] = f"{episode}"
 
             mode = "TRAINING"
-
-            # Set model q in train mode
-            q.train()
-            t.eval()
 
             # Start new training episode
             environment.start_game(mode='train')
@@ -182,10 +183,6 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
 
             environment.start_game(mode='eval')
 
-            # Set models in evaluation mode
-            q.eval()
-            t.eval()
-
             # Initialize the current state
             logger_main.info("Initial Trade EVAL call")
             _, cur_state, _ = environment.trade()
@@ -199,8 +196,8 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
             while not done_eval:
                 logger_main.info(f"EVAL Trading Day {current_trading_day_eval+1}")
 
-                # Predict select random action
-                y_hat = q(cur_state)
+                # Predict select random action from target function
+                y_hat = t(cur_state)
                 cur_action = agent.get_action(y_hat, min_epsilon, episode)
 
                 # Execute the action and get the reward and next state
