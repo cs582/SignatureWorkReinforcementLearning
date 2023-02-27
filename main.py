@@ -4,7 +4,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from datetime import datetime
 from models.training import train
-from logs.logger_file import logger_main
+from logs.logger_file import logger_main, logger_trading_info
 
 import argparse
 
@@ -141,6 +141,7 @@ if __name__ == "__main__":
     print(training_info)
 
     logger_main.info(training_info)
+    logger_trading_info.info(training_info)
 
     q, history_dqn = train(
         algorithm=algorithm,
