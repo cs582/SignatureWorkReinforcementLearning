@@ -30,6 +30,7 @@ def optimize_dqn(dqn, target, batch, loss_fn, gamma, optimizer, device):
     logger.debug("Calculating target Q-values")
 
     # Compute the best action for the next state
+    target = target.eval()
     actions = target(next_states).data.max(1)[1].view(-1, 1)
 
     # Initialize a tensor to hold the Q-values

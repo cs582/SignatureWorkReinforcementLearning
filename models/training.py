@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import torch
 import time
@@ -95,11 +97,13 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
         # Initiate training
         starting_time = time.time()
         for episode in range(starting_episode, episodes):
+            os.environ['EPISODE'] = f"{episode}"
+
             mode = "TRAINING"
 
-            # Set models in train mode
+            # Set model q in train mode
             q.train()
-            t.train()
+            t.eval()
 
             # Start new training episode
             environment.start_game(mode='train')
