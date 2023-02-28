@@ -80,9 +80,6 @@ class Environment:
         self.curr_prices = None
         self.curr_gas = None
 
-        self.curr_prices_image = None
-        self.prev_prices_image = None
-
         self.curr_image = None
         self.prev_image = None
 
@@ -159,9 +156,6 @@ class Environment:
         self.gross_roi_history = [0]
         self.sharpe_history = [0]
 
-        self.prev_prices_image = None
-        self.curr_prices_image = None
-
         self.curr_image = None
         self.prev_image = None
 
@@ -200,11 +194,10 @@ class Environment:
         if action is None:
             logger_main.debug("Getting Initial State")
             self.curr_prices = self.token_prices[self.data_index]
-            self.curr_prices_image = torch.from_numpy(np.array([self.database[self.data_index]])).to(self.device).double()
-            self.curr_image = self.curr_prices_image.clone()
+            self.curr_image = torch.from_numpy(np.array([self.database[self.data_index]])).to(self.device).double()
             self.curr_gas = self.gas_prices[self.data_index]
             self.data_index += 1
-            return None, self.curr_prices_image, None
+            return None, self.curr_image, None
 
         # Getting previous image
         self.prev_image = self.curr_image
@@ -277,19 +270,17 @@ class Environment:
         # Show the reward on screen in CYAN
         show_rewards(mode=mode, day=trading_day, roi=gross_roi, sharpe=sharpe, reward=reward, metric_mean=metric_mean)
 
+        # Selecting tokens currently held
+        tokens_curr_held = [i for i, tkn in enumerate(self.tokens_in_portfolio) if self.portfolio[tkn] > 0]
+
         # Move to next prices
         self.curr_prices = self.token_prices[self.data_index]
-        self.curr_prices_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device)
+        self.curr_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device)
+        self.curr_image[:, :, :, tokens_curr_held] += 0.12 if self.use == 3 else 1.0
         self.curr_gas = self.gas_prices[self.data_index]
         self.data_index += 1
         logger_main.debug(f"Next data index: {self.data_index}. Max index: {len(self.database)-1}")
 
-        # Compute image for the agent to see
-        self.curr_image = self.curr_prices_image.clone()
-        # Selecting tokens currently held
-        tokens_curr_held = [i for i, tkn in enumerate(self.tokens_in_portfolio) if self.portfolio[tkn] > 0]
-        # Adding reward
-        self.curr_image[:, :, :, tokens_curr_held] += 0.12
         # Calculate current state
         self.curr_state = self.curr_image - self.prev_image
 
