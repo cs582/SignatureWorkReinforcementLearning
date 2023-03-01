@@ -5,21 +5,22 @@ import torch.nn as nn
 from logs.logger_file import logger_cnn, logger_att
 
 
-
 class DQN(nn.Module):
-    def __init__(self, in_size, n_classes, kernel=3, inplace=True, bias=False):
+    def __init__(self, in_size, n_classes, inplace=True, bias=False):
         super(DQN, self).__init__()
         logger_cnn.info("Constructing DQN")
 
         # backbone
-        self.block1 = Block(in_channels=1, out_channels=8, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        self.block2 = Block(in_channels=8, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        self.block3 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+        self.block1 = Block(in_channels=1, out_channels=8, inplace=inplace, bias=bias)
+        self.block2 = Block(in_channels=8, out_channels=16, inplace=inplace, bias=bias)
+        self.block3 = Block(in_channels=16, out_channels=32, inplace=inplace, bias=bias)
 
-        self.fc1 = nn.Linear(in_size[0] * in_size[1] * 32, 128)
-        self.fc2 = nn.Linear(128, 128)
-        self.fc3 = nn.Linear(128, 64)
-        self.fc4 = nn.Linear(64, n_classes)
+        n, m = in_size
+
+        self.fc1 = nn.Linear((n-12) * (m-12) * 32, 128)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 32)
+        self.fc4 = nn.Linear(32, n_classes)
 
         self.relu = nn.ReLU(inplace=True)
 
@@ -29,6 +30,8 @@ class DQN(nn.Module):
         x = self.block1(x)
         x = self.block2(x)
         x = self.block3(x)
+
+        print(x.shape)
 
         x = torch.flatten(x, 1)
 
@@ -50,9 +53,9 @@ class DuelingDQN(nn.Module):
         self.n_classes = n_classes
 
         # ResNet-20 backbone
-        self.block1 = Block(in_channels=1, out_channels=8, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        self.block2 = Block(in_channels=8, out_channels=16, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
-        self.block3 = Block(in_channels=16, out_channels=32, kernel_size=(kernel, kernel), inplace=inplace, bias=bias)
+        self.block1 = Block(in_channels=1, out_channels=8, inplace=inplace, bias=bias)
+        self.block2 = Block(in_channels=8, out_channels=16, inplace=inplace, bias=bias)
+        self.block3 = Block(in_channels=16, out_channels=32, inplace=inplace, bias=bias)
 
         self.val1 = nn.Linear(in_size[0] * in_size[1] * 32, 128)
         self.val2 = nn.Linear(128, 128)
@@ -99,6 +102,10 @@ class ViT(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
         self.transformer = nn.Sequential(
+            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
+            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
+            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
+            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
             nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
             nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
             nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
