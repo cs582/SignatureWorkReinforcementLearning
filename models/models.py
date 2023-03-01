@@ -31,8 +31,6 @@ class DQN(nn.Module):
         x = self.block2(x)
         x = self.block3(x)
 
-        print(x.shape)
-
         x = torch.flatten(x, 1)
 
         x = self.relu(self.fc1(x))
