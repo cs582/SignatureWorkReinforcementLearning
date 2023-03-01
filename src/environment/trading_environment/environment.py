@@ -265,7 +265,7 @@ class Environment:
         # Calculate REWARD
         metric_today = self.sharpe_history[-1] if self.reward_metric == "sharpe" else self.daily_roi_history[-1]
         metric_mean = np.mean(self.sharpe_history) if self.reward_metric == "sharpe" else np.mean(self.daily_roi_history)
-        reward = metric_today - max(metric_mean, 0)
+        reward = metric_today
 
         # Show the reward on screen in CYAN
         show_rewards(mode=mode, day=trading_day, roi=gross_roi, sharpe=sharpe, reward=reward, metric_mean=metric_mean)
