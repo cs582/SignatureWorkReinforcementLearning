@@ -276,13 +276,9 @@ class Environment:
         # Move to next prices
         self.curr_prices = self.token_prices[self.data_index]
         self.curr_image = torch.tensor(np.array([self.database[self.data_index]]), dtype=torch.double, device=self.device)
-        self.curr_image[:, :, :, tokens_curr_held] += 0.12 if self.use == 3 else 1.0
         self.curr_gas = self.gas_prices[self.data_index]
         self.data_index += 1
         logger_main.debug(f"Next data index: {self.data_index}. Max index: {len(self.database)-1}")
-
-        # Calculate current state
-        self.curr_state = self.curr_image - self.prev_image
 
         # Check if done
         done = (self.curr_net_worth <= self.initial_cash*0.25) or (self.data_index >= len(self.database)-1)
@@ -290,4 +286,4 @@ class Environment:
 
         self.prev_action = action
 
-        return reward, self.curr_state, done
+        return reward, self.curr_image, done
