@@ -30,14 +30,14 @@ parser.add_argument('-me', type=float, default=1e-4, help="Minimum value epsilon
 parser.add_argument('-g', type=float, default=0.8, help="Gamma value for training.")
 parser.add_argument('-memory', type=int, default=10000, help="Replay memory size.")
 
-parser.add_argument('-batch', type=int, default=128, help="Batch size.")
+parser.add_argument('-batch', type=int, default=64, help="Batch size.")
 
 parser.add_argument('-d', type=int, default=1000, help="Number of trading days.")
 parser.add_argument('-lb', type=int, default=10, help="Lookback window.")
 
 # ViT arguments
 parser.add_argument('-dropout', type=float, default=0.2, help="Dropout rate for the model.")
-parser.add_argument('-vsize', type=int, default=128, help="Embedding projection size.")
+parser.add_argument('-vsize', type=int, default=512, help="Embedding projection size.")
 parser.add_argument('-nhead', type=int, default=8, help="Number of heads in Multi-Head Attention.")
 
 parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")

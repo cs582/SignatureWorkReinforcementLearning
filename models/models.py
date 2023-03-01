@@ -105,10 +105,6 @@ class ViT(nn.Module):
             nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
             nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
             nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
-            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
-            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
-            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
-            nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size),
             nn.TransformerEncoderLayer(d_model=vector_size, activation='gelu', nhead=nhead, dim_feedforward=vector_size)
         )
 
