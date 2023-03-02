@@ -16,6 +16,7 @@ class DQN(nn.Module):
         self.block3 = Block(in_channels=16, out_channels=32, inplace=inplace, bias=bias)
 
         n, m = in_size
+        print("size", n,m)
 
         self.fc1 = nn.Linear((n-12) * (m-12) * 32, 128)
         self.fc2 = nn.Linear(128, 64)
