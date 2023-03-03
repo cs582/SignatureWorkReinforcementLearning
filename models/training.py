@@ -184,8 +184,13 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
             #####################
             #  EVALUATING LOOP  #
             #####################
+
+            # Load latest model
+            t.load_state_dict(q.state_dict())
+
             mode = "EVAL"
 
+            # Restart Environment in Evaluating Mode (eval data)
             environment.start_game(mode='eval')
 
             # Initialize the current state
