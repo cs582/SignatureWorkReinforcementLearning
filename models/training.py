@@ -159,8 +159,9 @@ def train(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_ep
                 current_trading_day += 1
 
                 # Update target model
-                if current_trading_day % 24 == 0:
+                if current_trading_day % 12 == 0:
                     t.load_state_dict(q.state_dict())
+                    logger_main.info("Target Model Updated!")
 
             # Calculate the average loss and reward of the episode
             average_loss = np.mean(loss)
