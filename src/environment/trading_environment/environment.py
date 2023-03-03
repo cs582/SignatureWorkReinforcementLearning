@@ -136,7 +136,7 @@ class Environment:
         images_preview(logger_main, database)
 
         # Create TRAINING DATA
-        training_days = int(self.trading_days * 0.90)
+        training_days = int(self.trading_days * 0.75)
         self.token_prices_train = token_prices[:training_days]
         self.database_train = database[:training_days]
         self.gas_prices_train = gas_prices[:training_days]
@@ -281,7 +281,7 @@ class Environment:
         logger_main.debug(f"Next data index: {self.data_index}. Max index: {len(self.database)-1}")
 
         # Check if done
-        done = (self.curr_net_worth <= self.initial_cash*0.25) or (self.data_index >= len(self.database)-1)
+        done = (self.curr_net_worth <= self.initial_cash*0.90) or (self.data_index >= len(self.database)-1)
         logger_main.info(f"Reinforcement Learning Reward: {self.reward_metric} = {reward}. Done? {done}")
 
         self.prev_action = action
