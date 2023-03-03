@@ -136,7 +136,7 @@ class Environment:
         images_preview(logger_main, database)
 
         # Create TRAINING DATA
-        training_days = int(self.trading_days * 0.75)
+        training_days = int(self.trading_days * 0.90)
         self.token_prices_train = token_prices[:training_days]
         self.database_train = database[:training_days]
         self.gas_prices_train = gas_prices[:training_days]
