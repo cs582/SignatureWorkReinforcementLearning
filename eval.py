@@ -17,6 +17,8 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('-algorithm', type=str, default="Single_DQN", help='Training Algorithm to Use.')
 parser.add_argument('-model', type=str, default="CNN", help='Q-approx model to use.')
+parser.add_argument('-path', type=str, default=3, help="filepath of the model to test")
+
 parser.add_argument('-portfolio', type=int, default=1, help="Choose portfolio to use")
 
 parser.add_argument('-ic', type=int, default=100000, help="Set initial cash.")
@@ -37,7 +39,6 @@ parser.add_argument('-nhead', type=int, default=8, help="Number of heads in Mult
 parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
 
 parser.add_argument('-episodes', type=int, default=500, help="Number of episodes to train.")
-parser.add_argument('-path', type=int, default=3, help="2 to use covariance matrix. 3 to use snapshot of lookback days.")
 
 parser.add_argument('-us', type=bool, default=False, help="Load or not a saved model")
 
@@ -51,15 +52,12 @@ if __name__ == "__main__":
 
     portfolio = args.portfolio
 
-    save_path = "models/saved_models"
-
     # ViT Arguments
     dropout = args.dropout
     vector_size = args.vsize
     nhead = args.nhead
 
     device = torch.device("cuda:0") if torch.cuda.is_available() else None
-    loss_function = nn.MSELoss()
 
     algorithm = args.algorithm
     model_name = args.model
