@@ -26,7 +26,6 @@ parser.add_argument('-tp', type=int, default=2, help="Priority fee in gwei.")
 parser.add_argument('-gl', type=int, default=21000, help="Gas limit in units.")
 
 parser.add_argument('-e', type=float, default=0.01, help="Epsilon.")
-parser.add_argument('-batch', type=int, default=64, help="Batch size.")
 
 parser.add_argument('-d', type=int, default=1000, help="Number of trading days.")
 parser.add_argument('-lb', type=int, default=10, help="Lookback window.")
@@ -76,9 +75,6 @@ if __name__ == "__main__":
     priority_fee = args.tp
     gas_limit = args.gl
 
-    batch_size = args.batch
-    memory_size = args.memory
-
     model_path = args.path
 
     training_info = f"""
@@ -94,7 +90,6 @@ if __name__ == "__main__":
         nhead = {nhead}
         
         device = {"CPU" if not torch.cuda.is_available() else torch.cuda.get_device_name(device=device)}
-        loss_function = {loss_function}
         reward_metric = {reward_metric}
         epsilon = {epsilon}
         
@@ -110,9 +105,6 @@ if __name__ == "__main__":
         
         priority_fee = {priority_fee}
         gas_limit = {gas_limit}
-        
-        batch_size = {batch_size}
-        memory_size = {memory_size}
     """
     print(training_info)
 
