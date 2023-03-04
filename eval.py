@@ -23,13 +23,7 @@ parser.add_argument('-ic', type=int, default=100000, help="Set initial cash.")
 parser.add_argument('-tp', type=int, default=2, help="Priority fee in gwei.")
 parser.add_argument('-gl', type=int, default=21000, help="Gas limit in units.")
 
-parser.add_argument('-e', type=float, default=0.01, help="Epsilon to train.")
-parser.add_argument('-dr', type=float, default=0.995, help="Decay rate for epsilon each episode.")
-parser.add_argument('-me', type=float, default=1e-4, help="Minimum value epsilon can take.")
-
-parser.add_argument('-g', type=float, default=0.8, help="Gamma value for training.")
-parser.add_argument('-memory', type=int, default=10000, help="Replay memory size.")
-
+parser.add_argument('-e', type=float, default=0.01, help="Epsilon.")
 parser.add_argument('-batch', type=int, default=64, help="Batch size.")
 
 parser.add_argument('-d', type=int, default=1000, help="Number of trading days.")
@@ -42,11 +36,8 @@ parser.add_argument('-nhead', type=int, default=8, help="Number of heads in Mult
 
 parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
 
-parser.add_argument('-episodes', type=int, default=1000, help="Number of episodes to train.")
-parser.add_argument('-use', type=int, default=3, help="2 to use covariance matrix. 3 to use snapshot of lookback days.")
-
-parser.add_argument('-lr', type=float, default=1e-4, help="Learning rate.")
-parser.add_argument('-m', type=float, default=0.001, help="Momentum for training.")
+parser.add_argument('-episodes', type=int, default=500, help="Number of episodes to train.")
+parser.add_argument('-path', type=int, default=3, help="2 to use covariance matrix. 3 to use snapshot of lookback days.")
 
 parser.add_argument('-us', type=bool, default=False, help="Load or not a saved model")
 
@@ -73,6 +64,7 @@ if __name__ == "__main__":
     algorithm = args.algorithm
     model_name = args.model
     reward_metric = args.reward
+    epsilon = args.e
 
     use = args.use
 
@@ -95,7 +87,7 @@ if __name__ == "__main__":
     Training {model_name} with a {algorithm} in portfolio {portfolio} with
         data_file = {data_file}
         portfolios_json = {portfolios_json}
-        images_saving_path = {images_saving_path}
+        model_path = {model_path}
         
         ViT arguments:
         
@@ -106,17 +98,12 @@ if __name__ == "__main__":
         device = {"CPU" if not torch.cuda.is_available() else torch.cuda.get_device_name(device=device)}
         loss_function = {loss_function}
         reward_metric = {reward_metric}
+        epsilon = {epsilon}
         
         use = {use}
         
         episodes = {episodes}
         epsilon = {epsilon}
-        gamma = {gamma}
-        lr = {lr}
-        momentum = {momentum}
-        
-        min_epsilon = {min_epsilon}
-        decay_rate = {decay_rate}
         
         n_trading_days = {n_trading_days}
         lookback = {lookback}
@@ -128,8 +115,6 @@ if __name__ == "__main__":
         
         batch_size = {batch_size}
         memory_size = {memory_size}
-        
-        load_from_checkpoint = {load_from_checkpoint}
     """
     print(training_info)
 
@@ -148,13 +133,13 @@ if __name__ == "__main__":
         n_tokens=None,
         priority_fee=priority_fee,
         gas_limit=gas_limit,
+        epsilon=epsilon,
         episodes=episodes,
         lookback=lookback,
         dropout=dropout,
         vector_size=vector_size,
         nhead=nhead,
         use=use,
-        memory_size=memory_size,
         device=device,
         reward_metric=reward_metric,
         model_path=model_path

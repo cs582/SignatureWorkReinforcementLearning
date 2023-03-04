@@ -5,14 +5,14 @@ import torch
 import time
 
 from models.models import DQN, DuelingDQN, ViT
-from models.saving_tools import load_model
+from models.saving_tools import load_specific_model
 from src.environment.trading_environment.agent import Agent
 from src.environment.trading_environment.environment import Environment
 from src.utils.visualization.timeseries_cashflow import TradingCycleCashFlow
 from logs.logger_file import logger_eval
 
 
-def eval(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_epsilon, decay_rate, initial_cash, priority_fee, gas_limit,  episodes, reward_metric, use=3, lookback=10, dropout=0.2, vector_size=128, nhead=8, device=None, token_prices_address=None, model_path=None, model_name=None, algorithm=None, portfolio_json=None):
+def eval(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, epsilon, initial_cash, priority_fee, gas_limit,  episodes, reward_metric, use=3, lookback=10, dropout=0.2, vector_size=128, nhead=8, device=None, token_prices_address=None, model_path=None, model_name=None, algorithm=None, portfolio_json=None):
     with torch.autograd.set_detect_anomaly(True):
         timeseries_linechart = TradingCycleCashFlow(saving_path=images_saving_path)
 
@@ -49,8 +49,8 @@ def eval(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_eps
         agent = Agent(
             n_tokens=environment.n_defi_tokens,
             memory_size=0,
-            min_epsilon=min_epsilon,
-            decay_rate=decay_rate
+            min_epsilon=0,
+            decay_rate=1
         )
         logger_eval.info("Agent Initialized")
 
@@ -73,18 +73,15 @@ def eval(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_eps
         {q}
         """)
 
-        # Setting optimizer
-        optimizer = torch.optim.SGD(q.parameters(), lr=lr, momentum=momentum)
-
-        # If using a checkpoint, load from checkpoint
-        q, optimizer, train_history, starting_episode = load_model(model_path, algorithm, model_name, q, optimizer)
+        # load model
+        q = load_specific_model(model_path, q)
 
         # Set Q-function to train mode
         q.eval()
 
         # Initiate training
         starting_time = time.time()
-        for episode in range(starting_episode, episodes):
+        for episode in range(0, episodes):
             os.environ['EPISODE'] = f"{episode}"
 
             mode = "TRAINING"
@@ -156,7 +153,7 @@ def eval(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_eps
 
                 # Predict select random action from target function
                 y_hat = q(cur_state)
-                cur_action = agent.get_action(y_hat, min_epsilon, episode)
+                cur_action = agent.get_action(y_hat, epsilon, episode)
 
                 # Execute the action and get the reward and next state
                 cur_reward, next_image, done_eval = environment.trade(mode=mode, trading_day=current_trading_day_eval, action=cur_action)
@@ -177,10 +174,7 @@ def eval(portfolio_to_use, images_saving_path, n_trading_days, n_tokens, min_eps
             # Print
             print(f"EPISODE {episode+1}. Last Trading day: {current_trading_day-1}.\nFINAL REWARD: {final_reward_eval}. ELAPSED TIME: {time.time() - starting_time} seconds.")
 
-            # Append the final reward and average loss for this episode to the training history
-            train_history["metric_history_eval"].append(average_rewd_eval)
-
             # Reset the cash flow history for a new episode
             timeseries_linechart.reset()
 
-        return q, train_history
+        return q

@@ -32,3 +32,12 @@ def load_model(save_path, algorithm, model_name, q, optimizer):
         return q, optimizer, train_history, episode
 
     raise FileNotFoundError(f"No valid .pt file found in directory {save_path}")
+
+
+def load_specific_model(model_path, q):
+    checkpoint = torch.load(model_path)
+
+    # Load state from dictionary
+    q.load_state_dict(checkpoint['model_state_dict'])
+
+    return q
