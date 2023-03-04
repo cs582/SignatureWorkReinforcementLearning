@@ -37,8 +37,9 @@ parser.add_argument('-vsize', type=int, default=512, help="Embedding projection 
 parser.add_argument('-nhead', type=int, default=8, help="Number of heads in Multi-Head Attention.")
 
 parser.add_argument('-reward', type=str, default='roi', help="Reward metric to use in training.")
-
 parser.add_argument('-episodes', type=int, default=500, help="Number of episodes to train.")
+
+parser.add_argument('-use', type=int, default=3, help="2 to use covariance matrix. 3 to use snapshot of lookback days.")
 
 parser.add_argument('-us', type=bool, default=False, help="Load or not a saved model")
 
@@ -65,7 +66,6 @@ if __name__ == "__main__":
     epsilon = args.e
 
     use = args.use
-
     episodes = args.episodes
 
     n_trading_days = args.d
