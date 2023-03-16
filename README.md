@@ -97,12 +97,12 @@ The raw data consists of 1000 datapoints, from which the first 24 are used for c
 
 ### Built With
 
-[![Python](https://img.shields.io/badge/Python-3.8.5-blue)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-1.9.0-orange)](https://pytorch.org/)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-0.24.1-blue)](https://scikit-learn.org/)
+[![Python](https://img.shields.io/badge/Python-3.8.12-blue)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-1.10.2-orange)](https://pytorch.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-0.18.1-blue)](https://scikit-learn.org/)
 [![Matplotlib](https://img.shields.io/badge/Matplotlib-3.3.4-orange)](https://matplotlib.org/)
-[![Pandas](https://img.shields.io/badge/Pandas-1.2.3-blue)](https://pandas.pydata.org/)
-[![NumPy](https://img.shields.io/badge/NumPy-1.20.1-orange)](https://numpy.org/)
+[![Pandas](https://img.shields.io/badge/Pandas-1.3.5-blue)](https://pandas.pydata.org/)
+[![NumPy](https://img.shields.io/badge/NumPy-1.22.2-orange)](https://numpy.org/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
