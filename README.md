@@ -171,7 +171,7 @@ There are two main files, the training loop and the evaluation loop. The trainin
 <br />
 <div align="center">
   <a href="https://github.com/cs582/SignatureWorkReinforcementLearning">
-    <img src="images/headshot.HEIC" alt="Headshot" width="403" height="302">
+    <img src="images/headshot.png" alt="Headshot" width="300" height="290">
   </a>
 
 <h3 align="center">Carlos Gustavo Salas Flores</h3>
@@ -201,7 +201,6 @@ Project Link: [https://github.com/cs582/SignatureWorkReinforcementLearning](http
 ## Acknowledgments
 
 * Advisor: Luyao Zhang Ph.D. []()
-* AlphaVantageAPI
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
